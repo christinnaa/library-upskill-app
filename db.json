@@ -1,0 +1,237 @@
+{
+  "books": [
+    {
+      "id": 1,
+      "isbn": "978-1492043454",
+      "title": "Fundamentals of Software Architecture: An Engineering Approach 1st Edition",
+      "author": "Mark Richards",
+      "publisher_name": "O'Reilly Media",
+      "publication_year": "2020",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur rhoncus purus et pharetra semper. Curabitur nec sodales ante, at vulputate lectus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam ut aliquet orci. Donec blandit tincidunt eleifend. Aliquam pulvinar, massa vel elementum lacinia, turpis ligula elementum massa, ut accumsan est quam nec est. Cras eu lorem sit amet leo iaculis consectetur eu id nulla. Duis dignissim, elit ut posuere interdum, metus mauris rutrum nibh, nec varius mi justo eu justo. Aenean facilisis urna sed urna consectetur commodo eu a libero.",
+      "category_name": "Computers & Technology",
+      "no_of_copies": 3,
+      "no_of_pages": "419",
+      "shelf": "11",
+      "status": "active",
+      "publisher_id": "3"
+    },
+    {
+      "id": 2,
+      "isbn": "978-1976214387",
+      "title": "Vue: Step-By-Step Guide To Mastering Vue.js From Beginner To Advanced",
+      "author": "Lionel Lopez",
+      "publisher_name": "CreateSpace Independent Publishing Platform",
+      "publication_year": "2017",
+      "description": "Fusce tristique, ex non consequat aliquet, lectus nunc molestie quam, non hendrerit odio leo ac purus. Morbi facilisis et lacus eu efficitur. Etiam hendrerit maximus mi a viverra. Donec venenatis commodo orci. Curabitur volutpat commodo ex ac blandit. Sed quis volutpat arcu. Mauris ornare nec nisl consectetur facilisis. Aenean in justo sit amet augue gravida eleifend. Proin sodales ante mi, vitae tincidunt dolor semper eu. Maecenas lacinia dui erat, sed dictum mi vestibulum at.",
+      "category_name": "Computers & Technology",
+      "no_of_copies": 0,
+      "no_of_pages": "144",
+      "shelf": "2",
+      "status": "active"
+    },
+    {
+      "id": 3,
+      "isbn": "978-1250145307",
+      "title": "A World of Curiosities: A Novel (Chief Inspector Gamache Novel, 18)",
+      "author": "Louise Penny",
+      "publisher_name": "Minotaur Books",
+      "publication_year": "2023",
+      "description": "",
+      "category_name": "Mystery, Thriller & Suspense",
+      "no_of_copies": 2,
+      "no_of_pages": "400",
+      "shelf": "5",
+      "status": "active"
+    },
+    {
+      "id": 4,
+      "isbn": "978-1684811403",
+      "title": "Simple and Delicious Vegan: 100 Vegan and Gluten-Free Recipes Created by ElaVegan",
+      "author": "Michaela Vais",
+      "publisher_name": "Mango",
+      "publication_year": "2023",
+      "description": "Quisque commodo nulla lectus, eu semper felis iaculis at. Curabitur leo arcu, luctus a rhoncus vitae, vestibulum ut lorem. Vivamus gravida finibus fermentum. In rutrum et mi egestas dapibus. Morbi id ornare erat. Aenean in bibendum mi. Aliquam viverra libero enim, nec pharetra urna tempus id. Nunc orci tortor, laoreet sit amet lobortis at, volutpat id ipsum. Vivamus nec tellus id eros commodo porttitor. Etiam auctor tellus vel nulla molestie feugiat. Cras ullamcorper est vel suscipit lobortis. Quisque ultrices ligula finibus ligula congue, vestibulum ullamcorper odio condimentum. Donec quis ligula tortor.",
+      "category_name": "Cookbooks, Food & Wine",
+      "no_of_copies": 10,
+      "no_of_pages": "224",
+      "shelf": "4",
+      "status": "active"
+    }
+  ],
+  "category": [
+    {
+      "category_name": "Arts & Music",
+      "c_status": "active",
+      "subcategories": [
+        "Art History",
+        "Calligraphy",
+        "Drawing",
+        "Fashion",
+        "Film",
+        "Painting",
+        "Performing Arts",
+        "Photography",
+        "Theater"
+      ]
+    },
+    {
+      "category_name": "Biographies",
+      "c_status": "active",
+      "subcategories": [
+        "Ethnic & Cultural",
+        "Historical",
+        "Leaders & Notable People",
+        "Military",
+        "Modern",
+        "Sports",
+        "Women"
+      ]
+    },
+    {
+      "category_name": "Business",
+      "c_status": "active",
+      "subcategories": [
+        "Careers",
+        "Economics",
+        "Finance",
+        "Industries",
+        "International",
+        "Management",
+        "Marketing",
+        "Small Business"
+      ]
+    },
+    {
+      "category_name": "Computers & Tech",
+      "c_status": "active",
+      "subcategories": [
+        "Business Technology",
+        "Certification",
+        "Computer Science",
+        "Databases & Big Data",
+        "Games & Strategy Guides",
+        "Graphics & Design",
+        "Hardware & DIY",
+        "Internet & Social Media",
+        "Mobile Phones, Tablets & E-Readers",
+        "Networking & Cloud Computing",
+        "Operating Systems",
+        "Programming",
+        "Programming Languages",
+        "Security & Encryption",
+        "Software",
+        "Web Development & Design"
+      ]
+    },
+    {
+      "category_name": "Mystery, Thriller & Suspense",
+      "c_status": "active",
+      "subcategories": [
+        "Mystery",
+        "Thrillers & Suspense",
+        "Writing"
+      ]
+    }
+  ],
+  "issued_books": [
+    {
+      "isbn": "978-1250145307",
+      "copy_no": "7",
+      "title": "A World of Curiosities: A Novel (Chief Inspector Gamache Novel, 18)",
+      "reader_no": "003",
+      "reader": "Tony Stark",
+      "return_date": "01/03/23",
+      "status": "Active",
+      "date_issued": "12/28/22",
+      "date_returned": ""
+    },
+    {
+      "isbn": "978-1976214387",
+      "copy_no": "2",
+      "title": "Vue: Step-By-Step Guide To Mastering Vue.js From Beginner To Advanced",
+      "return_date": "12/25/22",
+      "reader_no": "004",
+      "reader": "Peter Parker",
+      "status": "Overdue",
+      "date_issued": "09/30/22",
+      "date_returned": ""
+    },
+    {
+      "isbn": "978-1492043454",
+      "copy_no": "1",
+      "title": "Fundamentals of Software Architecture: An Engineering Approach 1st Edition",
+      "return_date": "08/13/22",
+      "reader_no": "007",
+      "reader": "Natasha Romanoff",
+      "status": "Returned",
+      "date_issued": "08/01/22",
+      "date_returned": "08/11/22"
+    }
+  ],
+  "publishers": [
+    {
+      "publisher_id": 1,
+      "publisher_name": "Bantam Classics",
+      "location": "New York",
+      "p_status": "active"
+    },
+    {
+      "publisher_id": 2,
+      "publisher_name": "John Wiley & Sons, Inc.",
+      "location": "Hoboken",
+      "p_status": "active"
+    },
+    {
+      "publisher_id": 3,
+      "publisher_name": "O'Reilly Media Inc",
+      "location": "Sebastopol",
+      "p_status": "active"
+    },
+    {
+      "publisher_id": 4,
+      "publisher_name": "Warner Bros Global Publishing",
+      "location": "Burbank",
+      "p_status": "active"
+    }
+  ],
+  "readers": [
+    {
+      "reader_no": "001",
+      "first_name": "Peter",
+      "last_name": "Parker",
+      "city": "New York",
+      "date_of_birth": "08/13/1997"
+    },
+    {
+      "reader_no": "002",
+      "first_name": "Natasha",
+      "last_name": "Romanoff",
+      "city": "Maine",
+      "date_of_birth": "12/04/1987"
+    },
+    {
+      "reader_no": "003",
+      "first_name": "Tony",
+      "last_name": "Stark",
+      "city": "Delaware",
+      "date_of_birth": "10/14/1992"
+    }
+  ],
+  "request": [
+    {
+      "reader": "Tony Stark",
+      "book": "Fundamentals of Software Architecture: An Engineering Approach 1st Edition",
+      "date_requested": "01/01/23"
+    },
+    {
+      "reader": "Peter Parker",
+      "book": "Vue: Step-By-Step Guide To Mastering Vue.js From Beginner To Advanced",
+      "date_requested": "12/04/22"
+    },
+    {
+      "reader": "Natasha Romanoff",
+      "book": "A World of Curiosities: A Novel (Chief Inspector Gamache Novel, 18)",
+      "date_requested": "11/02/22"
+    }
+  ]
+}
