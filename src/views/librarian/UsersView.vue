@@ -1,237 +1,363 @@
 <template>
     <div class="wrapper">
-        <main>
-            <div
-                class="nav__header container-fluid w-100 px-4 mb-4 d-flex align-items-center justify-content-between rounded bg-white">
-                <div class="search__container w-100">
-                    <b-icon icon="search" class="mr-3"></b-icon>
-                    <input type="text" placeholder="Search" class="w-75 border-0" id="filter-input" v-model="filter" />
-                </div>
-
-                <AppDropdown>
-                    <template v-slot:text>
-                        Admin
-                        <b-icon class="ml-2" font-scale=".75" icon="caret-down-fill"></b-icon>
-                    </template>
-                    <template v-slot:links>
-                        <router-link class="dropdown-item" to="/">Logout </router-link>
-                    </template>
-                </AppDropdown>
+      <main>
+        <AppSearchbar @passData="getSearchData($event)"/>
+  
+        <div class="table__container p-4 pt-3 rounded">
+          <div class="d-flex justify-content-between mt-2 mb-4">
+            <h4>Users</h4>
+            <div>
+              <b-button class="mr-2 warning-btn" v-if="selectedRow[0] && selectedUser.status == 'active'"
+                v-b-modal.removeUserModal>
+                <b-icon icon="slash-circle" scale=".85"></b-icon>
+                Mark as Inactive</b-button>
+  
+              <b-button class="mr-2 success-btn" @click="
+                editUser(selectedUser.user_id, selectedUser)
+              " v-if="selectedRow[0] && selectedUser.status == 'inactive'">
+                <b-icon icon="check2-circle" scale=".85"></b-icon>
+                Mark as Active</b-button>
+              <b-button class="mr-2 info-btn" v-if="selectedRow[0]" v-b-modal.updateUserModal>
+                Update</b-button>
+  
+              <b-button v-b-modal.addUserModal class="primary-btn">Add User</b-button>
             </div>
-
-            <div class="table__container p-4 pt-3 rounded">
-                <div class="d-flex justify-content-between mt-2 mb-4">
-                    <h4>Users</h4>
-                    <div>
-                        <b-button v-if="selectedRow[0]" class="mr-2" v-b-modal.updatePublisherModal
-                            variant="info">Update</b-button>
-                        <b-button class="mr-2 text-white"
-                            v-if="selectedRow[0] && selectedPublisher.p_status == 'active'"
-                            v-b-modal.removePublisherModal variant="warning">Mark as inactive</b-button>
-                        <b-button class="mr-2 text-white"
-                            @click="editPublisher(selectedPublisher.publisher_id, selectedPublisher)"
-                            v-if="selectedRow[0] && selectedPublisher.p_status == 'inactive'" variant="success">
-                            Mark as active</b-button>
-                        <b-button v-b-modal.addPublisherModal variant="primary">Add Publisher</b-button>
-
-                    </div>
-                </div>
-
-                <b-table :items="items" :per-page="perPage" :fields="fields" :current-page="currentPage"
-                    label-sort-asc="" label-sort-desc="" label-sort-clear="" fixed responsive :filter="filter"
-                    select-mode="single" ref="selectableTable" selectable @row-selected="onRowSelected"
-                    @filtered="onFiltered">
-                </b-table>
-
-                <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" aria-controls="my-table"
-                    class="mt-3 mb-0 justify-content-center"></b-pagination>
-
-                <AppModal modalId="addPublisherModal" :key="modalKey" hideFooter>
-                    <template #modal-header>
-                        Add Publisher
-                    </template>
-
-                    <template #modal-body>
-                        <form class="px-2" @submit.prevent="addPublisher">
-                            <div class="row  mb-3 pt-0">
-                                <label for="publisher_name">Name</label>
-                                <b-input id="publisher_name" v-model="publisher.publisher_name"></b-input>
-                                {{ publisher.publisher_name }}
-                            </div>
-                            <div class="row mb-2">
-                                <label for="publisher_location">Location</label>
-                                <b-form-input id="publisher_location" v-model="publisher.location"></b-form-input>
-                            </div>
-                            <div class="w-100 mt-4 d-flex justify-content-end">
-                                <b-button variant="outline-secondary" class="mr-2" @click="rerenderModal">
-                                    Cancel
-                                </b-button>
-                                <b-button type="submit" variant="primary">
-                                    Add
-                                </b-button>
-                            </div>
-                        </form>
-                    </template>
-
-                </AppModal>
-            </div>
-
-
-            <AppModal modalId="updatePublisherModal" hideFooter :key="modalKey">
-                <template #modal-header>
-                    Update Publisher
-                </template>
-
-                <template #modal-body>
-                    <form class="px-2"
-                        @submit.prevent="editPublisher(selectedPublisher.publisher_id, selectedPublisher)">
-                        <div class="row  mb-3 pt-0">
-                            <label for="publisher_name">Name</label>
-                            <b-input id="publisher_name" v-model="selectedPublisher.publisher_name"></b-input>
-                        </div>
-                        <div class="row mb-2">
-                            <label for="publisher_location">Location</label>
-                            <b-form-input id="publisher_location" v-model="selectedPublisher.location"></b-form-input>
-                        </div>
-
-                        <div class="w-100 mt-4 d-flex justify-content-end">
-                            <b-button variant="outline-secondary" class="mr-2" @click="rerenderModal()">
-                                Cancel
-                            </b-button>
-                            <b-button type="submit" variant="primary">
-                                Update
-                            </b-button>
-                        </div>
-                    </form>
-                </template>
-
-            </AppModal>
-
-            {{ selectedPublisher }}
-        </main>
-
-        <AppModal modalId="removePublisherModal" modalSize="lg" hideFooter :key="modalKey">
-            <template #modal-header>
-                Mark Publisher as Inactive
+          </div>
+  
+          <b-table :items="items" :per-page="perPage" :fields="fields" :current-page="currentPage" label-sort-asc=""
+            label-sort-desc="" label-sort-clear="" fixed responsive :filter="filter" select-mode="single"
+            ref="selectableTable" selectable @row-selected="onRowSelected" @filtered="onFiltered">
+            <template #cell(first_name)="row">
+              <div v-if="row.item.status == 'inactive'" class="inactive">
+                <span>{{ row.item.first_name }} {{ row.item.last_name }}</span>
+                <b-badge pill variant="light" class="ml-2">{{
+                  row.item.status
+                }}</b-badge>
+              </div>
+              <template v-else>
+                {{ row.item.first_name }} {{ row.item.last_name }}
+              </template>
             </template>
+          </b-table>
+  
+          <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" aria-controls="my-table"
+            class="mt-3 mb-0 justify-content-center"></b-pagination>
+  
+          <AppModal modalId="addUserModal" modalSize="lg" :key="modalKey" hideFooter>
+            <template #modal-header> Add User </template>
             <template #modal-body>
-                <div class="row mb-3 text-center">
-                    Are you sure you want to mark <b>{{ selectedPublisher.publisher_name }}</b> as inactive?
+              <form class="px-2" @submit.prevent="addUser">
+                <b-row class="mb-3 px-2">
+                  <div class="col-6" :class="{
+                    'input-group--error': $v.user.first_name.$error,
+                  }">
+                    <label for="first_name">First Name</label>
+                    <b-form-input id="first_name" v-model="user.first_name"></b-form-input>
+                    <p class="error-message" v-if="
+                      submitStatus === 'error' &&
+                      !$v.user.first_name.required
+                    ">
+                      First name is required.
+                    </p>
+                  </div>
+                  <div class="col-6" :class="{
+                    'input-group--error': $v.user.last_name.$error,
+                  }">
+                    <label for="last_name">Last Name</label>
+                    <b-form-input id="last_name" v-model="user.last_name"></b-form-input>
+                    <p class="error-message" v-if="
+                      submitStatus === 'error' &&
+                      !$v.user.last_name.required
+                    ">
+                      Last name is required.
+                    </p>
+                  </div>
+                </b-row>
+                <b-row class="mb-3 px-2">
+                  <div class="col-6" :class="{
+                    'input-group--error': $v.user.date_of_birth.$error,
+                  }">
+                    <label for="date_of_birth">Date of Birth</label>
+                    <b-form-input type="date" id="date_of_birth" v-model="user.date_of_birth"></b-form-input>
+                    <p class="error-message" v-if="
+                      submitStatus === 'error' &&
+                      !$v.user.date_of_birth.required
+                    ">
+                      Date of birth is required.
+                    </p>
+                  </div>
+                  <div class="col-6" :class="{
+                    'input-group--error': $v.user.city.$error,
+                  }">
+                    <label for="city">City</label>
+                    <b-form-input id="city" v-model="user.city"></b-form-input>
+                    <p class="error-message" v-if="
+                      submitStatus === 'error' &&
+                      !$v.user.city.required
+                    ">
+                      City is required.
+                    </p>
+                  </div>
+                </b-row>
+                <b-row class="mb-3 px-2">
+                  <div class="col-6" :class="{
+                    'input-group--error': $v.user.username.$error,
+                  }">
+                    <label for="username">Username</label>
+                    <b-form-input id="username" v-model="user.username"></b-form-input>
+                    <p class="error-message" v-if="
+                      submitStatus === 'error' &&
+                      !$v.user.username.required
+                    ">
+                      Username is required.
+                    </p>
+                  </div>
+                  <div class="col-6" :class="{
+                    'input-group--error': $v.user.password.$error,
+                  }">
+                    <label for="password">Password</label>
+                    <b-form-input id="password" v-model="user.password"></b-form-input>
+                    <p class="error-message" v-if="
+                      submitStatus === 'error' &&
+                      !$v.user.password.required
+                    ">
+                      Password is required.
+                    </p>
+                  </div>
+                </b-row>
+                <b-row class="px-2">
+                  <div class="col-12" :class="{
+                    'input-group--error': $v.user.role.$error,
+                  }">
+                    <label for="role">Role</label>
+                    <b-form-select id="role" v-model="user.role">
+                      <b-form-select-option value="" disabled>Select</b-form-select-option>
+                      <b-form-select-option value="admin">Admin</b-form-select-option>
+                      <b-form-select-option value="reader">Reader</b-form-select-option>
+                    </b-form-select>
+                    <p class="error-message" v-if="
+                      submitStatus === 'error' &&
+                      !$v.user.role.required
+                    ">
+                      Role is required.
+                    </p>
+                  </div>
+                </b-row>
+                <div class="w-100 mt-4 d-flex justify-content-end">
+                  <b-button class="mr-2 secondary-btn" @click="rerenderModal">
+                    Cancel
+                  </b-button>
+                  <b-button type="submit" class="primary-btn"> Add </b-button>
                 </div>
-                <b-button @click="deletePublisher(selectedPublisher.publisher_id)">yes</b-button>
+              </form>
             </template>
+          </AppModal>
+        </div>
+  
+        <AppModal modalId="updateUserModal" hideFooter modalSize="lg" :key="modalKey">
+          <template #modal-header> Update User </template>
+          <template #modal-body>
+            <form @submit.prevent="editUser(selectedUser.user_id, selectedUser)">
+              <b-row class="mb-3 px-2">
+                <div class="col-6">
+                  <label for="first_name">First Name</label>
+                  <b-form-input v-model.trim="selectedUser.first_name" id="first_name"></b-form-input>
+                </div>
+                <div class="col-6">
+                  <label for="last_name">Last Name</label>
+                  <b-form-input v-model.trim="selectedUser.last_name" id="last_name"></b-form-input>
+                </div>
+              </b-row>
+              <b-row class="mb-3 px-2">
+                <div class="col-6">
+                  <label for="date_of_birth">Date of Birth</label>
+                  <b-form-input type="date" v-model.trim="selectedUser.date_of_birth" id="date_of_birth"></b-form-input>
+                </div>
+                <div class="col-6">
+                  <label for="city">City</label>
+                  <b-form-input v-model.trim="selectedUser.city" id="city"></b-form-input>
+                </div>
+              </b-row>
+              <b-row class="mb-3 px-2">
+                <div class="col-6">
+                  <label for="username">Username</label>
+                  <b-form-input v-model.trim="selectedUser.username" id="username"></b-form-input>
+                </div>
+                <div class="col-6">
+                  <label for="password">Password</label>
+                  <b-form-input v-model.trim="selectedUser.password" id="password"></b-form-input>
+                </div>
+              </b-row>
+              <b-row class="mb-2 px-2">
+                <div class="col-12">
+                  <label for="role">Role</label>
+                  <b-form-select v-model.trim="selectedUser.role">
+                    <b-form-select-option value="" disabled>Select</b-form-select-option>
+                    <b-form-select-option value="admin">Admin</b-form-select-option>
+                    <b-form-select-option value="reader">Reader</b-form-select-option>
+                  </b-form-select>
+                </div>
+              </b-row>
+
+              <div class="w-100 mt-4 d-flex justify-content-end">
+                <b-button class="mr-2 secondary-btn" @click="rerenderModal()">
+                  Cancel
+                </b-button>
+                <b-button type="submit" class="primary-btn"> Update </b-button>
+              </div>
+            </form>
+          </template>
         </AppModal>
-
+      </main>
+  
+      <AppModal modalId="removeUserModal" hideFooter :key="modalKey">
+        <template #modal-header> Mark Selected User as Inactive </template>
+        <template #modal-body>
+          <div class="pb-2 pt-1">
+            Are you sure you want to mark
+            <b>{{ selectedUser.first_name }} {{ selectedUser.last_name }}</b> as inactive?
+          </div>
+  
+          <div class="w-100 mt-4 d-flex justify-content-end">
+            <b-button class="mr-2 secondary-btn text-muted" @click="rerenderModal()">
+              Cancel
+            </b-button>
+            <b-button class="warning-btn text-warning" @click="deleteUser(selectedUser.user_id)">
+              Yes
+            </b-button>
+          </div>
+        </template>
+      </AppModal>
     </div>
-</template>
-
-<script>
-// import AppTable from '@/components/AppTable.vue';
-import AppModal from '@/components/AppModal.vue';
-import AppDropdown from "@/components/AppDropdown.vue";
-
-import { mapState } from 'vuex';
-
-export default {
-    name: 'PublishersView',
+  </template>
+  
+  <script>
+  import AppModal from "@/components/AppModal.vue";
+  import { required } from "vuelidate/lib/validators";
+  import { mapState } from "vuex";
+  import AppSearchbar from "@/components/AppSearchbar.vue";
+  
+  export default {
     props: [],
     components: {
-        // AppTable,
-        AppModal,
-        AppDropdown
+      AppModal,
+      AppSearchbar
+  },
+    validations: {
+      user: {
+        first_name: {
+          required,
+        },
+        last_name: {
+          required,
+        },
+        date_of_birth: {
+          required,
+        },
+        city: {
+          required,
+        },
+        username: {
+          required,
+        },
+        password: {
+          required,
+        },
+        role: {
+          required,
+        },
+      },
     },
     data() {
-        return {
-            fields: [
-                { key: 'publisher_name', label: 'publisher', thStyle: { textTransform: "uppercase" }, sortable: true },
-                { key: 'location', thStyle: { textTransform: "uppercase" }, sortable: true },
-                // { key: 'actions', thStyle: { textTransform: "uppercase" } },
-            ],
-            perPage: 12,
-            currentPage: 1,
-            totalRows: 1,
-            filter: null,
-            publisher: this.newPublisherObject(),
-            modalKey: 0,
-            selectedRow: [],
-            selectedPublisher: {}
-
-        }
+      return {
+        fields: [
+          {
+            key: "first_name",
+            label: "Name",
+            thStyle: { textTransform: "uppercase" },
+            sortable: true,
+          },
+        ],
+        perPage: 12,
+        currentPage: 1,
+        totalRows: 1,
+        filter: null,
+        user: this.newUserObject(),
+        modalKey: 0,
+        selectedRow: [],
+        selectedUser: {},
+        submitStatus: null,
+      };
     },
     created() {
-        this.$store.dispatch('fetchPublishers')
+      this.$store.dispatch("fetchUsers");
     },
     computed: {
-        ...mapState(['publishers']),
-        items() {
-            return this.publishers.publishers.map(item => ({ ...item }));
-        },
-        sortOptions() {
-            return this.fields
-                .filter((f) => f.sortable)
-                .map((f) => {
-                    return { text: f.label, value: f.key };
-                });
-        },
+      ...mapState(["users"]),
+      items() {
+        return this.users.users;
+      },
+      sortOptions() {
+        return this.fields
+          .filter((f) => f.sortable)
+          .map((f) => {
+            return { text: f.label, value: f.key };
+          });
+      },
     },
     mounted() {
-        this.totalRows = this.items.length;
+      this.totalRows = this.items.length;
     },
     methods: {
-        onRowSelected(items) {
-            this.selectedRow = items
-            for (let publisher of this.selectedRow) { this.selectedPublisher = publisher }
-        },
-        onFiltered(filteredItems) {
-            // Trigger pagination to update the number of buttons/pages due to filtering
-            this.totalRows = filteredItems.length;
-            this.currentPage = 1;
-        },
-        rerenderModal() {
-            this.modalKey += 1;
-        },
-        newPublisherObject() {
-            return {
-                publisher_name: '',
-                location: ''
-            }
-        },
-        addPublisher() {
-            this.$store.dispatch('addPublisher', this.publisher)
-                .then(() => {
-                    this.publisher = this.newPublisherObject();
-                    this.rerenderModal();
-                })
-                .catch(() => {
-                    console.log('There was a problem adding the publisher.')
-                })
-        },
-        editPublisher(id, publisher) {
-            this.$store.dispatch('editPublisher', { id, publisher })
-                .then(() => {
-                    this.rerenderModal();
-                    this.$router.go(0)
-                })
-                .catch(() => {
-                    console.log('There was a problem adding the publisher.')
-                })
-        },
-        deletePublisher(isbn) {
-            this.$store.dispatch('removePublisher', isbn)
-                .then(() => {
-                    // this.book = this.newPublisherObject();
-                    this.rerenderModal();
-                    this.$router.go(0)
-                })
-                .catch(() => {
-                    console.log('There was a problem marking the publisher as inactive.')
-                })
-        },
-
-    }
-}
-</script>
-
-<style lang="scss">
-
-</style>
+      onRowSelected(items) {
+        this.selectedRow = items;
+        for (let user of this.selectedRow) {
+          this.selectedUser = user;
+        }
+      },
+      onFiltered(filteredItems) {
+        // Trigger pagination to update the number of buttons/pages due to filtering
+        this.totalRows = filteredItems.length;
+        this.currentPage = 1;
+      },
+      getSearchData(data){
+        this.filter = data;
+      },
+      newUserObject() {
+        return {
+          first_name: "",
+          last_name: "",
+          date_of_birth: "",
+          city: "",
+          username: "",
+          password: "",
+          role: ""
+        };
+      },
+      rerenderModal() {
+        this.modalKey += 1;
+      },
+      addUser() {
+        this.$v.$touch();
+        if (this.$v.$invalid) {
+          this.submitStatus = "error";
+        } else {
+          this.$store
+            .dispatch("addUser", this.user)
+        }
+      },
+      editUser(user_id, user) {
+        delete user.status;
+        this.$store
+          .dispatch("editUser", { user_id, user })
+      },
+      deleteUser(id) {
+        this.$store
+          .dispatch("removeUser", id)
+      },
+      logout() {
+        this.$store.dispatch("logout")
+      },
+    },
+  };
+  </script>

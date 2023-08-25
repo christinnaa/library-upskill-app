@@ -1,7 +1,15 @@
 <template>
   <div class="wrapper">
     <main>
-      <AppSearchbar @passData="getSearchData($event)"/>
+      <div
+        class="nav__header container-fluid w-100 px-4 mb-4 d-flex align-items-center justify-content-between rounded bg-white">
+        <div class="search__container w-100">
+          <b-icon icon="search" class="mr-3"></b-icon>
+          <input type="text" placeholder="Search" class="w-75 border-0" id="filter-input" v-model="filter" />
+        </div>
+
+        <b-button class="rounded primary-btn" v-b-modal.loginModal>Login</b-button>
+      </div>
 
       <div class="table__container p-4 pt-3 rounded">
         <div class="d-flex mt-2 mb-4">
@@ -25,7 +33,7 @@
                   <b-icon @click="row.toggleDetails" class="h6 mt-1" icon="x-lg"></b-icon>
                 </div>
 
-                <div class="mb-4">
+                <div class="mb-3">
                   <b-badge pill v-if="row.item.copies > 0" class="bg-success">AVAILABLE: <b>{{
                     row.item.copies
                   }}</b></b-badge>
@@ -50,11 +58,6 @@
                     {{ row.item.pages }}</b-list-group-item>
                   <b-list-group-item><b>Shelf:</b> {{ row.item.shelf_name }}</b-list-group-item>
                 </b-list-group>
-
-                <b-button @click="getSelectedBook(row.item.book_id)" v-if="row.item.copies > 0"
-                  class="mx-auto rounded-pill primary-btn">
-                  Borrow
-                </b-button>
               </b-card-body>
             </b-card> </template>user
         </b-table>
@@ -63,20 +66,54 @@
           class="mt-3 mb-0 justify-content-center"></b-pagination>
       </div>
 
+      <AppModal modalId="loginModal" modalSize="md" hideFooter :key="modalKey">
+        <template #modal-header> Login </template>
+        <template #modal-body>
+          <form class="px-2" @submit.prevent="login">
+            <div class="mb-3 pt-0" :class="{
+              'input-group--error': $v.username.$error,
+            }">
+              <label for="username">Username</label>
+              <b-input id="username" v-model="username"></b-input>
+              <p class="error-message" v-if="submitStatus === 'error' &&
+                !$v.username.required
+                ">
+                Username is required.
+              </p>
+            </div>
+            <div class="mb-2" :class="{
+              'input-group--error': $v.password.$error,
+            }">
+              <label for="password">Password</label>
+              <b-form-input type="password" id="password" v-model="password"></b-form-input>
+              <p class="error-message" v-if="submitStatus === 'error' &&
+                !$v.password.required
+                ">
+                Password is required.
+              </p>
+            </div>
+            <div class="w-100 mt-4 d-flex justify-content-center">
+              <b-button class="rounded-pill w-25 primary-btn" type="submit">
+                Login
+              </b-button>
+            </div>
+          </form>
+        </template>
+      </AppModal>
     </main>
   </div>
 </template>
-
+  
 <script>
+import AppModal from "@/components/AppModal.vue";
 import { required } from "vuelidate/lib/validators";
 import { mapState, mapGetters } from "vuex";
-import AppSearchbar from "@/components/AppSearchbar.vue";
 
 export default {
-  name: "SearchBooksView",
+  name: "BrowseView",
   components: {
-    AppSearchbar
-},
+    AppModal,
+  },
   data() {
     return {
       fields: [
@@ -100,11 +137,14 @@ export default {
       filter: null,
       modalKey: 0,
       request: {
-        book_id: "",
+        isbn: "",
+        title: "",
         date_requested: "",
-        user_id: "",
+        librarian_id: "",
       },
-      selectedBookId: "",
+      selectedIsbn: "",
+      username: "",
+      password: "",
       loggedIn: false,
       submitStatus: null
     };
@@ -119,7 +159,6 @@ export default {
   },
   created() {
     this.$store.dispatch("fetchBooks");
-    this.$store.dispatch("fetchUsers");
   },
   mounted() {
     // Set the initial number of items
@@ -135,30 +174,14 @@ export default {
       this.$store
         .dispatch("addRequest", this.request)
     },
-    getSearchData(data){
-      this.filter = data;
-    },
-    getSelectedBook(book_id) {
-      this.selectedBookId = book_id;
-      let result = this.activeBooks.find((book) => book.book_id == book_id);
-        console.log("result:", result);
-        this.request.book_id = result.book_id;
-        this.request.date_requested = new Date().toLocaleDateString();
-        this.request.user_id = this.userId;
-
-        console.log("request:", this.request);
-        this.addRequest();
+    async login() {
+      await this.$store.dispatch("login", { username: this.username, password: this.password });
+      this.loggedIn = this.$store.state.auth.loggedIn;
     },
   },
   computed: {
-    ...mapState(["books", "users"]),
-    ...mapGetters(["activeBooks"]),
-    username() {
-      return localStorage.getItem("username");
-    },
-    userId() {
-      return this.users.users.find(u => u.username == this.username).user_id
-    },
+    ...mapState(["books"]),
+    ...mapGetters(["activeBooks", "users"]),
     items() {
       return this.activeBooks;
     },
@@ -172,14 +195,24 @@ export default {
   },
 };
 </script>
-
+  
 <style lang="scss" scoped>
+main {
+  margin-left: 0;
+}
+
 .table__container {
   background: white;
 }
 
-.nav__header {
-  height: 70px;
+.search {
+  height: 50px;
+
+}
+.main__header{
+  button {
+  height: 50px;
+}
 }
 
 input {
@@ -209,3 +242,4 @@ form {
   }
 }
 </style>
+  

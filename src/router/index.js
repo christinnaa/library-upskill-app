@@ -7,22 +7,22 @@ const routes = [
   {
     path: "/",
     name: "home",
-    redirect: { name: "search" },
+    redirect: { name: "browse" },
   },
   {
-    path: "/login",
-    name: "login",
-    component: () => import("../views/LoginView.vue"),
+    path: "/browse",
+    name: "browse",
+    component: () => import("../views/BrowseView.vue"),
   },
   {
     path: "/reader/:id?",
     name: "reader",
     component: () => import("../views/reader/ReaderView.vue"),
-    redirect: { name: "search" },
+    redirect: { name: "reader-browse" },
     children: [
       {
-        path: "/reader/search",
-        name: "search",
+        path: "/reader/browse",
+        name: "reader-browse",
         component: () => import("../views/reader/SearchBooksView.vue"),
       },
     ],
@@ -63,6 +63,11 @@ const routes = [
         name: "users",
         component: () => import("../views/librarian/UsersView.vue"),
       },
+      {
+        path: "/shelves",
+        name: "shelves",
+        component: () => import("../views/librarian/ShelvesView.vue"),
+      },
     ],
   },
 ];
@@ -73,14 +78,23 @@ const router = new VueRouter({
   routes,
 });
 
-// router.beforeEach((to, from, next) => {
-//   const publicPage = "/reader/search";
-//   const authRequired = !publicPage.includes(to.path);
-//   const loggedIn = localStorage.getItem("user");
+router.beforeEach((to, _from, next) => {
+  const publicPage = "/browse";
+  const authRequired = !publicPage.includes(to.path);
+  const loggedIn = localStorage.getItem("token");
+  const role = localStorage.getItem("role");
 
-//   if (authRequired && !loggedIn) {
-//     next("/");
-//   } else next();
-// });
+  if (authRequired && !loggedIn) {
+    next("/");
+  } 
+  else if (role !== "admin" && to.path !== "/reader/browse" && to.path !== "/browse") {
+    next("/reader/browse")
+  }
+  else {
+    next();
+  }
+});
+
+
 
 export default router;

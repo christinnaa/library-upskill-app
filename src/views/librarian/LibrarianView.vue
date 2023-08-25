@@ -1,36 +1,48 @@
 <template>
   <div>
     <AppSidebar>
-      <li class="sidebar__item">
+      <span class="sidebar__item">
         <router-link class="sidebar__link" :to="{ name: 'books' }" exact>
-          <b-icon icon="bookshelf" font-scale="2"></b-icon>
+          <b-icon icon="book" font-scale="2"></b-icon>
           <div class="sidebar__text">Books</div>
         </router-link>
-      </li>
-      <li class="sidebar__item">
+      </span>
+      <span class="sidebar__item">
         <router-link class="sidebar__link" :to="{ name: 'issued-books' }" exact>
-          <b-icon icon="book" font-scale="2"></b-icon>
+          <b-icon icon="bookmark-check" font-scale="2"></b-icon>
           <div class="sidebar__text">Issued Books</div>
         </router-link>
-      </li>
-      <li class="sidebar__item">
+      </span>
+      <span class="sidebar__item">
         <router-link class="sidebar__link" :to="{ name: 'publishers' }" exact>
           <b-icon icon="building" font-scale="2"></b-icon>
           <div class="sidebar__text">Publishers</div>
         </router-link>
-      </li>
-      <li class="sidebar__item">
+      </span>
+      <span class="sidebar__item">
         <router-link class="sidebar__link" :to="{ name: 'categories' }" exact>
           <b-icon icon="grid3x3-gap" font-scale="2"></b-icon>
           <div class="sidebar__text">Categories</div>
         </router-link>
-      </li>
-      <li class="sidebar__item">
+      </span>
+      <span class="sidebar__item">
+        <router-link class="sidebar__link" :to="{ name: 'shelves' }" exact>
+          <b-icon icon="bookshelf" font-scale="2"></b-icon>
+          <div class="sidebar__text">Shelves</div>
+        </router-link>
+      </span>
+      <span class="sidebar__item">
+        <router-link class="sidebar__link" :to="{ name: 'users' }" exact>
+          <b-icon icon="people" font-scale="2"></b-icon>
+          <div class="sidebar__text">Users</div>
+        </router-link>
+      </span>
+      <span class="sidebar__item">
         <router-link class="sidebar__link" :to="{ name: 'requests' }" exact>
           <b-icon icon="bell" font-scale="2"></b-icon>
           <div class="sidebar__text">Requests</div>
         </router-link>
-      </li>
+      </span>
     </AppSidebar>
     <router-view />
   </div>

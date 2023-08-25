@@ -1,29 +1,13 @@
 <template>
   <div class="wrapper">
     <main>
-      <div
-        class="nav__header container-fluid w-100 px-4 mb-4 d-flex align-items-center justify-content-between rounded bg-white">
-        <div class="search__container w-100">
-          <b-icon icon="search" class="mr-3"></b-icon>
-          <input type="text" placeholder="Search" class="w-75 border-0" id="filter-input" v-model="filter" />
-        </div>
-
-        <AppDropdown>
-          <template v-slot:text>
-            Admin
-            <b-icon class="ml-2" font-scale=".75" icon="caret-down-fill"></b-icon>
-          </template>
-          <template v-slot:links>
-            <a class="dropdown-item" @click="logout">Logout </a>
-          </template>
-        </AppDropdown>
-      </div>
+      <AppSearchbar @passData="getSearchData($event)"/>
 
       <div class="table__container p-4 pt-3 rounded">
         <div class="d-flex justify-content-between mt-2 mb-4">
           <h4>Issued Books</h4>
           <div>
-            <b-button v-if="selectedRow[0] && selectedIssuedBook.ib_status == 'active'" v-b-modal.updateIssuedBookModal
+            <b-button v-if="selectedRow[0] && selectedIssuedBook.status == 'active' || selectedIssuedBook.status == 'overdue'" v-b-modal.updateIssuedBookModal
               class="mr-2 primary-btn">Update</b-button>
           </div>
         </div>
@@ -31,13 +15,16 @@
         <b-table :items="items" :per-page="perPage" :fields="fields" :current-page="currentPage" label-sort-asc=""
           label-sort-desc="" label-sort-clear="" fixed responsive :filter="filter" select-mode="single"
           ref="selectableTable" selectable @row-selected="onRowSelected" @filtered="onFiltered">
-          <template #cell(ib_status)="row">
-            <b-badge pill v-if="row.item.ib_status == 'Overdue'" class="bg-danger">{{ row.item.ib_status }}</b-badge>
-            <b-badge pill v-else-if="row.item.ib_status == 'active'" class="bg-primary">{{
-              row.item.ib_status
+          <template #cell(borrower_name)="row">
+            {{ row.item.first_name }} {{ row.item.last_name }}
+          </template>
+          <template #cell(status)="row">
+            <b-badge pill v-if="row.item.status == 'overdue'" class="bg-danger">{{ row.item.status }}</b-badge>
+            <b-badge pill v-else-if="row.item.status == 'active'" class="bg-primary">{{
+              row.item.status
             }}</b-badge>
-            <b-badge pill v-else-if="row.item.ib_status == 'returned'" class="bg-success">{{
-              row.item.ib_status
+            <b-badge pill v-else-if="row.item.status == 'returned'" class="bg-success">{{
+              row.item.status
             }}</b-badge>
           </template>
         </b-table>
@@ -79,17 +66,16 @@
 
 <script>
 import AppModal from "@/components/AppModal.vue";
-import AppDropdown from "@/components/AppDropdown.vue";
 import moment from "moment";
 import { required } from "vuelidate/lib/validators";
-
 import { mapState } from "vuex";
+import AppSearchbar from '@/components/AppSearchbar.vue';
 
 export default {
   props: [],
   components: {
-    AppDropdown,
     AppModal,
+    AppSearchbar,
   },
   data() {
     return {
@@ -100,12 +86,13 @@ export default {
           sortable: true,
         },
         {
-          key: "reader_name",
+          key: "borrower_name",
           thStyle: { textTransform: "uppercase", width: "190px" },
           sortable: true,
         },
         {
-          key: "date_issued",
+          key: "issue_date",
+          label: "issued on",
           thStyle: { textTransform: "uppercase", width: "160px" },
           sortable: true,
           formatter: (value) => {
@@ -114,14 +101,13 @@ export default {
         },
         {
           key: "return_date",
-          label: " return by",
+          label: "return by",
           thStyle: { textTransform: "uppercase", width: "160px" },
           sortable: true,
           formatter: (value) => {
             return moment(value).format("MMM DD, YYYY");
           },
         },
-
         {
           key: "date_returned",
           thStyle: { textTransform: "uppercase", width: "180px" },
@@ -131,7 +117,7 @@ export default {
           },
         },
         {
-          key: "ib_status",
+          key: "status",
           label: "status",
           thStyle: { textTransform: "uppercase", width: "110px" },
           sortable: true,
@@ -191,9 +177,12 @@ export default {
     rerenderModal() {
       this.modalKey += 1;
     },
+    getSearchData(data){
+      this.filter = data;
+    },
     getSelectedBookData() {
       this.selectedBookData = this.books.books.find(
-        (b) => b.isbn == this.selectedIssuedBook.b_isbn
+        (b) => b.book_id == this.selectedIssuedBook.book_id
       );
     },
     editIssuedBook(id, issuedBook) {
@@ -202,17 +191,18 @@ export default {
       if (this.$v.$invalid) {
         this.submitStatus = "error";
       } else {
+        this.selectedIssuedBook.status = "returned";
+        
         this.$store
           .dispatch("editIssuedBook", { id, issuedBook })
 
-
-        this.selectedBookData.no_of_copies++;
-        this.editBook(this.selectedBookData.isbn, this.selectedBookData);
+        this.selectedBookData.copies++;
+        this.editBook(this.selectedBookData.book_id, this.selectedBookData);
       }
     },
-    editBook(isbn, book) {
+    editBook(book_id, book) {
       this.$store
-        .dispatch("editBook", { isbn, book })
+        .dispatch("editBook", { book_id, book })
 
     },
     logout() {

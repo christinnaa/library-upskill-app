@@ -20,56 +20,54 @@ export default {
     ADD_BOOK(state, book) {
       state.books.push(book);
     },
-    REMOVE_BOOK(state, isbn) {
-      let index = state.books.findIndex((b) => b.isbn == isbn);
+    REMOVE_BOOK(state, book_id) {
+      let index = state.books.findIndex((b) => b.book_id == book_id);
       state.books.splice(index, 0);
     },
-    UPDATE_BOOK(state, isbn) {
-      let index = state.books.findIndex((b) => b.isbn == isbn);
+    UPDATE_BOOK(state, book_id) {
+      let index = state.books.findIndex((b) => b.book_id == book_id);
       state.books.splice(index, 0);
     },
   },
   actions: {
-    addBook({ commit }, book) {
-      return service
-        .postBook(book)
-        .then(() => {
-          commit("ADD_BOOK", book);
-          router.go(0);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+    async addBook({ commit }, book) {
+      try {
+        await service
+          .postBook(book);
+        await commit("ADD_BOOK", book);
+        router.go(0);
+      } catch (error) {
+        console.log(error);
+      }
     },
     fetchBooks({ commit }) {
       service
         .getBooks()
-        .then((response) => {
-          commit("SET_BOOKS", response.data);
+        .then(({data}) => {
+          commit("SET_BOOKS", data.book);
         })
         .catch((error) => console.log(error));
     },
-    removeBook({ commit }, isbn) {
+    removeBook({ commit }, book_id) {
       service
-        .removeBook(isbn)
-        .then(() => {
-          commit("REMOVE_BOOK", isbn);
+        .removeBook(book_id)
+        .then(async () => {
+          await commit("REMOVE_BOOK", book_id);
           router.go(0);
         })
         .catch((error) => {
           console.log(error);
         });
     },
-    editBook({ commit }, { isbn, book }) {
-      return service
-        .updateBook(isbn, book)
-        .then(() => {
-          commit("UPDATE_BOOK", isbn);
-          router.go(0);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+    async editBook({ commit }, { book_id, book }) {
+      try {
+        await service
+          .updateBook(book_id, book);
+        await commit("UPDATE_BOOK", book_id);
+        router.go(0);
+      } catch (error) {
+        console.log(error);
+      }
     },
   },
 };

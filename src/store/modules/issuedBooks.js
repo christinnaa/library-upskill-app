@@ -21,32 +21,30 @@ export default {
     fetchIssuedBooks({ commit }) {
       service
         .getIssuedBooks()
-        .then((response) => {
-          commit("SET_ISSUED_BOOKS", response.data);
+        .then(({data}) => {
+          commit("SET_ISSUED_BOOKS", data.issue);
         })
         .catch((error) => console.log(error));
     },
-    addIssuedBook({ commit }, issuedBook) {
-      return service
-        .postIssuedBook(issuedBook)
-        .then(() => {
-          commit("ADD_ISSUED_BOOK", issuedBook);
-          router.go(0);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+    async addIssuedBook({ commit }, issuedBook) {
+      try {
+        await service
+          .postIssuedBook(issuedBook);
+        await commit("ADD_ISSUED_BOOK", issuedBook);
+        router.go(0);
+      } catch (error) {
+        console.log(error);
+      }
     },
-    editIssuedBook({ commit }, { id, issuedBook }) {
-      return service
-        .updateIssuedBook(id, issuedBook)
-        .then(() => {
-          commit("UPDATE_ISSUED_BOOK", id);
-          router.go(0);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+    async editIssuedBook({ commit }, { id, issuedBook }) {
+      try {
+        await service
+          .updateIssuedBook(id, issuedBook);
+        await commit("UPDATE_ISSUED_BOOK", id);
+        router.go(0);
+      } catch (error) {
+        console.log(error);
+      }
     },
   },
 };

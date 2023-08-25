@@ -16,10 +16,13 @@ export default {
 </script>
 
 <style lang="scss">
+@import url(https://api.fontshare.com/v2/css?f[]=general-sans@1&display=swap);
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: 'General Sans', sans-serif;
 
   ::-webkit-scrollbar {
     width: 0.45rem;
@@ -33,9 +36,6 @@ export default {
   ::-webkit-scrollbar-thumb {
     background: rgb(190, 190, 190);
     border-radius: 20px;
-  }
-
-  ::-webkit-scrollbar-thumb {
     &:active {
       background: rgb(173, 173, 173);
     }
@@ -114,5 +114,9 @@ a {
     display: flex;
     align-items: center;
   }
+}
+
+.badge{
+  font-weight: 500 !important;
 }
 </style>

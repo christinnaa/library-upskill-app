@@ -4,8 +4,8 @@ import router from "@/router";
 
 export default {
   state: {
-    user: {},
-    message: "",
+    user: "",
+    loggedIn: false,
   },
   getters: {
     users: (state) => {
@@ -13,42 +13,39 @@ export default {
     },
   },
   mutations: {
-    SET_USER_DATA(state, userData) {
+    LOGIN_SUCCESSFUL(state, userData) {
       state.user = userData;
-    },
-    LOGIN_SUCCESS(state, user) {
       state.loggedIn = true;
-      state.user = user;
-    },
-    LOGIN_FAILURE(state) {
-      state.loggedIn = false;
-      state.user = null;
     },
     LOGOUT(state) {
-      // state.loggedIn = false;
       state.user = null;
     },
   },
   actions: {
-    login({ commit }, credentials) {
+    async login({ commit }, { username, password }) {
       service
-        .login(credentials)
-        .then(({ data }) => {
-          if (data.user[0].token) {
-            localStorage.setItem("user", JSON.stringify(data.user[0]));
-            localStorage.setItem("token", data.user[0].token);
+        .login({ username, password })
+        .then(async ({ data }) => {
+          await commit("LOGIN_SUCCESSFUL", data.user);
+          console.log(data.user)
+          if (data.user.token) {
+            localStorage.setItem("token", data.user.token);
+            localStorage.setItem("role", data.user.role);
+            localStorage.setItem("username", data.user.username);
           }
 
-          commit("SET_USER_DATA", data.user[0]);
-          location.href = "/books";
+          data.user.role === "admin"
+            ? router.push("/books")
+            : router.push("/reader");
         })
         .catch((e) => {
           alert(e.response.data.error);
         });
     },
     logout({ commit }) {
-      localStorage.removeItem("user");
       localStorage.removeItem("token");
+      localStorage.removeItem("role");
+      localStorage.removeItem("username");
       commit("LOGOUT");
       router.go(0);
     },

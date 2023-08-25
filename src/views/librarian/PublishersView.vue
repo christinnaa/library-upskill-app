@@ -1,35 +1,20 @@
 <template>
   <div class="wrapper">
     <main>
-      <div
-        class="nav__header container-fluid w-100 px-4 mb-4 d-flex align-items-center justify-content-between rounded bg-white">
-        <div class="search__container w-100">
-          <b-icon icon="search" class="mr-3"></b-icon>
-          <input type="text" placeholder="Search" class="w-75 border-0" id="filter-input" v-model="filter" />
-        </div>
+      <AppSearchbar @passData="getSearchData($event)"/>
 
-        <AppDropdown>
-          <template v-slot:text>
-            Admin
-            <b-icon class="ml-2" font-scale=".75" icon="caret-down-fill"></b-icon>
-          </template>
-          <template v-slot:links>
-            <a class="dropdown-item" @click="logout">Logout </a>
-          </template>
-        </AppDropdown>
-      </div>
 
       <div class="table__container p-4 pt-3 rounded">
         <div class="d-flex justify-content-between mt-2 mb-4">
           <h4>Publishers</h4>
           <div>
-            <b-button class="mr-2 warning-btn" v-if="selectedRow[0] && selectedPublisher.p_status == 'active'"
+            <b-button class="mr-2 warning-btn" v-if="selectedRow[0] && selectedPublisher.status == 'active'"
               v-b-modal.removePublisherModal>
               <b-icon icon="slash-circle" scale=".85"></b-icon>
               Mark as Inactive</b-button>
             <b-button class="mr-2 success-btn" @click="
               editPublisher(selectedPublisher.publisher_id, selectedPublisher)
-            " v-if="selectedRow[0] && selectedPublisher.p_status == 'inactive'">
+            " v-if="selectedRow[0] && selectedPublisher.status == 'inactive'">
               <b-icon icon="check2-circle" scale=".85"></b-icon>
               Mark as Active</b-button>
             <b-button v-if="selectedRow[0]" class="mr-2 info-btn" v-b-modal.updatePublisherModal>
@@ -45,14 +30,14 @@
           label-sort-desc="" label-sort-clear="" fixed responsive :filter="filter" select-mode="single"
           ref="selectableTable" selectable @row-selected="onRowSelected" @filtered="onFiltered">
           <template #cell(location)="row">
-            <div v-if="row.item.p_status == 'inactive'" class="inactive">
-              <span>{{ row.item.location }}</span>
+            <div v-if="row.item.status == 'inactive'" class="inactive">
+              <span>{{ row.item.p_location }}</span>
               <b-badge pill variant="light" class="ml-2">{{
-                row.item.p_status
+                row.item.status
               }}</b-badge>
             </div>
             <template v-else>
-              {{ row.item.location }}
+              {{ row.item.p_location }}
             </template>
           </template>
         </b-table>
@@ -66,24 +51,24 @@
           <template #modal-body>
             <form class="px-2" @submit.prevent="addPublisher">
               <div class="mb-3 pt-0" :class="{
-                'input-group--error': $v.publisher.publisher_name.$error,
+                'input-group--error': $v.publisher.p_name.$error,
               }">
-                <label for="publisher_name">Name</label>
-                <b-input id="publisher_name" v-model="publisher.publisher_name"></b-input>
+                <label for="p_name">Name</label>
+                <b-input id="p_name" v-model="publisher.p_name"></b-input>
                 <p class="error-message" v-if="
                   submitStatus === 'error' &&
-                  !$v.publisher.publisher_name.required
+                  !$v.publisher.p_name.required
                 ">
                   Name is required.
                 </p>
               </div>
               <div class="mb-2" :class="{
-                'input-group--error': $v.publisher.publisher_name.$error,
+                'input-group--error': $v.publisher.p_name.$error,
               }">
-                <label for="publisher_location">Location</label>
-                <b-form-input id="publisher_location" v-model="publisher.location"></b-form-input>
+                <label for="p_location">Location</label>
+                <b-form-input id="p_location" v-model="publisher.p_location"></b-form-input>
                 <p class="error-message" v-if="
-                  submitStatus === 'error' && !$v.publisher.location.required
+                  submitStatus === 'error' && !$v.publisher.p_location.required
                 ">
                   Location is required.
                 </p>
@@ -107,14 +92,14 @@
             editPublisher(selectedPublisher.publisher_id, selectedPublisher)
           ">
             <div class="mb-3 pt-0">
-              <label for="publisher_name">Name</label>
-              <b-input id="publisher_name" v-model="selectedPublisher.publisher_name"></b-input>
+              <label for="p_name">Name</label>
+              <b-input id="p_name" v-model="selectedPublisher.p_name"></b-input>
             </div>
             <div class="mb-2" :class="{
-              'input-group--error': $v.publisher.publisher_name.$error,
+              'input-group--error': $v.publisher.p_name.$error,
             }">
-              <label for="publisher_location">Location</label>
-              <b-form-input id="publisher_location" v-model="selectedPublisher.location"></b-form-input>
+              <label for="p_location">Location</label>
+              <b-form-input id="p_location" v-model="selectedPublisher.p_location"></b-form-input>
             </div>
 
             <div class="w-100 mt-4 d-flex justify-content-end">
@@ -133,7 +118,7 @@
       <template #modal-body>
         <div class="pb-2">
           Are you sure you want to mark
-          <b>{{ selectedPublisher.publisher_name }}</b> as inactive?
+          <b>{{ selectedPublisher.p_name }}</b> as inactive?
         </div>
 
         <div class="w-100 mt-4 d-flex justify-content-end">
@@ -152,9 +137,9 @@
 
 <script>
 import AppModal from "@/components/AppModal.vue";
-import AppDropdown from "@/components/AppDropdown.vue";
 import { required } from "vuelidate/lib/validators";
 import { mapState } from "vuex";
+import AppSearchbar from '@/components/AppSearchbar.vue';
 
 export default {
   name: "PublishersView",
@@ -162,14 +147,14 @@ export default {
   components: {
     // AppTable,
     AppModal,
-    AppDropdown,
+    AppSearchbar,
   },
   validations: {
     publisher: {
-      publisher_name: {
+      p_name: {
         required,
       },
-      location: {
+      p_location: {
         required,
       },
     },
@@ -178,7 +163,7 @@ export default {
     return {
       fields: [
         {
-          key: "publisher_name",
+          key: "p_name",
           label: "publisher",
           thStyle: { textTransform: "uppercase" },
           sortable: true,
@@ -234,10 +219,13 @@ export default {
     rerenderModal() {
       this.modalKey += 1;
     },
+    getSearchData(data){
+      this.filter = data;
+    },
     newPublisherObject() {
       return {
-        publisher_name: "",
-        location: "",
+        p_name: "",
+        p_location: "",
       };
     },
     addPublisher() {
@@ -251,6 +239,7 @@ export default {
       }
     },
     editPublisher(id, publisher) {
+      delete publisher.status;
       this.$store
         .dispatch("editPublisher", { id, publisher })
 

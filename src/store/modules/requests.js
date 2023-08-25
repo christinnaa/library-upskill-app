@@ -7,7 +7,7 @@ export default {
   },
   getters: {
     activeRequests: (state) => {
-      return state.requests.filter((request) => request.r_status == "active");
+      return state.requests.filter((request) => request.status == "active");
     },
   },
   mutations: {
@@ -26,27 +26,26 @@ export default {
     fetchRequests({ commit }) {
       service
         .getRequests()
-        .then((response) => {
-          commit("SET_REQUESTS", response.data);
+        .then(({data}) => {
+          commit("SET_REQUESTS", data.request);
         })
         .catch((error) => console.log(error));
     },
-    addRequest({ commit }, request) {
-      return service
-        .postRequest(request)
-        .then(() => {
-          commit("ADD_REQUEST", request);
-          router.go(0);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+    async addRequest({ commit }, request) {
+      try {
+        await service
+          .postRequest(request);
+        await commit("ADD_REQUEST", request);
+        router.go(0);
+      } catch (error) {
+        console.log(error);
+      }
     },
     removeRequest({ commit }, id) {
       service
         .removeRequest(id)
-        .then(() => {
-          commit("REMOVE_REQUEST", id);
+        .then(async () => {
+          await commit("REMOVE_REQUEST", id);
           router.go(0);
         })
         .catch((error) => {

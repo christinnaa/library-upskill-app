@@ -8,7 +8,7 @@ export default {
   getters: {
     activeCategories: (state) => {
       return state.categories.filter(
-        (category) => category.c_status == "active"
+        (category) => category.status == "active"
       );
     },
   },
@@ -29,31 +29,29 @@ export default {
     },
   },
   actions: {
-    addCategory({ commit }, category) {
-      return service
-        .postCategory(category)
-        .then(() => {
-          commit("ADD_CATEGORY", category);
-          router.go(0);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+    async addCategory({ commit }, category) {
+      try {
+        await service
+          .postCategory(category);
+        await commit("ADD_CATEGORY", category);
+        router.go(0);
+      } catch (error) {
+        console.log(error);
+      }
     },
     fetchCategories({ commit }) {
       service
         .getCategories()
-        .then((response) => {
-          commit("SET_CATEGORIES", response.data);
-          console.log(response.data)
+        .then(({data}) => {
+          commit("SET_CATEGORIES", data.category);
         })
         .catch((error) => console.log(error));
     },
     removeCategory({ commit }, id) {
       service
         .removeCategory(id)
-        .then(() => {
-          commit("REMOVE_CATEGORY", id);
+        .then(async () => {
+          await commit("REMOVE_CATEGORY", id);
           router.go(0);
         })
         .catch((error) => {
@@ -63,8 +61,8 @@ export default {
     editCategory({ commit }, { id, category }) {
       service
         .updateCategory(id, category)
-        .then(() => {
-          commit("UPDATE_CATEGORY", id);
+        .then(async () => {
+          await commit("UPDATE_CATEGORY", id);
           router.go(0);
         })
         .catch((error) => {

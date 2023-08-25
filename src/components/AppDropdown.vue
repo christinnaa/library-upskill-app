@@ -1,7 +1,7 @@
 <template>
   <div class="dropdown">
     <button
-      class="btn btn-transparent dropdown-toggle d-flex align-items-center"
+      class="btn dropdown-toggle d-flex align-items-center"
       type="button"
       data-toggle="dropdown"
       aria-expanded="false"
