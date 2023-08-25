@@ -29,7 +29,7 @@
             ref="selectableTable" selectable @row-selected="onRowSelected" @filtered="onFiltered">
             <template #cell(categories)="row">
 
-              <b-badge pill variant="light" class="mr-2" v-for="category of row.item.cat" :key="category.id">{{ category.cat_name }}</b-badge>
+              <b-badge pill variant="primary" class="mr-2" v-for="category of row.item.cat" :key="category.id">{{ category.cat_name }}</b-badge>
             
             </template>
           </b-table>
@@ -75,15 +75,6 @@
                 <b-form-input id="shelf" v-model="selectedShelf.shelf_name"></b-form-input>
               </b-row>
 
-              <b-row class="px-2">
-                  <label for="cat_name">Category</label>
-                  <b-form-select v-model.trim="selectedShelf.category_id" id="cat_name">
-                    <b-form-select-option value disabled>Select</b-form-select-option>
-                    <b-form-select-option v-for="cat in activeCategories" :key="cat.category_id"
-                      :value="cat.category_id">{{ cat.cat_name }}</b-form-select-option>
-                  </b-form-select>
-              </b-row>
-  
               <div class="w-100 mt-4 d-flex justify-content-end">
                 <b-button class="mr-2 secondary-btn" @click="rerenderModal()">
                   Cancel
@@ -149,7 +140,6 @@
           },
           {
             key: "categories",
-            label: "category",
             thStyle: { textTransform: "uppercase" },
             sortable: true,
           },

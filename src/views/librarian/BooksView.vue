@@ -64,6 +64,11 @@
                       row.item.cat_name
                     }}</b-badge>
                   </b-list-group-item>
+                  <b-list-group-item><b>Subcategories:</b>
+                    <b-badge pill variant="light" class="ml-2">{{
+                      row.item.cat_name
+                    }}</b-badge>
+                  </b-list-group-item>
                   <b-list-group-item><b>No. of Pages:</b>
                     {{ row.item.pages }}</b-list-group-item>
                   <b-list-group-item><b>No. of Copies:</b>
@@ -115,36 +120,45 @@
                 </div>
               </b-row>
               <b-row class="mb-3 px-2">
-                <div class="col-3">
+                <div class="col-4">
                   <label for="publication_year">Publication Year</label>
                   <b-form-input v-model.trim="updateBook.publication_year" id="publication_year"></b-form-input>
                 </div>
-                <div class="col-3">
+                <div class="col-4">
                   <label for="copies">No. of Copies</label>
                   <b-form-input v-model.trim.number="updateBook.copies" type="number"
                     id="copies"></b-form-input>
                 </div>
-                <div class="col-3">
+                <div class="col-4">
                   <label for="pages">No. of Pages</label>
                   <b-form-input v-model.trim.number="updateBook.pages" type="number"
                     id="pages"></b-form-input>
                 </div>
-                <div class="col-3">
+
+              </b-row>
+              <b-row class="mb-2 px-2">
+                <div class="col-4">
+                  <label for="categories">Category</label>
+                  <b-form-select v-model.trim="updateBook.category_id">
+                    <b-form-select-option value="" disabled>Select</b-form-select-option>
+                    <b-form-select-option v-for="category in activeCategories" :key="category.category_id"
+                      :value="category.category_id">{{ category.cat_name }}</b-form-select-option>
+                  </b-form-select>
+                </div>
+                <div class="col-4">
+                  <label for="sub_cat">Subcategory</label>
+                  <b-form-select v-model.trim="updateBook.category_id">
+                    <b-form-select-option value="" disabled>Select</b-form-select-option>
+                    <b-form-select-option v-for="category in activeCategories" :key="category.category_id"
+                      :value="category.category_id">{{ category.cat_name }}</b-form-select-option>
+                  </b-form-select>
+                </div>
+                <div class="col-4">
                   <label for="shelf_id">Shelf</label>
                   <b-form-select v-model.trim="updateBook.shelf_id">
                     <b-form-select-option value="" disabled>Select</b-form-select-option>
                     <b-form-select-option v-for="shelf in shelves.shelves" :key="shelf.shelf_id"
                       :value="shelf.shelf_id">{{ shelf.shelf_name }}</b-form-select-option>
-                  </b-form-select>
-                </div>
-              </b-row>
-              <b-row class="mb-2 px-2">
-                <div class="col-12">
-                  <label for="categories">Categories</label>
-                  <b-form-select v-model.trim="updateBook.category_id">
-                    <b-form-select-option value="" disabled>Select</b-form-select-option>
-                    <b-form-select-option v-for="category in activeCategories" :key="category.category_id"
-                      :value="category.category_id">{{ category.cat_name }}</b-form-select-option>
                   </b-form-select>
                 </div>
               </b-row>
@@ -341,7 +355,7 @@ export default {
         { key: "actions", thStyle: { textTransform: "uppercase" } },
       ],
 
-      perPage: 20,
+      perPage: 10,
       filter:null,
       currentPage: 1,
       totalRows: 1,

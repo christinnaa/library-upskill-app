@@ -42,6 +42,9 @@ export default {
   postCategory(category) {
     return apiClient.post("/category", category);
   },
+  postSubcategory(subcategory) {
+    return apiClient.post("/subcategory", subcategory);
+  },
   postIssuedBook(issuedBook) {
     return apiClient.post("/issue", issuedBook);
   },

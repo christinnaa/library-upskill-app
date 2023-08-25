@@ -34,7 +34,7 @@ export default {
         await service
           .postCategory(category);
         await commit("ADD_CATEGORY", category);
-        router.go(0);
+        // router.go(0);
       } catch (error) {
         console.log(error);
       }

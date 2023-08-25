@@ -27,15 +27,18 @@
         <b-table :items="items" :per-page="perPage" :fields="fields" :current-page="currentPage" label-sort-asc=""
           label-sort-desc="" label-sort-clear="" fixed responsive :filter="filter" select-mode="single"
           ref="selectableTable" selectable @row-selected="onRowSelected" @filtered="onFiltered">
-          <template #cell(cat_name)="row">
+          <template #cell(subcategories)="row">
+            <b-badge pill variant="primary" class="mr-2" v-for="subcategory of row.item.sub_cat" :key="subcategory.id">{{ subcategory.subcat_name }}</b-badge>
+          </template>
+          <template #cell(shelf_name)="row">
             <div v-if="row.item.status == 'inactive'" class="inactive">
-              <span>{{ row.item.cat_name }}</span>
+              <span>{{ row.item.shelf_name }}</span>
               <b-badge pill variant="light" class="ml-2">{{
                 row.item.status
               }}</b-badge>
             </div>
             <template v-else>
-              {{ row.item.cat_name }}
+              {{ row.item.shelf_name }}
             </template>
           </template>
         </b-table>
@@ -59,6 +62,21 @@
                   Category name is required.
                 </p>
               </div>
+              <div class="mb-3" :class="{ 'input-group--error': $v.category.shelf_id.$error }">
+                <label for="shelf_id">Shelf</label>
+                <b-form-select v-model.trim="category.shelf_id">
+                  <b-form-select-option value disabled>Select</b-form-select-option>
+                  <b-form-select-option v-for="shelf in shelves.shelves" :key="shelf.shelf_id"
+                  :value="shelf.shelf_id">{{ shelf.shelf_name }}</b-form-select-option>
+                </b-form-select>
+                
+                <p class="error-message" v-if="submitStatus === 'error' && !$v.category.shelf_id.required">
+                  Shelf is required.
+                </p>
+              </div>
+              <div class="mb-3 pt-0">
+                <label for="subcategories">Subcategories</label>
+              </div>
               <div class="w-100 mt-4 d-flex justify-content-end">
                 <b-button class="mr-2 secondary-btn" @click="rerenderModal">
                   Cancel
@@ -79,6 +97,22 @@
             <div class="mb-3 pt-0">
               <label for="category">Category</label>
               <b-form-input id="category" v-model="selectedCategory.cat_name"></b-form-input>
+            </div>
+            <div class="mb-3">
+                <label for="shelf_id">Shelf</label>
+                <b-form-select v-model.trim="selectedCategory.shelf_id">
+                  <b-form-select-option value disabled>Select</b-form-select-option>
+                  <b-form-select-option v-for="shelf in shelves.shelves" :key="shelf.shelf_id"
+                  :value="shelf.shelf_id">{{ shelf.shelf_name }}</b-form-select-option>
+                </b-form-select>
+                
+                <p class="error-message" v-if="submitStatus === 'error' && !$v.category.shelf_id.required">
+                  Shelf is required.
+                </p>
+            </div>
+
+            <div class="mb-3 pt-0">
+              <SubcategoryTable :category_id="selectedCategory.category_id"/>
             </div>
 
             <div class="w-100 mt-4 d-flex justify-content-end">
@@ -118,18 +152,26 @@ import AppModal from "@/components/AppModal.vue";
 import { required } from "vuelidate/lib/validators";
 import { mapState } from "vuex";
 import AppSearchbar from "@/components/AppSearchbar.vue";
+import SubcategoryTable from "@/components/SubcategoryTable.vue";
 
 export default {
   props: [],
   components: {
     AppModal,
-    AppSearchbar
+    AppSearchbar,
+    SubcategoryTable,
 },
   validations: {
     category: {
       cat_name: {
         required,
       },
+      shelf_id: {
+        required,
+      },
+      // cat_name: {
+      //   required,
+      // },
     },
   },
   data() {
@@ -138,6 +180,17 @@ export default {
         {
           key: "cat_name",
           label: "category",
+          thStyle: { textTransform: "uppercase" },
+          sortable: true,
+        },
+        {
+          key: "subcategories",
+          thStyle: { textTransform: "uppercase" },
+          sortable: true,
+        },
+        {
+          key: "shelf_name",
+          label: "shelf",
           thStyle: { textTransform: "uppercase" },
           sortable: true,
         },
@@ -155,9 +208,10 @@ export default {
   },
   created() {
     this.$store.dispatch("fetchCategories");
+    this.$store.dispatch("fetchShelves");
   },
   computed: {
-    ...mapState(["categories"]),
+    ...mapState(["categories", "shelves"]),
     items() {
       return this.categories.categories;
     },
