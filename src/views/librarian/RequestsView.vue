@@ -18,8 +18,7 @@
           </div>
         </div>
 
-        <b-table :items="items" :per-page="perPage" :fields="fields" :current-page="currentPage" label-sort-asc=""
-          label-sort-desc="" label-sort-clear="" fixed responsive :filter="filter" select-mode="single"
+        <b-table :items="items" :per-page="perPage" :fields="fields" :current-page="currentPage" :sort-by.sync="sortBy" sort-desc.sync="false" fixed responsive :filter="filter" select-mode="single"
           ref="selectableTable" selectable @row-selected="onRowSelected" @filtered="onFiltered">
           <template #cell(request_id)="row">
             <template v-if="row.item.request_id.toString().length == 1">
@@ -81,6 +80,7 @@ export default {
 },
   data() {
     return {
+      sortBy: 'request_id',
       fields: [
         {
           key: "request_id",

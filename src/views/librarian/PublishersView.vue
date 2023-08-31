@@ -26,8 +26,7 @@
           </div>
         </div>
 
-        <b-table :items="items" :per-page="perPage" :fields="fields" :current-page="currentPage" label-sort-asc=""
-          label-sort-desc="" label-sort-clear="" fixed responsive :filter="filter" select-mode="single"
+        <b-table :items="items" :per-page="perPage" :fields="fields" :current-page="currentPage" :sort-by.sync="sortBy" sort-desc.sync="false" fixed responsive :filter="filter" select-mode="single"
           ref="selectableTable" selectable @row-selected="onRowSelected" @filtered="onFiltered">
           <template #cell(location)="row">
             <div v-if="row.item.status == 'inactive'" class="inactive">
@@ -161,6 +160,7 @@ export default {
   },
   data() {
     return {
+      sortBy: 'p_name',
       fields: [
         {
           key: "p_name",

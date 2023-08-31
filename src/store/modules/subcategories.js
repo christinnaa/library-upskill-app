@@ -1,4 +1,4 @@
-import router from "@/router";
+// import router from "@/router";
 import service from "@/services/service";
 
 export default {
@@ -52,7 +52,7 @@ export default {
         .removeSubcategory(id)
         .then(async () => {
           await commit("REMOVE_SUBCATEGORY", id);
-          router.go(0);
+          // router.go(0);
         })
         .catch((error) => {
           console.log(error);
@@ -63,7 +63,7 @@ export default {
         .updateSubcategory(id, subcategory)
         .then(async () => {
           await commit("UPDATE_SUBCATEGORY", id);
-          router.go(0);
+          // router.go(0);
         })
         .catch((error) => {
           console.log(error);

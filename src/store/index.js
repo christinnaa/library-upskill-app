@@ -8,6 +8,7 @@ import publishers from "./modules/publishers";
 import requests from "./modules/requests";
 import users from "./modules/users";
 import shelves from "./modules/shelves";
+import subcategories from "./modules/subcategories";
 
 Vue.use(Vuex);
 
@@ -20,6 +21,7 @@ export default new Vuex.Store({
     publishers,
     requests,
     users,
-    shelves
+    shelves,
+    subcategories,
   },
 });

@@ -27,10 +27,11 @@ export default {
         .login({ username, password })
         .then(async ({ data }) => {
           await commit("LOGIN_SUCCESSFUL", data.user);
-          console.log(data.user)
           if (data.user.token) {
             localStorage.setItem("token", data.user.token);
             localStorage.setItem("role", data.user.role);
+            localStorage.setItem("first_name", data.user.first_name);
+            localStorage.setItem("last_name", data.user.last_name);
             localStorage.setItem("username", data.user.username);
           }
 
@@ -45,6 +46,8 @@ export default {
     logout({ commit }) {
       localStorage.removeItem("token");
       localStorage.removeItem("role");
+      localStorage.removeItem("first_name");
+      localStorage.removeItem("last_name");
       localStorage.removeItem("username");
       commit("LOGOUT");
       router.go(0);

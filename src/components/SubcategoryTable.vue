@@ -1,42 +1,107 @@
 <template>
     <div>
         <div class="d-flex justify-content-between align-items-center mb-2">
-            <label for="category">Subcategories</label>
-            <b-button size="sm" class="ml-2 d-flex align-items-center btn primary-btn" pill @click="rerenderModal">
-                <small>Add Subcategory</small>
-            </b-button>
+            <label for="subcategory">Subcategories</label>
+
+            <div class="d-flex">
+              <b-button v-if="selectedRow[0] && selectedSubcategory.status == 'active'" size="sm" class="ml-1 d-flex align-items-center btn warning-btn" @click="deleteSubcategory(selectedSubcategory.sub_category_id); $store.dispatch('fetchCategories')
+">
+                <small>Delete</small>
+              </b-button>
+              <b-button v-if="selectedRow[0]" size="sm" class="ml-1 d-flex align-items-center btn info-btn" @click="toggleUpdateModal">
+                <small>Update</small>
+              </b-button>
+              <b-button size="sm" class="ml-1 d-flex align-items-center btn primary-btn" @click="toggleAddModal">
+                  <small>Add Subcategory</small>
+              </b-button>
+
+            </div>
         </div>
         <b-table thead-class="d-none" :items="items" :fields="fields" fixed responsive select-mode="single"
-          ref="selectableTable" selectable @row-selected="onRowSelected" @filtered="onFiltered">
+          ref="selectableTable" selectable @row-selected="onRowSelected">
           <template #cell(subcategories)="row">
-            <!-- <b-badge pill variant="primary" class="mr-2"> -->
-                {{ row.item.subcat_name }}
-            <!-- </b-badge> -->
+            {{ row.item.subcat_name }}
           </template>
         </b-table>
+
+        <SubcategoryModal title="Add Subcategory" :visible="isAddModalVisible" @close="toggleAddModal">
+          <form class="px-2" @submit.prevent="addSubcategory">
+              <div class="mt-2 mb-3 pt-0" :class="{
+                'input-group--error': $v.subcategory.subcat_name.$error,
+              }">
+                <b-input id="subcat_name" v-model="subcategory.subcat_name"></b-input>
+                <p class="error-message" v-if="
+                  submitStatus === 'error' &&
+                  !$v.subcategory.subcat_name.required
+                ">
+                  Subcategory name is required.
+                </p>
+              </div>
+              <div class="w-100 mt-4 d-flex justify-content-end">
+                <b-button class="mr-2 secondary-btn" @click="toggleAddModal">
+                  Cancel
+                </b-button>
+                <b-button type="submit" class="primary-btn"> Add </b-button>
+              </div>
+            </form>
+        </SubcategoryModal>
+
+        <SubcategoryModal title="Update Subcategory" :visible="isUpdateModalVisible" @close="toggleUpdateModal">
+          <form class="px-2" @submit.prevent="
+            editSubcategory(selectedSubcategory.sub_category_id, selectedSubcategory)
+          ">
+              <div class="mt-2 mb-3 pt-0">
+              <label for="subcategory">Subcategory</label>
+              <b-form-input id="subcategory" v-model="selectedSubcategory.subcat_name"></b-form-input>
+            </div>
+            <div class="w-100 mt-4 d-flex justify-content-end">
+              <b-button class="mr-2 secondary-btn" @click="toggleUpdateModal">
+                Cancel
+              </b-button>
+              <b-button type="submit" class="primary-btn"> Update </b-button>
+            </div>
+          </form>
+        </SubcategoryModal>
 
     </div>
 </template>
 
 <script>
+
+
+import { required } from "vuelidate/lib/validators";
 import { mapState } from "vuex";
+import SubcategoryModal from "./SubcategoryModal.vue";
+
+
 export default {
+    components: {
+        SubcategoryModal,
+    },
     props: ["category_id"],
+    validations: {
+      subcategory: {
+        subcat_name: {
+          required,
+        },
+      },
+  },
     data() {
         return {
             fields: [
                 {
                     key: "subcategories",
                     label: "",
-                    thStyle: { textTransform: "uppercase" },
                 },
             ],
             filter: null,
-            category: this.newCategoryObject(),
+            subcategory: this.newSubcategoryObject(),
             modalKey: 0,
             selectedRow: [],
-            selectedCategory: {},
+            selectedSubcategory: {},
             submitStatus: null,
+            isAddModalVisible: false,
+            isUpdateModalVisible: false,
         };
   },
   created() {
@@ -46,48 +111,64 @@ export default {
     ...mapState(["categories"]),
     items() {
       return this.categories.categories.find(
-        (category) => category.category_id == this.category_id
-      ).sub_cat;
+        (subcategory) => subcategory.category_id == this.category_id
+      ).sub_cat.filter((subcat) => subcat.status == "active");
     },
   },
   mounted() {
     this.totalRows = this.items.length;
   },
   methods: {
+    toggleAddModal() {
+      this.isAddModalVisible = !this.isAddModalVisible;
+    },
+    toggleUpdateModal() {
+      this.isUpdateModalVisible = !this.isUpdateModalVisible;
+    },
     onRowSelected(items) {
       this.selectedRow = items;
-      for (let category of this.selectedRow) {
-        this.selectedCategory = category;
+      for (let subcategory of this.selectedRow) {
+        this.selectedSubcategory = subcategory;
       }
     },
-    newCategoryObject() {
+    newSubcategoryObject() {
       return {
-        cat_name: ""
+        subcat_name: "",
+        category_id: this.category_id,
       };
     },
     rerenderModal() {
       this.modalKey += 1;
     },
-    addCategory() {
+    async addSubcategory() {
       this.$v.$touch();
       if (this.$v.$invalid) {
         this.submitStatus = "error";
       } else {
-        this.$store
-          .dispatch("addCategory", this.category)
+        await this.$store
+          .dispatch("addSubcategory", this.subcategory).then(() => {
+            this.$store.dispatch("fetchCategories");
+            this.toggleAddModal();
+          });
+        this.$store.dispatch("fetchCategories");
       }
     },
-    editCategory(id, category) {
-      delete category.status;
-      this.$store
-        .dispatch("editCategory", { id, category })
+    async editSubcategory(id, subcategory) {
+      delete subcategory.status;
+      await this.$store
+        .dispatch("editSubcategory", { id, subcategory }).then(() => {
+            this.$store.dispatch("fetchCategories");
+            this.toggleUpdateModal();
+          });
+        this.$store.dispatch("fetchCategories");
+
     },
-    deleteCategory(id) {
-      this.$store
-        .dispatch("removeCategory", id)
-    },
-    logout() {
-      this.$store.dispatch("logout")
+    async deleteSubcategory(id) {
+      await this.$store
+        .dispatch("removeSubcategory", id).then(() => {
+          this.$store.dispatch("fetchCategories");
+        });
+        this.$store.dispatch("fetchCategories");
     },
   },
 }

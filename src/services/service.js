@@ -9,14 +9,17 @@ const apiClient = axios.create({
 });
 
 export default {
-  async getBooks() {
-    return await apiClient.get("/book");
+  login(credentials) {
+    return apiClient.post("/login", credentials);
   },
-  async login(credentials) {
-    return await apiClient.post("/login", credentials);
+  getBooks() {
+    return apiClient.get("/book");
   },
   getCategories() {
     return apiClient.get("/category");
+  },
+  getSubcategories() {
+    return apiClient.get("/subcategory");
   },
   getIssuedBooks() {
     return apiClient.get("/issue");
@@ -54,6 +57,9 @@ export default {
   postRequest(request) {
     return apiClient.post("/request", request);
   },
+  postShelf(shelf) {
+    return apiClient.post("/shelf", shelf);
+  },
   removeBook(book_id) {
     return apiClient.patch(`/book/inactive/${book_id}`);
   },
@@ -63,11 +69,17 @@ export default {
   removeCategory(category_id) {
     return apiClient.patch(`/category/inactive/${category_id}`);
   },
+  removeSubcategory(subcategory_id) {
+    return apiClient.patch(`/subcategory/inactive/${subcategory_id}`);
+  },
   removeUser(user_id) {
     return apiClient.patch(`/user/inactive/${user_id}`);
   },
   removeRequest(request_id) {
     return apiClient.patch(`/request/inactive/${request_id}`);
+  },
+  removeShelf(shelf_id) {
+    return apiClient.patch(`/shelf/inactive/${shelf_id}`);
   },
   updateBook(book_id, book) {
     return apiClient.put(`/book/${book_id}`, book);
@@ -78,11 +90,17 @@ export default {
   updateCategory(category_id, category) {
     return apiClient.put(`/category/${category_id}`, category);
   },
+  updateSubcategory(subcategory_id, subcategory) {
+    return apiClient.put(`/subcategory/${subcategory_id}`, subcategory);
+  },
   updateIssuedBook(issuedBook_id, issuedBook) {
     return apiClient.put(`/issue/${issuedBook_id}`, issuedBook);
   },
   updateUser(user_id, user) {
     return apiClient.put(`/user/${user_id}`, user);
+  },
+  updateShelf(shelf_id, shelf) {
+    return apiClient.put(`/shelf/${shelf_id}`, shelf);
   },
 
 };

@@ -24,14 +24,22 @@
             </div>
           </div>
   
-          <b-table :items="items" :per-page="perPage" :fields="fields" :current-page="currentPage" label-sort-asc=""
-            label-sort-desc="" label-sort-clear="" fixed responsive :filter="filter" select-mode="single"
+          <b-table :items="items" :per-page="perPage" :fields="fields" :current-page="currentPage" :sort-by.sync="sortBy" sort-desc.sync="false" fixed responsive :filter="filter" select-mode="single"
             ref="selectableTable" selectable @row-selected="onRowSelected" @filtered="onFiltered">
-            <template #cell(categories)="row">
 
-              <b-badge pill variant="primary" class="mr-2" v-for="category of row.item.cat" :key="category.id">{{ category.cat_name }}</b-badge>
-            
+            <template #cell(categories)="row">
+            <div v-if="row.item.status == 'inactive'" class="inactive">
+              <span>
+                <b-badge variant="primary" class="mr-1" v-for="category of row.item.cat" :key="category.id">{{ category.cat_name }}</b-badge>
+              </span>
+              <b-badge pill variant="light">{{
+                row.item.status
+              }}</b-badge>
+            </div>
+            <template v-else>
+              <b-badge variant="primary" class="mr-2" v-for="category of row.item.cat" :key="category.id">{{ category.cat_name }}</b-badge>
             </template>
+          </template>
           </b-table>
   
           <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" aria-controls="my-table"
@@ -124,13 +132,11 @@
         shelf_name: {
         required,
         },
-        category_id: {
-          required,
-        },
       },
     },
     data() {
       return {
+      sortBy: 'shelf_name',
         fields: [
           {
             key: "shelf_name",
@@ -181,7 +187,6 @@
         this.selectedRow = items;
         for (let shelf of this.selectedRow) {
           this.selectedShelf = shelf;
-          this.selectedShelf.category_id = shelf.category_id;
         }
       },
       onFiltered(filteredItems) {
@@ -194,8 +199,7 @@
       },
       newShelfObject() {
         return {
-            shelf_name: "",
-            category_id: ""
+            shelf_name: ""
         };
       },
       rerenderModal() {

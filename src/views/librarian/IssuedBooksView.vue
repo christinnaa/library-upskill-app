@@ -12,18 +12,17 @@
           </div>
         </div>
 
-        <b-table :items="items" :per-page="perPage" :fields="fields" :current-page="currentPage" label-sort-asc=""
-          label-sort-desc="" label-sort-clear="" fixed responsive :filter="filter" select-mode="single"
+        <b-table :items="items" :per-page="perPage" :fields="fields" :current-page="currentPage" :sort-by.sync="sortBy" sort-desc.sync="false" fixed responsive :filter="filter" select-mode="single"
           ref="selectableTable" selectable @row-selected="onRowSelected" @filtered="onFiltered">
           <template #cell(borrower_name)="row">
             {{ row.item.first_name }} {{ row.item.last_name }}
           </template>
           <template #cell(status)="row">
-            <b-badge pill v-if="row.item.status == 'overdue'" class="bg-danger">{{ row.item.status }}</b-badge>
-            <b-badge pill v-else-if="row.item.status == 'active'" class="bg-primary">{{
+            <b-badge v-if="row.item.status == 'overdue'" class="bg-danger">{{ row.item.status }}</b-badge>
+            <b-badge v-else-if="row.item.status == 'active'" class="bg-primary">{{
               row.item.status
             }}</b-badge>
-            <b-badge pill v-else-if="row.item.status == 'returned'" class="bg-success">{{
+            <b-badge v-else-if="row.item.status == 'returned'" class="bg-success">{{
               row.item.status
             }}</b-badge>
           </template>
@@ -79,6 +78,7 @@ export default {
   },
   data() {
     return {
+      sortBy: 'status',
       fields: [
         {
           key: "title",

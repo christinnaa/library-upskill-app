@@ -24,16 +24,17 @@
           </div>
         </div>
 
-        <b-table :items="items" :per-page="perPage" :fields="fields" :current-page="currentPage" label-sort-asc=""
-          label-sort-desc="" label-sort-clear="" fixed responsive :filter="filter" select-mode="single"
+        <b-table :items="items" :per-page="perPage" :fields="fields" :current-page="currentPage" :sort-by.sync="sortBy" sort-desc.sync="false" fixed responsive :filter="filter" select-mode="single"
           ref="selectableTable" selectable @row-selected="onRowSelected" @filtered="onFiltered">
           <template #cell(subcategories)="row">
-            <b-badge pill variant="primary" class="mr-2" v-for="subcategory of row.item.sub_cat" :key="subcategory.id">{{ subcategory.subcat_name }}</b-badge>
+            <span v-for="subcategory of row.item.sub_cat" :key="subcategory.id">
+              <b-badge variant="primary" class="mr-1" v-if="subcategory.status == 'active'">{{ subcategory.subcat_name }}</b-badge>
+            </span>
           </template>
           <template #cell(shelf_name)="row">
             <div v-if="row.item.status == 'inactive'" class="inactive">
               <span>{{ row.item.shelf_name }}</span>
-              <b-badge pill variant="light" class="ml-2">{{
+              <b-badge pill variant="light">{{
                 row.item.status
               }}</b-badge>
             </div>
@@ -65,7 +66,7 @@
               <div class="mb-3" :class="{ 'input-group--error': $v.category.shelf_id.$error }">
                 <label for="shelf_id">Shelf</label>
                 <b-form-select v-model.trim="category.shelf_id">
-                  <b-form-select-option value disabled>Select</b-form-select-option>
+                  <b-form-select-option value="" disabled>Select</b-form-select-option>
                   <b-form-select-option v-for="shelf in shelves.shelves" :key="shelf.shelf_id"
                   :value="shelf.shelf_id">{{ shelf.shelf_name }}</b-form-select-option>
                 </b-form-select>
@@ -73,9 +74,6 @@
                 <p class="error-message" v-if="submitStatus === 'error' && !$v.category.shelf_id.required">
                   Shelf is required.
                 </p>
-              </div>
-              <div class="mb-3 pt-0">
-                <label for="subcategories">Subcategories</label>
               </div>
               <div class="w-100 mt-4 d-flex justify-content-end">
                 <b-button class="mr-2 secondary-btn" @click="rerenderModal">
@@ -88,17 +86,18 @@
         </AppModal>
       </div>
 
-      <AppModal modalId="updateCategoryModal" hideFooter :key="modalKey">
+      <AppModal modalId="updateCategoryModal" modalSize="lg" hideFooter :key="modalKey">
         <template #modal-header> Update Category </template>
         <template #modal-body>
           <form class="px-2" @submit.prevent="
             editCategory(selectedCategory.category_id, selectedCategory)
           ">
-            <div class="mb-3 pt-0">
+            <b-row class="mb-4">
+              <div class="col-6 pt-0">
               <label for="category">Category</label>
               <b-form-input id="category" v-model="selectedCategory.cat_name"></b-form-input>
             </div>
-            <div class="mb-3">
+            <div class="col-6">
                 <label for="shelf_id">Shelf</label>
                 <b-form-select v-model.trim="selectedCategory.shelf_id">
                   <b-form-select-option value disabled>Select</b-form-select-option>
@@ -110,6 +109,7 @@
                   Shelf is required.
                 </p>
             </div>
+            </b-row>
 
             <div class="mb-3 pt-0">
               <SubcategoryTable :category_id="selectedCategory.category_id"/>
@@ -169,13 +169,11 @@ export default {
       shelf_id: {
         required,
       },
-      // cat_name: {
-      //   required,
-      // },
     },
   },
   data() {
     return {
+      sortBy: 'cat_name',
       fields: [
         {
           key: "cat_name",
@@ -243,7 +241,8 @@ export default {
     },
     newCategoryObject() {
       return {
-        cat_name: ""
+        cat_name: "",
+        shelf_id: ""
       };
     },
     rerenderModal() {

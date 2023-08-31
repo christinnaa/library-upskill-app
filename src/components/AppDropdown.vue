@@ -1,11 +1,7 @@
 <template>
   <div class="dropdown">
-    <button
-      class="btn dropdown-toggle d-flex align-items-center"
-      type="button"
-      data-toggle="dropdown"
-      aria-expanded="false"
-    >
+    <button class="btn dropdown-toggle d-flex align-items-center" type="button" data-toggle="dropdown"
+      aria-expanded="false">
       <slot name="text"></slot>
     </button>
     <div class="dropdown-menu">
@@ -27,5 +23,9 @@ export default {
   }
 
   border: 0;
+}
+
+.dropdown-header {
+  font-weight: 600;
 }
 </style>

@@ -7,12 +7,6 @@
                     <div class="sidebar__text">Search</div>
                 </router-link>
             </li>
-            <!-- <li class="sidebar__item">
-                <router-link class="sidebar__link" to="/reader/borrowed-books" exact>
-                    <b-icon icon="book" font-scale="2"></b-icon>
-                    <div class="sidebar__text">Borrowed Books</div>
-                </router-link>
-            </li> -->
         </AppSidebar>
         <router-view />
     </div>

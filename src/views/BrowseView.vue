@@ -49,11 +49,10 @@
                     {{ row.item.p_name }}</b-list-group-item>
                   <b-list-group-item><b>Publication Year:</b>
                     {{ row.item.publication_year }}</b-list-group-item>
-                  <b-list-group-item><b>Categories: </b>
-                    <b-badge pill class="bg-light text-dark ms-2">{{
-                      row.item.cat_name
-                    }}</b-badge>
-                  </b-list-group-item>
+                  <b-list-group-item><b>Category: </b>
+                    {{ row.item.cat_name }}</b-list-group-item>
+                  <b-list-group-item><b>Subcategory: </b>
+                    {{ row.item.subcat_name }}</b-list-group-item>
                   <b-list-group-item><b>No. of Pages:</b>
                     {{ row.item.pages }}</b-list-group-item>
                   <b-list-group-item><b>Shelf:</b> {{ row.item.shelf_name }}</b-list-group-item>
