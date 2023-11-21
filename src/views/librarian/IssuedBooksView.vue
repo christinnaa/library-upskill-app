@@ -123,6 +123,15 @@ export default {
           sortable: true,
         },
       ],
+      items: [
+        {
+          title: 'Crazy Rich Asians',
+          first_name: 'Bada',
+          last_name: 'Lee',
+          issue_date: '2023-11-01',
+          status: 'active'
+        }
+      ],
       perPage: 12,
       currentPage: 1,
       totalRows: 1,
@@ -147,9 +156,9 @@ export default {
   },
   computed: {
     ...mapState(["issuedBooks", "books"]),
-    items() {
-      return this.issuedBooks.issuedBooks;
-    },
+    // items() {
+    //   return this.issuedBooks.issuedBooks;
+    // },
     sortOptions() {
       return this.fields
         .filter((f) => f.sortable)

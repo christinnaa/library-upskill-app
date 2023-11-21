@@ -135,9 +135,9 @@ export default {
   computed: {
     ...mapState(["books"]),
     ...mapGetters(["activeRequests"]),
-    items() {
-      return this.activeRequests;
-    },
+    // items() {
+    //   return this.activeRequests;
+    // },
     sortOptions() {
       return this.fields
         .filter((f) => f.sortable)

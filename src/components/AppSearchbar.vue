@@ -9,11 +9,11 @@
     <AppDropdown>
         <template v-slot:text>
           <b-icon class="mr-2" font-scale="1.5" icon="person-circle"></b-icon>
-          {{ userName }}
+          Bada Lee
           <b-icon class="ml-3" font-scale=".75" icon="caret-down-fill"></b-icon>
         </template>
         <template v-slot:links>
-          <p class="dropdown-header text-capitalize">{{ role }}</p>
+          <p class="dropdown-header text-capitalize">Admin</p>
           <a class="dropdown-item" @click="logout">Logout</a>
         </template>
       </AppDropdown>

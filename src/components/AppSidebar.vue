@@ -3,7 +3,8 @@
     <ul>
       <li class="sidebar__item sidebar__logo">
         <div class="sidebar__link">
-          <b-icon icon="book-half" font-scale="2"></b-icon>
+          <img src="../assets/library-logo.png" alt="">
+          <!-- <b-icon icon="book-half" font-scale="2"></b-icon> -->
           <div class="sidebar__text">Lou Geh Library</div>
         </div>
       </li>
@@ -29,6 +30,11 @@ export default {
   border-right: solid px #eee;
   z-index: 1000;
   transition: width 500ms ease;
+
+  img {
+    width: 100px;
+    padding-right: 5px;
+  }
 
   ul {
     list-style: none;
