@@ -82,7 +82,7 @@ export default {
       fields: [
         {
           key: "title",
-          thStyle: { textTransform: "uppercase", width: "400px" },
+          thStyle: { textTransform: "uppercase", width: "350px" },
           sortable: true,
         },
         {
@@ -99,15 +99,15 @@ export default {
             return moment(value).format("MMM DD, YYYY");
           },
         },
-        {
-          key: "return_date",
-          label: "return by",
-          thStyle: { textTransform: "uppercase", width: "160px" },
-          sortable: true,
-          formatter: (value) => {
-            return moment(value).format("MMM DD, YYYY");
-          },
-        },
+        // {
+        //   key: "return_date",
+        //   label: "return by",
+        //   thStyle: { textTransform: "uppercase", width: "160px" },
+        //   sortable: true,
+        //   formatter: (value) => {
+        //     return moment(value).format("MMM DD, YYYY");
+        //   },
+        // },
         {
           key: "date_returned",
           thStyle: { textTransform: "uppercase", width: "180px" },

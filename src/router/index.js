@@ -6,6 +6,11 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: "/",
+    name: "login",
+    component: () => import("../views/LoginView.vue"),
+  },
+  {
+    path: "/",
     name: "home",
     redirect: { name: "browse" },
   },
@@ -78,22 +83,22 @@ const router = new VueRouter({
   routes,
 });
 
-router.beforeEach((to, _from, next) => {
-  const publicPage = "/browse";
-  const authRequired = !publicPage.includes(to.path);
-  const loggedIn = localStorage.getItem("token");
-  const role = localStorage.getItem("role");
+// router.beforeEach((to, _from, next) => {
+//   const publicPage = "/browse";
+//   const authRequired = !publicPage.includes(to.path);
+//   const loggedIn = localStorage.getItem("token");
+//   const role = localStorage.getItem("role");
 
-  if (authRequired && !loggedIn) {
-    next("/");
-  } 
-  else if (role !== "admin" && to.path !== "/reader/browse" && to.path !== "/browse") {
-    next("/reader/browse")
-  }
-  else {
-    next();
-  }
-});
+//   if (authRequired && !loggedIn) {
+//     next("/");
+//   } 
+//   else if (role !== "admin" && to.path !== "/reader/browse" && to.path !== "/browse") {
+//     next("/reader/browse")
+//   }
+//   else {
+//     next();
+//   }
+// });
 
 
 

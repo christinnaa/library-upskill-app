@@ -63,14 +63,8 @@
                   <b-list-group-item><b>Category:</b>
                     {{ row.item.cat_name }}
                   </b-list-group-item>
-                  <b-list-group-item><b>Subcategory:</b>
-                    {{ row.item.subcat_name }}
-                  </b-list-group-item>
                   <b-list-group-item><b>No. of Pages:</b>
                     {{ row.item.pages }}</b-list-group-item>
-                  <b-list-group-item><b>No. of Copies:</b>
-                    {{ row.item.copies }}</b-list-group-item>
-                  <b-list-group-item><b>Shelf:</b> {{ row.item.shelf_name }}</b-list-group-item>
                   <b-list-group-item><b>Status:</b>
                     <b-badge pill v-if="row.item.status == 'active'" variant="success" class="ml-2 text-white">
                       Active
@@ -122,39 +116,15 @@
                   <b-form-input v-model.trim="updateBook.publication_year" id="publication_year"></b-form-input>
                 </div>
                 <div class="col-4">
-                  <label for="copies">No. of Copies</label>
-                  <b-form-input v-model.trim.number="updateBook.copies" type="number" id="copies"></b-form-input>
-                </div>
-                <div class="col-4">
                   <label for="pages">No. of Pages</label>
                   <b-form-input v-model.trim.number="updateBook.pages" type="number" id="pages"></b-form-input>
                 </div>
-
-              </b-row>
-              <b-row class="mb-2 px-2">
                 <div class="col-4">
                   <label for="categories">Category</label>
                   <b-form-select v-model.trim="updateBook.category_id">
                     <b-form-select-option value="" disabled>Select</b-form-select-option>
                     <b-form-select-option v-for="category in activeCategories" :key="category.category_id"
                       :value="category.category_id">{{ category.cat_name }}</b-form-select-option>
-                  </b-form-select>
-                </div>
-                <div class="col-4">
-                  <label for="sub_cat">Subcategory</label>
-                  <b-form-select v-model.trim="updateBook.sub_category_id">
-                    <b-form-select-option value="" disabled>Select</b-form-select-option>
-                    <b-form-select-option v-for="subcategory in subcategories.subcategories.filter((subcat) => 
-                  subcat.category_id == updateBook.category_id)" :key="subcategory.sub_category_id"
-                      :value="subcategory.sub_category_id">{{ subcategory.subcat_name }}</b-form-select-option>
-                  </b-form-select>
-                </div>
-                <div class="col-4">
-                  <label for="shelf_id">Shelf</label>
-                  <b-form-select v-model.trim="updateBook.shelf_id">
-                    <b-form-select-option value="" disabled>Select</b-form-select-option>
-                    <b-form-select-option v-for="shelf in shelves.shelves.filter(shelf => shelf.cat.some(category => category.category_id == updateBook.category_id))" :key="shelf.shelf_id"
-                      :value="shelf.shelf_id">{{ shelf.shelf_name }}</b-form-select-option>
                   </b-form-select>
                 </div>
               </b-row>
@@ -228,18 +198,6 @@
                   Publication year must be a number.
                 </p>
               </div>
-              <div class="col-4" :class="{ 'input-group--error': $v.book.copies.$error }">
-                <label for="copies">No. of Copies</label>
-                <b-form-input v-model.number="$v.book.copies.$model" id="copies"></b-form-input>
-                <p class="error-message" v-if="submitStatus === 'error' && !$v.book.copies.numeric
-                  ">
-                  No. of copies must be a number.
-                </p>
-                <p class="error-message" v-if="submitStatus === 'error' && !$v.book.copies.required
-                  ">
-                  No. of copies is required.
-                </p>
-              </div>
               <div class="col-4" :class="{ 'input-group--error': $v.book.pages.$error }">
                 <label for="pages">No. of Pages</label>
                 <b-form-input v-model.trim="$v.book.pages.$model" id="pages"></b-form-input>
@@ -252,8 +210,6 @@
                   No. of pages is required.
                 </p>
               </div>
-            </b-row>
-            <b-row class="mb-2 px-2">
               <div class="col-4" :class="{ 'input-group--error': $v.book.category_id.$error }">
                 <label for="categories">Category</label>
                 <b-form-select v-model.trim="$v.book.category_id.$model">
@@ -264,31 +220,6 @@
                 <p class="error-message" v-if="submitStatus === 'error' && !$v.book.category_id.required
                   ">
                   Category is required.
-                </p>
-              </div>
-              <div class="col-4" :class="{ 'input-group--error': $v.book.sub_category_id.$error }">
-                <label for="subcategories">Subcategory</label>
-                <b-form-select v-model.trim="$v.book.sub_category_id.$model">
-                  <b-form-select-option value="" disabled>Select</b-form-select-option>
-                  <b-form-select-option v-for="subcategory in subcategories.subcategories.filter((subcat) => 
-                  subcat.category_id == book.category_id)" :key="subcategory.sub_category_id"
-                    :value="subcategory.sub_category_id">{{ subcategory.subcat_name }}</b-form-select-option>
-                </b-form-select>
-                <p class="error-message" v-if="submitStatus === 'error' && !$v.book.sub_category_id.required
-                  ">
-                  Subcategory is required.
-                </p>
-              </div>
-              <div class="col-4" :class="{ 'input-group--error': $v.book.shelf_id.$error }">
-                <label for="shelf_id">Shelf</label>
-                <b-form-select v-model.trim="$v.book.shelf_id.$model">
-                  <b-form-select-option value disabled>Select</b-form-select-option>
-                  <b-form-select-option v-for="shelf in shelves.shelves.filter(shelf => shelf.cat.some(category => category.category_id == book.category_id))" :key="shelf.shelf_id" :value="shelf.shelf_id">{{
-                    shelf.shelf_name }}</b-form-select-option>
-                </b-form-select>
-
-                <p class="error-message" v-if="submitStatus === 'error' && !$v.book.shelf_id.required">
-                  Shelf is required.
                 </p>
               </div>
             </b-row>
@@ -356,6 +287,30 @@ export default {
         { key: "actions", thStyle: { textTransform: "uppercase" } },
       ],
 
+      items: [
+        {
+          isbn: "978-0-7475-3269-9",
+          title: "Harry Potter and the Philosophers Stone",
+          author: 'J.K. Rowling',
+          p_name: 'Bloomsbury',
+          publication_year: 1997,
+          category: 'Fantasy',
+          pages: 223,
+          status: 'active'
+        },
+        {
+          isbn: "978-1-4169-6829-0",
+          title: "The Summer I Turned Pretty",
+          author: 'Jenny Han',
+          p_name: 'Simon & Schuster',
+          publication_year: 2010,
+          category: 'Romance',
+          pages: 276,
+          status: 'active'
+        },
+
+      ],
+
       perPage: 10,
       filter: null,
       currentPage: 1,
@@ -385,23 +340,13 @@ export default {
         required,
         numeric,
       },
-      copies: {
-        required,
-        numeric,
-      },
-      shelf_id: {
-        required,
-      },
       pages: {
         required,
         numeric,
       },
       category_id: {
         required,
-      },
-      sub_category_id: {
-        required,
-      },
+      }
     },
   },
   created() {
@@ -493,11 +438,11 @@ export default {
   computed: {
     ...mapState(["books", "shelves", "subcategories"]),
     ...mapGetters(["activePublishers", "activeCategories"]),
-    items() {
-      return this.books.books.map((item) => ({
-        ...item,
-      }));
-    },
+    // items() {
+    //   return this.books.books.map((item) => ({
+    //     ...item,
+    //   }));
+    // },
     // subcats() {
     //   return this.;
     // },

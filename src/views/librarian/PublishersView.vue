@@ -174,6 +174,21 @@ export default {
           sortable: true,
         },
       ],
+      items: [
+        {
+          p_name: "Miramax Books",
+          p_location: "New York",
+        },
+        {
+          p_name: "Bloomsbury",
+          p_location: "London",
+        },
+        {
+          p_name: "Simon & Schuster",
+          p_location: "New York",
+        },
+
+      ],
       perPage: 12,
       currentPage: 1,
       totalRows: 1,
@@ -190,9 +205,9 @@ export default {
   },
   computed: {
     ...mapState(["publishers"]),
-    items() {
-      return this.publishers.publishers.map((item) => ({ ...item }));
-    },
+    // items() {
+    //   return this.publishers.publishers.map((item) => ({ ...item }));
+    // },
     sortOptions() {
       return this.fields
         .filter((f) => f.sortable)

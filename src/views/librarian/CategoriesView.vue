@@ -31,17 +31,6 @@
               <b-badge variant="primary" class="mr-1" v-if="subcategory.status == 'active'">{{ subcategory.subcat_name }}</b-badge>
             </span>
           </template>
-          <template #cell(shelf_name)="row">
-            <div v-if="row.item.status == 'inactive'" class="inactive">
-              <span>{{ row.item.shelf_name }}</span>
-              <b-badge pill variant="light">{{
-                row.item.status
-              }}</b-badge>
-            </div>
-            <template v-else>
-              {{ row.item.shelf_name }}
-            </template>
-          </template>
         </b-table>
 
         <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" aria-controls="my-table"
@@ -61,18 +50,6 @@
                   !$v.category.cat_name.required
                 ">
                   Category name is required.
-                </p>
-              </div>
-              <div class="mb-3" :class="{ 'input-group--error': $v.category.shelf_id.$error }">
-                <label for="shelf_id">Shelf</label>
-                <b-form-select v-model.trim="category.shelf_id">
-                  <b-form-select-option value="" disabled>Select</b-form-select-option>
-                  <b-form-select-option v-for="shelf in shelves.shelves" :key="shelf.shelf_id"
-                  :value="shelf.shelf_id">{{ shelf.shelf_name }}</b-form-select-option>
-                </b-form-select>
-                
-                <p class="error-message" v-if="submitStatus === 'error' && !$v.category.shelf_id.required">
-                  Shelf is required.
                 </p>
               </div>
               <div class="w-100 mt-4 d-flex justify-content-end">
@@ -96,18 +73,6 @@
               <div class="col-6 pt-0">
               <label for="category">Category</label>
               <b-form-input id="category" v-model="selectedCategory.cat_name"></b-form-input>
-            </div>
-            <div class="col-6">
-                <label for="shelf_id">Shelf</label>
-                <b-form-select v-model.trim="selectedCategory.shelf_id">
-                  <b-form-select-option value disabled>Select</b-form-select-option>
-                  <b-form-select-option v-for="shelf in shelves.shelves" :key="shelf.shelf_id"
-                  :value="shelf.shelf_id">{{ shelf.shelf_name }}</b-form-select-option>
-                </b-form-select>
-                
-                <p class="error-message" v-if="submitStatus === 'error' && !$v.category.shelf_id.required">
-                  Shelf is required.
-                </p>
             </div>
             </b-row>
 
@@ -166,9 +131,6 @@ export default {
       cat_name: {
         required,
       },
-      shelf_id: {
-        required,
-      },
     },
   },
   data() {
@@ -181,16 +143,19 @@ export default {
           thStyle: { textTransform: "uppercase" },
           sortable: true,
         },
+      ],
+      items: [
         {
-          key: "subcategories",
-          thStyle: { textTransform: "uppercase" },
-          sortable: true,
+          cat_name: "Fiction"
         },
         {
-          key: "shelf_name",
-          label: "shelf",
-          thStyle: { textTransform: "uppercase" },
-          sortable: true,
+          cat_name: "Science Fiction"
+        },
+        {
+          cat_name: "Drama"
+        },
+        {
+          cat_name: "Romance"
         },
       ],
       perPage: 12,
@@ -210,9 +175,9 @@ export default {
   },
   computed: {
     ...mapState(["categories", "shelves"]),
-    items() {
-      return this.categories.categories;
-    },
+    // items() {
+    //   return this.categories.categories;
+    // },
     sortOptions() {
       return this.fields
         .filter((f) => f.sortable)
@@ -242,7 +207,6 @@ export default {
     newCategoryObject() {
       return {
         cat_name: "",
-        shelf_id: ""
       };
     },
     rerenderModal() {

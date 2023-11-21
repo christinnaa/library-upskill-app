@@ -8,7 +8,7 @@
           <input type="text" placeholder="Search" class="w-75 border-0" id="filter-input" v-model="filter" />
         </div>
 
-        <b-button class="rounded primary-btn" v-b-modal.loginModal>Login</b-button>
+        <!-- <b-button class="rounded primary-btn" v-b-modal.loginModal>Login</b-button> -->
       </div>
 
       <div class="table__container p-4 pt-3 rounded">

@@ -16,13 +16,13 @@ export default {
 </script>
 
 <style lang="scss">
-@import url(https://api.fontshare.com/v2/css?f[]=general-sans@1&display=swap);
+@import url('https://fonts.googleapis.com/css2?family=Lobster+Two&family=Poppins:wght@400;500;600;700&display=swap');
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'General Sans', sans-serif;
+  font-family: 'Poppins', sans-serif;
 
   ::-webkit-scrollbar {
     width: 0.45rem;

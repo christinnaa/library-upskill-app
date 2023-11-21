@@ -45,7 +45,7 @@ export default {
 
 .loader>span {
   display: inline-block;
-  background-color: #7679ff;
+  background-color: #81B29A;
   width: 0px;
   height: 0px;
   border-radius: 50%;
@@ -55,11 +55,12 @@ export default {
 }
 
 .loader>span:nth-child(2) {
-  background-color: #a9aaf7;
+  background-color: #a4c3b2;
   animation-delay: 0.2s;
 }
 
 .loader>span:nth-child(3) {
+  background-color: #cce3de;
   animation-delay: 0.4s;
 }
 

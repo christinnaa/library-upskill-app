@@ -1,4 +1,4 @@
-$primary: #696cff;
+$primary: #81B29A;
 $secondary: #8592a3;
 $success: #71dd37;
 $info: #03c3ec;
@@ -263,16 +263,20 @@ a {
 }
 
 .primary-btn {
-  background-color: #e7e7ff !important;
+  background-color: #81B29A !important;
   border: #e7e7ff solid 1px !important;
-  color: #696cff !important;
+  color: white !important;
 
   svg {
-    color: #696cff !important;
+    color: #81B29A !important;
   }
   &:hover {
-    background-color: darken(#e7e7ff, 3) !important;
-    border: darken(#e7e7ff, 3) solid 1px !important;
+    background-color: #a4c3b2 !important;
+    border: #a4c3b2 solid 1px !important;
+  }
+
+  &:focus {
+    box-shadow: none !important;
   }
 }
 
@@ -307,4 +311,11 @@ a {
     margin-top: 5px;
     margin-bottom: 0;
   }
+}
+
+label {
+  color: #555555;
+  margin-left: 5px !important;
+  font-weight: 600;
+  margin-bottom: 3px !important;
 }
