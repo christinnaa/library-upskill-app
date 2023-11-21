@@ -21,7 +21,7 @@
             <b-card class="border-0">
               <b-card-body class="d-flex flex-column pt-2">
                 <div class="d-flex justify-content-between">
-                  <h4 class="mb-4 text-dark">
+                  <h4 class="mb-4 book-title">
                     {{ row.item.title }}
                   </h4>
 
@@ -294,7 +294,7 @@ export default {
           author: 'J.K. Rowling',
           p_name: 'Bloomsbury',
           publication_year: 1997,
-          category: 'Fantasy',
+          cat_name: 'Fantasy',
           pages: 223,
           status: 'active'
         },
@@ -304,7 +304,7 @@ export default {
           author: 'Jenny Han',
           p_name: 'Simon & Schuster',
           publication_year: 2010,
-          category: 'Romance',
+          cat_name: 'Romance',
           pages: 276,
           status: 'active'
         },
@@ -466,5 +466,10 @@ export default {
 
 .table__container {
   background: white;
+}
+
+.book-title {
+  color: #81B29A;
+  font-weight: 600;
 }
 </style>

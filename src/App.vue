@@ -69,7 +69,7 @@ a,
 }
 
 main {
-  margin-left: 90px;
+  margin-left: 65px;
   padding: 20px;
 }
 

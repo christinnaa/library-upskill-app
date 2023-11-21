@@ -86,13 +86,13 @@ export default {
     margin: 0 28px;
   }
 
-  &:hover {
-    width: 250px;
-  }
+  // &:hover {
+  //   width: 250px;
+  // }
 
-  &:hover &__text {
-    display: inline;
-  }
+  // &:hover &__text {
+  //   display: inline;
+  // }
 
   &__link:hover {
     background: #f8f8fa;

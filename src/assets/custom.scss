@@ -292,6 +292,10 @@ a {
     background-color: darken(#ebeef0, 3) !important;
     border: darken(#ebeef0, 3) solid 1px !important;
   }
+
+  &:focus {
+    box-shadow: none !important;
+  } 
 }
 
 .input-group--error {
