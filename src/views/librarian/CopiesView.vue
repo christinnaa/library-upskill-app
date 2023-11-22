@@ -6,7 +6,7 @@
 
       <div class="table__container p-4 pt-3 rounded">
         <div class="d-flex justify-content-between mt-2 mb-4">
-          <h4>Publishers</h4>
+          <h4>Book Copies</h4>
           <div>
             <b-button class="mr-2 warning-btn" v-if="selectedRow[0] && selectedPublisher.status == 'active'"
               v-b-modal.removePublisherModal>
@@ -91,14 +91,14 @@
             editPublisher(selectedPublisher.publisher_id, selectedPublisher)
           ">
             <div class="mb-3 pt-0">
-              <label for="p_name">Name</label>
-              <b-input id="p_name" v-model="selectedPublisher.publisher"></b-input>
+              <label for="p_name">Title</label>
+              <b-input id="p_name" v-model="selectedPublisher.title"></b-input>
             </div>
             <div class="mb-2" :class="{
               'input-group--error': $v.publisher.p_name.$error,
             }">
-              <label for="p_location">Location</label>
-              <b-form-input id="p_location" v-model="selectedPublisher.p_location"></b-form-input>
+              <label for="p_location">Copies</label>
+              <b-form-input id="p_location" v-model="selectedPublisher.copy"></b-form-input>
             </div>
 
             <div class="w-100 mt-4 d-flex justify-content-end">
@@ -160,32 +160,32 @@ export default {
   },
   data() {
     return {
-      sortBy: 'publisher',
+      sortBy: 'title',
       fields: [
         {
-          key: "publisher",
-          label: "Publisher Name",
+          key: "title",
+          label: "Book Title",
           thStyle: { textTransform: "uppercase" },
           sortable: true,
         },
         {
-          key: "location",
+          key: "copy",
+          label: "Copies",
           thStyle: { textTransform: "uppercase" },
-          sortable: true,
         },
       ],
       items: [
         {
-          publisher: "Miramax Books",
-          p_location: "New York",
+          title: "Harry Potter and the Philosophers Stone",
+          copy: 2,
         },
         {
-          publisher: "Bloomsbury",
-          p_location: "London",
+          title: "The Summer I Turned Pretty",
+          copy: 4,
         },
         {
-          publisher: "Simon & Schuster",
-          p_location: "New York",
+          title: "The Lightning Thief",
+          copy: 1,
         },
 
       ],

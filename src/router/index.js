@@ -44,6 +44,11 @@ const routes = [
         component: () => import("../views/librarian/BooksView.vue"),
       },
       {
+        path: "/copies",
+        name: "copies",
+        component: () => import("../views/librarian/CopiesView.vue"),
+      },
+      {
         path: "/issued-books",
         name: "issued-books",
         component: () => import("../views/librarian/IssuedBooksView.vue"),
@@ -67,11 +72,6 @@ const routes = [
         path: "/users",
         name: "users",
         component: () => import("../views/librarian/UsersView.vue"),
-      },
-      {
-        path: "/shelves",
-        name: "shelves",
-        component: () => import("../views/librarian/ShelvesView.vue"),
       },
     ],
   },

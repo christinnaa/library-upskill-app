@@ -63,22 +63,18 @@
         </AppModal>
       </div>
 
-      <AppModal modalId="updateCategoryModal" modalSize="lg" hideFooter :key="modalKey">
+      <AppModal modalId="updateCategoryModal" modalSize="md" hideFooter :key="modalKey">
         <template #modal-header> Update Category </template>
         <template #modal-body>
           <form class="px-2" @submit.prevent="
             editCategory(selectedCategory.category_id, selectedCategory)
           ">
             <b-row class="mb-4">
-              <div class="col-6 pt-0">
+              <div class="col-12 pt-0">
               <label for="category">Category</label>
               <b-form-input id="category" v-model="selectedCategory.cat_name"></b-form-input>
             </div>
             </b-row>
-
-            <div class="mb-3 pt-0">
-              <SubcategoryTable :category_id="selectedCategory.category_id"/>
-            </div>
 
             <div class="w-100 mt-4 d-flex justify-content-end">
               <b-button class="mr-2 secondary-btn" @click="rerenderModal()">
@@ -117,14 +113,12 @@ import AppModal from "@/components/AppModal.vue";
 import { required } from "vuelidate/lib/validators";
 import { mapState } from "vuex";
 import AppSearchbar from "@/components/AppSearchbar.vue";
-import SubcategoryTable from "@/components/SubcategoryTable.vue";
 
 export default {
   props: [],
   components: {
     AppModal,
     AppSearchbar,
-    SubcategoryTable,
 },
   validations: {
     category: {

@@ -109,6 +109,11 @@ export default {
         },
         // { key: 'actions', thStyle: { textTransform: "uppercase" } },
       ],
+      // items: [
+      //   {
+      //     title: 'hjhfjsg'
+      //   }
+      // ],
       perPage: 12,
       currentPage: 1,
       totalRows: 1,

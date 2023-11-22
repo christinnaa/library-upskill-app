@@ -5,10 +5,11 @@
 
       <div class="table__container p-4 pt-3 rounded">
         <div class="d-flex justify-content-between mt-2 mb-4">
-          <h4>Issued Books</h4>
+          <h4>Borrow Records</h4>
           <div>
             <b-button v-if="selectedRow[0] && selectedIssuedBook.status == 'active' || selectedIssuedBook.status == 'overdue'" v-b-modal.updateIssuedBookModal
-              class="mr-2 primary-btn">Update</b-button>
+              class="mr-2 info-btn">Update</b-button>
+            <b-button v-b-modal.addBorrowRecord class="primary-btn">Add Record</b-button>
           </div>
         </div>
 
@@ -60,6 +61,47 @@
         </form>
       </template>
     </AppModal>
+
+    <AppModal :key="modalKey" modalId="addBorrowRecord" modalSize="lg" submitMethod="addBorrowRecord" hideFooter>
+      <template #modal-header> Add Borrow Record </template>
+      <template #modal-body>
+        <form>
+          <b-row class="mb-3 px-2">
+            <div class="col-6">
+                <label for="title">Username</label>
+                <b-form-input id="title"></b-form-input>
+                <p class="error-message" v-if="submitStatus === 'error' && !$v.book.title.required">
+                  User is required.
+                </p>
+            </div>
+            <div class="col-6">
+                <label for="title">Book Title</label>
+                <b-form-input id="title"></b-form-input>
+                <p class="error-message" v-if="submitStatus === 'error' && !$v.book.title.required">
+                  Title is required.
+                </p>
+            </div>
+          </b-row>
+          <b-row class="mb-3 px-2">
+            <div class="col-6">
+              <label for="date_of_birth">Borrow Date</label>
+              <b-form-input type="date" id="date_of_birth"></b-form-input>
+            </div>
+            <div class="col-6">
+              <label for="date_of_birth">Date Returned</label>
+              <b-form-input type="date" id="date_of_birth" readonly></b-form-input>
+            </div>
+          </b-row>
+
+          <div class="w-100 mt-4 d-flex justify-content-end">
+              <b-button class="mr-2 secondary-btn" @click="rerenderModal()">
+                Cancel
+              </b-button>
+              <b-button type="submit" class="primary-btn"> Add </b-button>
+            </div>
+        </form>
+      </template>
+    </AppModal>
   </div>
 </template>
 
@@ -91,8 +133,8 @@ export default {
           sortable: true,
         },
         {
-          key: "issue_date",
-          label: "issued on",
+          key: "borrow_date",
+          label: "Date Borrowed",
           thStyle: { textTransform: "uppercase", width: "160px" },
           sortable: true,
           formatter: (value) => {
@@ -125,12 +167,19 @@ export default {
       ],
       items: [
         {
+          title: 'Lightning Thief',
+          first_name: 'Bada',
+          last_name: 'Lee',
+          borrow_date: '2021-11-01',
+          status: 'active'
+        },
+        {
           title: 'Crazy Rich Asians',
           first_name: 'Bada',
           last_name: 'Lee',
-          issue_date: '2023-11-01',
+          borrow_date: '2023-11-24',
           status: 'active'
-        }
+        },
       ],
       perPage: 12,
       currentPage: 1,

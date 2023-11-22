@@ -14,7 +14,8 @@
         </template>
         <template v-slot:links>
           <p class="dropdown-header text-capitalize">Admin</p>
-          <a class="dropdown-item" @click="logout">Logout</a>
+          <!-- <a class="dropdown-item" @click="logout">Logout</a> -->
+          <router-link class="dropdown-item" :to="{ name: 'login' }">Logout</router-link>
         </template>
       </AppDropdown>
   </div>

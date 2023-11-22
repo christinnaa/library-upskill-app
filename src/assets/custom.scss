@@ -246,19 +246,25 @@ a {
     background-color: darken(#e8fadf, 3) !important;
     border: darken(#e8fadf, 3) solid 1px !important;
   }
+  &:focus {
+    box-shadow: none !important;
+  }
 }
 
 .info-btn {
-  background-color: #d7f5fc !important;
-  border: #d7f5fc solid 1px !important;
-  color: #03c3ec !important;
+  background-color: #b0d3cb !important;
+  border: #b0d3cb solid 1px !important;
+  color: white !important;
 
   svg {
-    color: #03c3ec !important;
+    color: #b0d3cb !important;
   }
   &:hover {
-    background-color: darken(#d7f5fc, 3) !important;
-    border: darken(#d7f5fc, 3) solid 1px !important;
+    background-color: darken(#89b0ae, 3) !important;
+    border: darken(#89b0ae, 3) solid 1px !important;
+  }
+  &:focus {
+    box-shadow: none !important;
   }
 }
 
@@ -292,10 +298,9 @@ a {
     background-color: darken(#ebeef0, 3) !important;
     border: darken(#ebeef0, 3) solid 1px !important;
   }
-
   &:focus {
     box-shadow: none !important;
-  } 
+  }
 }
 
 .input-group--error {
@@ -322,4 +327,10 @@ label {
   margin-left: 5px !important;
   font-weight: 600;
   margin-bottom: 3px !important;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }

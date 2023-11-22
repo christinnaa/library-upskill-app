@@ -39,6 +39,7 @@ form {
     padding: 30px 35px;
     border-radius: 24px;
     position: relative;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
 
     .circle {
         position: absolute;

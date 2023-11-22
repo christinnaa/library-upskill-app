@@ -24,7 +24,6 @@
                   <h4 class="mb-4 book-title">
                     {{ row.item.title }}
                   </h4>
-
                   <AppDropdown>
                     <template v-slot:text>
                       <b-icon icon="three-dots-vertical"></b-icon>
@@ -54,6 +53,7 @@
                 </div>
 
                 <b-list-group class="mb-3">
+                  <b-list-group-item><b>Available Copies:</b> {{ row.item.copies }} </b-list-group-item>
                   <b-list-group-item><b>ISBN:</b> {{ row.item.isbn }}</b-list-group-item>
                   <b-list-group-item><b>Author:</b> {{ row.item.author }}</b-list-group-item>
                   <b-list-group-item><b>Publisher:</b>
@@ -97,11 +97,11 @@
                 </div>
               </b-row>
               <b-row class="mb-3 px-2">
-                <div class="col-6">
+                <div class="col-4">
                   <label for="author">Author</label>
                   <b-form-input v-model.trim="updateBook.author" id="author"></b-form-input>
                 </div>
-                <div class="col-6">
+                <div class="col-4">
                   <label for="publisher">Publisher</label>
                   <b-form-select v-model.trim="updateBook.publisher_id">
                     <b-form-select-option value="" disabled>Select</b-form-select-option>
@@ -109,6 +109,10 @@
                       :value="publisher.publisher_id">{{ publisher.p_name }}</b-form-select-option>
                   </b-form-select>
                 </div>
+                <div class="col-4" :class="{ 'input-group--error': $v.book.pages.$error }">
+                <label for="pages">Available Copies</label>
+                <b-form-input v-model.trim="$v.book.pages.$model" id="pages" disabled></b-form-input>
+              </div>
               </b-row>
               <b-row class="mb-3 px-2">
                 <div class="col-4">
@@ -289,6 +293,7 @@ export default {
 
       items: [
         {
+          copies: 2,
           isbn: "978-0-7475-3269-9",
           title: "Harry Potter and the Philosophers Stone",
           author: 'J.K. Rowling',
@@ -299,6 +304,7 @@ export default {
           status: 'active'
         },
         {
+          copies: 4,
           isbn: "978-1-4169-6829-0",
           title: "The Summer I Turned Pretty",
           author: 'Jenny Han',
@@ -306,6 +312,17 @@ export default {
           publication_year: 2010,
           cat_name: 'Romance',
           pages: 276,
+          status: 'active'
+        },
+        {
+          copies: 1,
+          isbn: "0-7868-5629-7",
+          title: "The Lightning Thief",
+          author: 'Rick Riordan',
+          p_name: 'Simon & Schuster',
+          publication_year: 2010,
+          cat_name: 'Fantasy',
+          pages: 377,
           status: 'active'
         },
 
@@ -353,8 +370,6 @@ export default {
     this.$store.dispatch("fetchBooks");
     this.$store.dispatch("fetchPublishers");
     this.$store.dispatch("fetchCategories");
-    this.$store.dispatch("fetchSubcategories");
-    this.$store.dispatch("fetchShelves");
   },
   mounted() {
     // Set the initial number of items
