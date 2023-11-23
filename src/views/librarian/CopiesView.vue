@@ -22,7 +22,7 @@
             </b-button>
 
             <b-button class="primary-btn" v-b-modal.addPublisherModal>
-              Add Publisher</b-button>
+              Add Copy</b-button>
           </div>
         </div>
 
@@ -52,24 +52,24 @@
               <div class="mb-3 pt-0" :class="{
                 'input-group--error': $v.publisher.p_name.$error,
               }">
-                <label for="p_name">Name</label>
-                <b-input id="p_name" v-model="publisher.publisher"></b-input>
+                <label for="p_name">Title</label>
+                <b-input id="p_name" v-model="publisher.title"></b-input>
                 <p class="error-message" v-if="
                   submitStatus === 'error' &&
                   !$v.publisher.p_name.required
                 ">
-                  Name is required.
+                  Title is required.
                 </p>
               </div>
               <div class="mb-2" :class="{
                 'input-group--error': $v.publisher.p_name.$error,
               }">
-                <label for="p_location">Location</label>
-                <b-form-input id="p_location" v-model="publisher.p_location"></b-form-input>
+                <label for="p_location">Number of Copies</label>
+                <b-form-input id="p_location" v-model="publisher.copy"></b-form-input>
                 <p class="error-message" v-if="
-                  submitStatus === 'error' && !$v.publisher.p_location.required
+                  submitStatus === 'error' && !$v.publisher.copy.required
                 ">
-                  Location is required.
+                  Number of copies is required.
                 </p>
               </div>
               <div class="w-100 mt-4 d-flex justify-content-end">
@@ -95,7 +95,7 @@
               <b-input id="p_name" v-model="selectedPublisher.title"></b-input>
             </div>
             <div class="mb-2" :class="{
-              'input-group--error': $v.publisher.p_name.$error,
+              'input-group--error': $v.publisher.title.$error,
             }">
               <label for="p_location">Copies</label>
               <b-form-input id="p_location" v-model="selectedPublisher.copy"></b-form-input>

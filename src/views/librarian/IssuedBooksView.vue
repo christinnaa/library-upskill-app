@@ -75,11 +75,12 @@
                 </p>
             </div>
             <div class="col-6">
-                <label for="title">Book Title</label>
-                <b-form-input id="title"></b-form-input>
-                <p class="error-message" v-if="submitStatus === 'error' && !$v.book.title.required">
-                  Title is required.
-                </p>
+                <label for="publisher">Title</label>
+                <b-form-select>
+                  <b-form-select-option value="" disabled>Select</b-form-select-option>
+                  <b-form-select-option v-for="publisher in activePublishers" :key="publisher.publisher_id"
+                      :value="publisher.publisher_id">{{ publisher.p_name }}</b-form-select-option>
+                  </b-form-select>
             </div>
           </b-row>
           <b-row class="mb-3 px-2">

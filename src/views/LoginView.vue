@@ -14,7 +14,7 @@
                 <b-form-input id="password" type="password" placeholder="Enter password" required></b-form-input>
             </b-form-group>
 
-            <router-link :to="{ name: 'books' }" exact>
+            <router-link :to="{ name: 'dashboard' }" exact>
                 <b-button class="w-100 mb-2 text-white" type="submit" variant="primary">Sign In</b-button>
             </router-link>
         </b-form>
