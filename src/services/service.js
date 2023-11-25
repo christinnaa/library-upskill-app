@@ -1,10 +1,11 @@
 import axios from "axios";
 
 const apiClient = axios.create({
-  baseURL: "http://172.16.4.182:1000/api",
+  // baseURL: "http://172.16.4.182:1000/api",
+  baseURL: "http://114.29.238.61:3000/api",
   headers: {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${localStorage.getItem("token")}`,
+    // Authorization: `Bearer ${localStorage.getItem("token")}`,
   },
 });
 
@@ -13,19 +14,17 @@ export default {
     return apiClient.post("/login", credentials);
   },
   getBooks() {
-    return apiClient.get("/book");
+    // console.log(data);
+    return apiClient.get("/books");
   },
   getCategories() {
-    return apiClient.get("/category");
-  },
-  getSubcategories() {
-    return apiClient.get("/subcategory");
+    return apiClient.get("/categories");
   },
   getIssuedBooks() {
     return apiClient.get("/issue");
   },
   getPublishers() {
-    return apiClient.get("/publisher");
+    return apiClient.get("/publishers");
   },
   getUsers() {
     return apiClient.get("/user");
@@ -47,9 +46,6 @@ export default {
   },
   postSubcategory(subcategory) {
     return apiClient.post("/subcategory", subcategory);
-  },
-  postIssuedBook(issuedBook) {
-    return apiClient.post("/issue", issuedBook);
   },
   postUser(user) {
     return apiClient.post("/user", user);

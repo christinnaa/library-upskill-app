@@ -56,5 +56,17 @@ export default {
 </script>
 
 <style>
+@media only screen and (max-width: 992px) {
 
+  .b-icon.bi {
+    height: 26px;
+    margin: 0px;
+  }
+
+  .sidebar__link {
+    display: flex;
+    justify-content: center;
+  }
+
+}
 </style>

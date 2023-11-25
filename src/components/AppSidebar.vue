@@ -29,7 +29,6 @@ export default {
   overflow-x: hidden;
   border-right: solid px #eee;
   z-index: 1000;
-  transition: width 500ms ease;
 
   img {
     width: 100px;
@@ -122,4 +121,15 @@ export default {
 .active &__text {
     color;
 } */
+
+@media only screen and (max-width: 992px) {
+  .sidebar {
+    width: 70px;
+  }
+
+  img {
+    padding: 0px !important;
+  }
+
+}
 </style>

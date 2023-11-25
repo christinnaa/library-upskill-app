@@ -53,23 +53,16 @@
                 'input-group--error': $v.publisher.p_name.$error,
               }">
                 <label for="p_name">Title</label>
-                <b-input id="p_name" v-model="publisher.title"></b-input>
+                <b-form-select>
+                  <b-form-select-option value="" disabled>Select</b-form-select-option>
+                  <b-form-select-option v-for="publisher in activePublishers" :key="publisher.publisher_id"
+                      :value="publisher.publisher_id">{{ publisher.p_name }}</b-form-select-option>
+                  </b-form-select>
                 <p class="error-message" v-if="
                   submitStatus === 'error' &&
                   !$v.publisher.p_name.required
                 ">
                   Title is required.
-                </p>
-              </div>
-              <div class="mb-2" :class="{
-                'input-group--error': $v.publisher.p_name.$error,
-              }">
-                <label for="p_location">Number of Copies</label>
-                <b-form-input id="p_location" v-model="publisher.copy"></b-form-input>
-                <p class="error-message" v-if="
-                  submitStatus === 'error' && !$v.publisher.copy.required
-                ">
-                  Number of copies is required.
                 </p>
               </div>
               <div class="w-100 mt-4 d-flex justify-content-end">
@@ -90,15 +83,11 @@
           <form class="px-2" @submit.prevent="
             editPublisher(selectedPublisher.publisher_id, selectedPublisher)
           ">
-            <div class="mb-3 pt-0">
-              <label for="p_name">Title</label>
-              <b-input id="p_name" v-model="selectedPublisher.title"></b-input>
-            </div>
             <div class="mb-2" :class="{
-              'input-group--error': $v.publisher.title.$error,
+              'input-group--error': $v.publisher.copy.$error,
             }">
-              <label for="p_location">Copies</label>
-              <b-form-input id="p_location" v-model="selectedPublisher.copy"></b-form-input>
+              <label for="copy">Copies</label>
+              <b-form-input id="copy" v-model="selectedPublisher.copy"></b-form-input>
             </div>
 
             <div class="w-100 mt-4 d-flex justify-content-end">
@@ -239,8 +228,7 @@ export default {
     },
     newPublisherObject() {
       return {
-        p_name: "",
-        p_location: "",
+        title: ""
       };
     },
     addPublisher() {
@@ -257,7 +245,7 @@ export default {
       delete publisher.status;
       this.$store
         .dispatch("editPublisher", { id, publisher })
-
+      console.log(id);
     },
     deletePublisher(isbn) {
       this.$store

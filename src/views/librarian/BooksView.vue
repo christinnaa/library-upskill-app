@@ -9,7 +9,7 @@
           <b-button v-b-modal.addBookModal class="primary-btn">Add Book</b-button>
         </div>
         <b-table :items="items" :per-page="perPage" :fields="fields" :current-page="currentPage" label-sort-asc=""
-          label-sort-desc="" label-sort-clear="" responsive :filter="filter" @filtered="onFiltered">
+          label-sort-desc="" label-sort-clear="" responsive>
           <template #cell(actions)="row">
             <b-button size="sm" @click="row.toggleDetails(); getSelectedBook(row.item.book_id)"
               class="mr-2 secondary-btn">
@@ -291,42 +291,42 @@ export default {
         { key: "actions", thStyle: { textTransform: "uppercase" } },
       ],
 
-      items: [
-        {
-          copies: 2,
-          isbn: "978-0-7475-3269-9",
-          title: "Harry Potter and the Philosophers Stone",
-          author: 'J.K. Rowling',
-          p_name: 'Bloomsbury',
-          publication_year: 1997,
-          cat_name: 'Fantasy',
-          pages: 223,
-          status: 'active'
-        },
-        {
-          copies: 4,
-          isbn: "978-1-4169-6829-0",
-          title: "The Summer I Turned Pretty",
-          author: 'Jenny Han',
-          p_name: 'Simon & Schuster',
-          publication_year: 2010,
-          cat_name: 'Romance',
-          pages: 276,
-          status: 'active'
-        },
-        {
-          copies: 1,
-          isbn: "0-7868-5629-7",
-          title: "The Lightning Thief",
-          author: 'Rick Riordan',
-          p_name: 'Simon & Schuster',
-          publication_year: 2010,
-          cat_name: 'Fantasy',
-          pages: 377,
-          status: 'active'
-        },
+      // items: [
+      //   {
+      //     copies: 2,
+      //     isbn: "978-0-7475-3269-9",
+      //     title: "Harry Potter and the Philosophers Stone",
+      //     author: 'J.K. Rowling',
+      //     p_name: 'Bloomsbury',
+      //     publication_year: 1997,
+      //     cat_name: 'Fantasy',
+      //     pages: 223,
+      //     status: 'active'
+      //   },
+      //   {
+      //     copies: 4,
+      //     isbn: "978-1-4169-6829-0",
+      //     title: "The Summer I Turned Pretty",
+      //     author: 'Jenny Han',
+      //     p_name: 'Simon & Schuster',
+      //     publication_year: 2010,
+      //     cat_name: 'Romance',
+      //     pages: 276,
+      //     status: 'active'
+      //   },
+      //   {
+      //     copies: 1,
+      //     isbn: "0-7868-5629-7",
+      //     title: "The Lightning Thief",
+      //     author: 'Rick Riordan',
+      //     p_name: 'Simon & Schuster',
+      //     publication_year: 2010,
+      //     cat_name: 'Fantasy',
+      //     pages: 377,
+      //     status: 'active'
+      //   },
 
-      ],
+      // ],
 
       perPage: 10,
       filter: null,
@@ -437,10 +437,8 @@ export default {
         publisher_id: "",
         publication_year: "",
         copies: "",
-        shelf_id: "",
         pages: "",
         category_id: "",
-        sub_category_id: ""
       };
     },
 
@@ -451,13 +449,13 @@ export default {
     },
   },
   computed: {
-    ...mapState(["books", "shelves", "subcategories"]),
+    ...mapState(["books"]),
     ...mapGetters(["activePublishers", "activeCategories"]),
-    // items() {
-    //   return this.books.books.map((item) => ({
-    //     ...item,
-    //   }));
-    // },
+    items() {
+      return this.books.books.map((item) => ({
+        ...item,
+      }));
+    },
     // subcats() {
     //   return this.;
     // },
