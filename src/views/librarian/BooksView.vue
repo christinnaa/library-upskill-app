@@ -9,7 +9,8 @@
           <b-button v-b-modal.addBookModal class="primary-btn">Add Book</b-button>
         </div>
         <b-table :items="items" :per-page="perPage" :fields="fields" :current-page="currentPage" label-sort-asc=""
-          label-sort-desc="" label-sort-clear="" responsive>
+          label-sort-desc="" label-sort-clear="" fixed responsive :filter="filter" select-mode="single"
+          ref="selectableTable" selectable @row-selected="onRowSelected" @filtered="onFiltered">
           <template #cell(actions)="row">
             <b-button size="sm" @click="row.toggleDetails(); getSelectedBook(row.item.book_id)"
               class="mr-2 secondary-btn">
@@ -53,26 +54,26 @@
                 </div>
 
                 <b-list-group class="mb-3">
-                  <b-list-group-item><b>Available Copies:</b> {{ row.item.copies }} </b-list-group-item>
+                  <!-- <b-list-group-item><b>Available Copies:</b> {{ row.item.copies }} </b-list-group-item> -->
                   <b-list-group-item><b>ISBN:</b> {{ row.item.isbn }}</b-list-group-item>
                   <b-list-group-item><b>Author:</b> {{ row.item.author }}</b-list-group-item>
                   <b-list-group-item><b>Publisher:</b>
-                    {{ row.item.p_name }}</b-list-group-item>
+                    {{ row.item.publisher }}</b-list-group-item>
                   <b-list-group-item><b>Publication Year:</b>
                     {{ row.item.publication_year }}</b-list-group-item>
                   <b-list-group-item><b>Category:</b>
-                    {{ row.item.cat_name }}
+                    {{ row.item.category }}
                   </b-list-group-item>
                   <b-list-group-item><b>No. of Pages:</b>
                     {{ row.item.pages }}</b-list-group-item>
-                  <b-list-group-item><b>Status:</b>
+                  <!-- <b-list-group-item><b>Status:</b>
                     <b-badge pill v-if="row.item.status == 'active'" variant="success" class="ml-2 text-white">
                       Active
                     </b-badge>
                     <b-badge pill v-else variant="warning" class="ml-2 text-white">
                       Inactive
                     </b-badge>
-                  </b-list-group-item>
+                  </b-list-group-item> -->
                 </b-list-group>
               </b-card-body>
             </b-card>
@@ -106,7 +107,7 @@
                   <b-form-select v-model.trim="updateBook.publisher_id">
                     <b-form-select-option value="" disabled>Select</b-form-select-option>
                     <b-form-select-option v-for="publisher in activePublishers" :key="publisher.publisher_id"
-                      :value="publisher.publisher_id">{{ publisher.p_name }}</b-form-select-option>
+                      :value="publisher.publisher_id">{{ publisher.publisher_name }}</b-form-select-option>
                   </b-form-select>
                 </div>
                 <div class="col-4" :class="{ 'input-group--error': $v.book.pages.$error }">
@@ -290,45 +291,7 @@ export default {
         },
         { key: "actions", thStyle: { textTransform: "uppercase" } },
       ],
-
-      // items: [
-      //   {
-      //     copies: 2,
-      //     isbn: "978-0-7475-3269-9",
-      //     title: "Harry Potter and the Philosophers Stone",
-      //     author: 'J.K. Rowling',
-      //     p_name: 'Bloomsbury',
-      //     publication_year: 1997,
-      //     cat_name: 'Fantasy',
-      //     pages: 223,
-      //     status: 'active'
-      //   },
-      //   {
-      //     copies: 4,
-      //     isbn: "978-1-4169-6829-0",
-      //     title: "The Summer I Turned Pretty",
-      //     author: 'Jenny Han',
-      //     p_name: 'Simon & Schuster',
-      //     publication_year: 2010,
-      //     cat_name: 'Romance',
-      //     pages: 276,
-      //     status: 'active'
-      //   },
-      //   {
-      //     copies: 1,
-      //     isbn: "0-7868-5629-7",
-      //     title: "The Lightning Thief",
-      //     author: 'Rick Riordan',
-      //     p_name: 'Simon & Schuster',
-      //     publication_year: 2010,
-      //     cat_name: 'Fantasy',
-      //     pages: 377,
-      //     status: 'active'
-      //   },
-
-      // ],
-
-      perPage: 10,
+      perPage: 5,
       filter: null,
       currentPage: 1,
       totalRows: 1,
@@ -370,6 +333,16 @@ export default {
     this.$store.dispatch("fetchBooks");
     this.$store.dispatch("fetchPublishers");
     this.$store.dispatch("fetchCategories");
+
+    // fetch('http://114.29.238.61:3000/api/books')
+    //   .then(response => response.json())
+    //   .then(data => {
+    //     // Log the data to the console
+    //     console.log(data);
+    //   })
+    //   .catch(error => {
+    //     console.error('Error fetching data from API:', error);
+    // });
   },
   mounted() {
     // Set the initial number of items
@@ -441,8 +414,7 @@ export default {
         category_id: "",
       };
     },
-
-
+    
     setBookPublisher(value) {
       this.book.publisher = value;
       this.$v.book.publisher.$touch();

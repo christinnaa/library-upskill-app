@@ -8,8 +8,7 @@
         <div class="d-flex justify-content-between mt-2 mb-4">
           <h4>Publishers</h4>
           <div>
-            <b-button class="mr-2 warning-btn" v-if="selectedRow[0] && selectedPublisher.status == 'active'"
-              v-b-modal.removePublisherModal>
+            <b-button class="mr-2 warning-btn" v-if="selectedRow[0]" v-b-modal.removePublisherModal>
               <b-icon icon="slash-circle" scale=".85"></b-icon>
               Mark as Inactive</b-button>
             <b-button class="mr-2 success-btn" @click="
@@ -92,13 +91,13 @@
           ">
             <div class="mb-3 pt-0">
               <label for="p_name">Name</label>
-              <b-input id="p_name" v-model="selectedPublisher.publisher"></b-input>
+              <b-input id="p_name" v-model="selectedPublisher.publisher_name"></b-input>
             </div>
             <div class="mb-2" :class="{
               'input-group--error': $v.publisher.p_name.$error,
             }">
               <label for="p_location">Location</label>
-              <b-form-input id="p_location" v-model="selectedPublisher.p_location"></b-form-input>
+              <b-form-input id="p_location" v-model="selectedPublisher.publisher_location"></b-form-input>
             </div>
 
             <div class="w-100 mt-4 d-flex justify-content-end">
@@ -163,33 +162,33 @@ export default {
       sortBy: 'publisher',
       fields: [
         {
-          key: "publisher",
+          key: "publisher_name",
           label: "Publisher Name",
           thStyle: { textTransform: "uppercase" },
           sortable: true,
         },
         {
-          key: "location",
+          key: "publisher_location",
           thStyle: { textTransform: "uppercase" },
           sortable: true,
         },
       ],
-      items: [
-        {
-          publisher: "Miramax Books",
-          p_location: "New York",
-        },
-        {
-          publisher: "Bloomsbury",
-          p_location: "London",
-        },
-        {
-          publisher: "Simon & Schuster",
-          p_location: "New York",
-        },
+      // items: [
+      //   {
+      //     publisher: "Miramax Books",
+      //     p_location: "New York",
+      //   },
+      //   {
+      //     publisher: "Bloomsbury",
+      //     p_location: "London",
+      //   },
+      //   {
+      //     publisher: "Simon & Schuster",
+      //     p_location: "New York",
+      //   },
 
-      ],
-      perPage: 12,
+      // ],
+      perPage: 5,
       currentPage: 1,
       totalRows: 1,
       filter: null,
@@ -205,9 +204,9 @@ export default {
   },
   computed: {
     ...mapState(["publishers"]),
-    // items() {
-    //   return this.publishers.publishers.map((item) => ({ ...item }));
-    // },
+    items() {
+      return this.publishers.publishers.map((item) => ({ ...item }));
+    },
     sortOptions() {
       return this.fields
         .filter((f) => f.sortable)

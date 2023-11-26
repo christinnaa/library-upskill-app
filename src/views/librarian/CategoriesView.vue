@@ -132,27 +132,13 @@ export default {
       sortBy: 'cat_name',
       fields: [
         {
-          key: "cat_name",
+          key: "category_name",
           label: "category",
           thStyle: { textTransform: "uppercase" },
           sortable: true,
         },
       ],
-      items: [
-        {
-          cat_name: "Fiction"
-        },
-        {
-          cat_name: "Science Fiction"
-        },
-        {
-          cat_name: "Drama"
-        },
-        {
-          cat_name: "Romance"
-        },
-      ],
-      perPage: 12,
+      perPage: 5,
       currentPage: 1,
       totalRows: 1,
       filter: null,
@@ -165,13 +151,12 @@ export default {
   },
   created() {
     this.$store.dispatch("fetchCategories");
-    this.$store.dispatch("fetchShelves");
   },
   computed: {
-    ...mapState(["categories", "shelves"]),
-    // items() {
-    //   return this.categories.categories;
-    // },
+    ...mapState(["categories"]),
+    items() {
+      return this.categories.categories;
+    },
     sortOptions() {
       return this.fields
         .filter((f) => f.sortable)

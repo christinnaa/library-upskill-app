@@ -74,8 +74,7 @@
                     <h3>Trending Books</h3>
                 </div>
 
-                <b-table :items="items" :per-page="perPage" :fields="fields" :current-page="currentPage" label-sort-asc=""
-                    label-sort-desc="" label-sort-clear="" responsive :filter="filter" @filtered="onFiltered">
+                <b-table :items="items" :fields="fields" label-sort-asc="" label-sort-desc="" label-sort-clear="" responsive>
                 </b-table>
             </div>
         </main>

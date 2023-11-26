@@ -269,16 +269,34 @@
     },
     data() {
       return {
-      sortBy: 'first_name',
+      sortBy: 'name',
         fields: [
           {
-            key: "first_name",
-            label: "Name",
+            key: "name",
+            label: "Reader Name",
+            thStyle: { textTransform: "uppercase" },
+            sortable: true,
+          },
+          {
+            key: "username",
+            label: "Username",
+            thStyle: { textTransform: "uppercase" },
+            sortable: true,
+          },
+          {
+            key: "password",
+            label: "Password",
+            thStyle: { textTransform: "uppercase" },
+            sortable: true,
+          },
+          {
+            key: "role",
+            label: "Role",
             thStyle: { textTransform: "uppercase" },
             sortable: true,
           },
         ],
-        perPage: 12,
+        perPage: 5,
         currentPage: 1,
         totalRows: 1,
         filter: null,

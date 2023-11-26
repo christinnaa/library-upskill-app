@@ -28,16 +28,14 @@
 
         <b-table :items="items" :per-page="perPage" :fields="fields" :current-page="currentPage" :sort-by.sync="sortBy" sort-desc.sync="false" fixed responsive :filter="filter" select-mode="single"
           ref="selectableTable" selectable @row-selected="onRowSelected" @filtered="onFiltered">
-          <template #cell(location)="row">
-            <div v-if="row.item.status == 'inactive'" class="inactive">
-              <span>{{ row.item.p_location }}</span>
-              <b-badge pill variant="light" class="ml-2">{{
-                row.item.status
-              }}</b-badge>
-            </div>
-            <template v-else>
-              {{ row.item.p_location }}
-            </template>
+          <template #cell(status)="row">
+            <b-badge v-if="row.item.status == 'Overdue'" class="bg-danger py-2 px-3">{{ row.item.status }}</b-badge>
+            <b-badge v-else-if="row.item.status == 'Active'" class="bg-primary py-2 px-3">{{
+              row.item.status
+            }}</b-badge>
+            <b-badge v-else-if="row.item.status == 'Borrowed'" class="bg-success py-2 px-3">{{
+              row.item.status
+            }}</b-badge>
           </template>
         </b-table>
 
@@ -149,32 +147,46 @@ export default {
   },
   data() {
     return {
-      sortBy: 'title',
+      sortBy: 'copy_id',
       fields: [
+        {
+          key: "copy_id",
+          label: "Copy ID",
+          thStyle: { textTransform: "uppercase", width: '250px' },
+          sortable: true,
+        },
         {
           key: "title",
           label: "Book Title",
           thStyle: { textTransform: "uppercase" },
           sortable: true,
         },
+        // {
+        //   key: "copy",
+        //   label: "Copies",
+        //   thStyle: { textTransform: "uppercase" },
+        // },
         {
-          key: "copy",
-          label: "Copies",
+          key: "status",
+          label: "Status",
           thStyle: { textTransform: "uppercase" },
         },
       ],
       items: [
         {
+          copy_id: 1,
           title: "Harry Potter and the Philosophers Stone",
-          copy: 2,
+          status: 'Active'
         },
         {
+          copy_id: 2,
           title: "The Summer I Turned Pretty",
-          copy: 4,
+          status: 'Overdue'
         },
         {
+          copy_id: 3,
           title: "The Lightning Thief",
-          copy: 1,
+          status: 'Borrowed'
         },
 
       ],

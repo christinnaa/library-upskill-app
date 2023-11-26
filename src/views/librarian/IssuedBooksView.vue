@@ -84,11 +84,19 @@
             </div>
           </b-row>
           <b-row class="mb-3 px-2">
-            <div class="col-6">
+            <div class="col-4">
+              <label for="publisher">Available Copy</label>
+                <b-form-select>
+                <b-form-select-option value="" disabled>Select</b-form-select-option>
+                <b-form-select-option v-for="publisher in activePublishers" :key="publisher.publisher_id"
+                  :value="publisher.publisher_id">{{ publisher.publisher_name }}</b-form-select-option>
+                </b-form-select>
+            </div>
+            <div class="col-4">
               <label for="date_of_birth">Borrow Date</label>
               <b-form-input type="date" id="date_of_birth"></b-form-input>
             </div>
-            <div class="col-6">
+            <div class="col-4">
               <label for="date_of_birth">Date Returned</label>
               <b-form-input type="date" id="date_of_birth" readonly></b-form-input>
             </div>

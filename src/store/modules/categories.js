@@ -43,7 +43,7 @@ export default {
       service
         .getCategories()
         .then(({data}) => {
-          commit("SET_CATEGORIES", data.category);
+          commit("SET_CATEGORIES", data);
         })
         .catch((error) => console.log(error));
     },

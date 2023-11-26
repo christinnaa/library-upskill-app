@@ -43,7 +43,7 @@ export default {
       service
         .getPublishers()
         .then(({data}) => {
-          commit("SET_PUBLISHERS", data.publisher);
+          commit("SET_PUBLISHERS", data);
         })
         .catch((error) => console.log(error));
     },

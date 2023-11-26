@@ -36,7 +36,7 @@ export default {
       service
         .getUsers()
         .then(({data}) => {
-          commit("SET_USERS", data.user);
+          commit("SET_USERS", data);
         })
         .catch((error) => console.log(error));
     },

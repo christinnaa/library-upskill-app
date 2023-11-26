@@ -14,7 +14,6 @@ export default {
     return apiClient.post("/login", credentials);
   },
   getBooks() {
-    // console.log(data);
     return apiClient.get("/books");
   },
   getCategories() {
@@ -27,11 +26,11 @@ export default {
     return apiClient.get("/publishers");
   },
   getUsers() {
-    return apiClient.get("/user");
+    return apiClient.get("/users");
   },
-  getShelves() {
-    return apiClient.get("/shelf");
-  },
+  // getShelves() {
+  //   return apiClient.get("/shelf");
+  // },
   getRequests() {
     return apiClient.get("/request");
   },
@@ -44,9 +43,9 @@ export default {
   postCategory(category) {
     return apiClient.post("/category", category);
   },
-  postSubcategory(subcategory) {
-    return apiClient.post("/subcategory", subcategory);
-  },
+  // postSubcategory(subcategory) {
+  //   return apiClient.post("/subcategory", subcategory);
+  // },
   postUser(user) {
     return apiClient.post("/user", user);
   },
@@ -65,18 +64,18 @@ export default {
   removeCategory(category_id) {
     return apiClient.patch(`/category/inactive/${category_id}`);
   },
-  removeSubcategory(subcategory_id) {
-    return apiClient.patch(`/subcategory/inactive/${subcategory_id}`);
-  },
+  // removeSubcategory(subcategory_id) {
+  //   return apiClient.patch(`/subcategory/inactive/${subcategory_id}`);
+  // },
   removeUser(user_id) {
     return apiClient.patch(`/user/inactive/${user_id}`);
   },
   removeRequest(request_id) {
     return apiClient.patch(`/request/inactive/${request_id}`);
   },
-  removeShelf(shelf_id) {
-    return apiClient.patch(`/shelf/inactive/${shelf_id}`);
-  },
+  // removeShelf(shelf_id) {
+  //   return apiClient.patch(`/shelf/inactive/${shelf_id}`);
+  // },
   updateBook(book_id, book) {
     return apiClient.put(`/book/${book_id}`, book);
   },

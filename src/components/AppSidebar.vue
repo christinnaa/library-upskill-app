@@ -2,7 +2,7 @@
   <nav class="sidebar">
     <ul>
       <li class="sidebar__item sidebar__logo">
-        <div class="sidebar__link">
+        <div class="sidebar__link mt-2">
           <img src="../assets/library-logo.png" alt="">
           <!-- <b-icon icon="book-half" font-scale="2"></b-icon> -->
           <div class="sidebar__text">Lou Geh Library</div>
@@ -51,10 +51,6 @@ export default {
   &__item svg,
   &__item &__text {
     color: #697a8d;
-  }
-
-  &__item:first-child {
-    border-bottom: solid 1px #eee;
   }
 
   &__item:first-child svg {

@@ -1,7 +1,7 @@
 <template>
   <div>
     <AppSidebar>
-      <span class="sidebar__item">
+      <span class="sidebar__item mt-2">
         <router-link class="sidebar__link" :to="{ name: 'dashboard' }" exact>
           <b-icon icon="grid1x2" font-scale="2"></b-icon>
           <div class="sidebar__text">Dashboard</div>
