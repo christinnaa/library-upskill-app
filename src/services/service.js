@@ -25,14 +25,11 @@ export default {
   getPublishers() {
     return apiClient.get("/publishers");
   },
+  getCopies() {
+    return apiClient.get("/copies");
+  },
   getUsers() {
     return apiClient.get("/users");
-  },
-  // getShelves() {
-  //   return apiClient.get("/shelf");
-  // },
-  getRequests() {
-    return apiClient.get("/request");
   },
   postBook(book) {
     return apiClient.post("/book", book);

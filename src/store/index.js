@@ -5,6 +5,7 @@ import books from "./modules/books";
 import categories from "./modules/categories";
 import issuedBooks from "./modules/issuedBooks";
 import publishers from "./modules/publishers";
+import copies from "./modules/copies";
 import requests from "./modules/requests";
 import users from "./modules/users";
 import shelves from "./modules/shelves";
@@ -23,5 +24,6 @@ export default new Vuex.Store({
     users,
     shelves,
     subcategories,
+    copies
   },
 });

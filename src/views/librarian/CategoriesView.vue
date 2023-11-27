@@ -44,10 +44,10 @@
                 'input-group--error': $v.category.cat_name.$error,
               }">
                 <label for="category">Category Name</label>
-                <b-form-input id="category" v-model="category.cat_name"></b-form-input>
+                <b-form-input id="category" v-model="category.category_name"></b-form-input>
                 <p class="error-message" v-if="
                   submitStatus === 'error' &&
-                  !$v.category.cat_name.required
+                  !$v.category.category_name.required
                 ">
                   Category name is required.
                 </p>
@@ -72,7 +72,7 @@
             <b-row class="mb-4">
               <div class="col-12 pt-0">
               <label for="category">Category</label>
-              <b-form-input id="category" v-model="selectedCategory.cat_name"></b-form-input>
+              <b-form-input id="category" v-model="selectedCategory.category_name"></b-form-input>
             </div>
             </b-row>
 

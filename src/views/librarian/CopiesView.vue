@@ -8,18 +8,6 @@
         <div class="d-flex justify-content-between mt-2 mb-4">
           <h4>Book Copies</h4>
           <div>
-            <b-button class="mr-2 warning-btn" v-if="selectedRow[0] && selectedPublisher.status == 'active'"
-              v-b-modal.removePublisherModal>
-              <b-icon icon="slash-circle" scale=".85"></b-icon>
-              Mark as Inactive</b-button>
-            <b-button class="mr-2 success-btn" @click="
-              editPublisher(selectedPublisher.publisher_id, selectedPublisher)
-            " v-if="selectedRow[0] && selectedPublisher.status == 'inactive'">
-              <b-icon icon="check2-circle" scale=".85"></b-icon>
-              Mark as Active</b-button>
-            <b-button v-if="selectedRow[0]" class="mr-2 info-btn" v-b-modal.updatePublisherModal>
-              Update
-            </b-button>
 
             <b-button class="primary-btn" v-b-modal.addPublisherModal>
               Add Copy</b-button>
@@ -27,13 +15,13 @@
         </div>
 
         <b-table :items="items" :per-page="perPage" :fields="fields" :current-page="currentPage" :sort-by.sync="sortBy" sort-desc.sync="false" fixed responsive :filter="filter" select-mode="single"
-          ref="selectableTable" selectable @row-selected="onRowSelected" @filtered="onFiltered">
+          ref="selectableTable" selectable>
           <template #cell(status)="row">
-            <b-badge v-if="row.item.status == 'Overdue'" class="bg-danger py-2 px-3">{{ row.item.status }}</b-badge>
-            <b-badge v-else-if="row.item.status == 'Active'" class="bg-primary py-2 px-3">{{
+            <b-badge v-if="row.item.status == 'Overdue'" class="badge bg-danger py-2 px-3">{{ row.item.status }}</b-badge>
+            <b-badge v-else-if="row.item.status == 'Active'" class="badge bg-primary py-2 px-3">{{
               row.item.status
             }}</b-badge>
-            <b-badge v-else-if="row.item.status == 'Borrowed'" class="bg-success py-2 px-3">{{
+            <b-badge v-else-if="row.item.status == 'Borrowed'" class="badge bg-success py-2 px-3">{{
               row.item.status
             }}</b-badge>
           </template>
@@ -42,108 +30,21 @@
         <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" aria-controls="my-table"
           class="mt-3 mb-0 justify-content-center"></b-pagination>
 
-        <AppModal modalId="addPublisherModal" :key="modalKey" hideFooter>
-          <template #modal-header> Add Publisher </template>
-
-          <template #modal-body>
-            <form class="px-2" @submit.prevent="addPublisher">
-              <div class="mb-3 pt-0" :class="{
-                'input-group--error': $v.publisher.p_name.$error,
-              }">
-                <label for="p_name">Title</label>
-                <b-form-select>
-                  <b-form-select-option value="" disabled>Select</b-form-select-option>
-                  <b-form-select-option v-for="publisher in activePublishers" :key="publisher.publisher_id"
-                      :value="publisher.publisher_id">{{ publisher.p_name }}</b-form-select-option>
-                  </b-form-select>
-                <p class="error-message" v-if="
-                  submitStatus === 'error' &&
-                  !$v.publisher.p_name.required
-                ">
-                  Title is required.
-                </p>
-              </div>
-              <div class="w-100 mt-4 d-flex justify-content-end">
-                <b-button class="mr-2 secondary-btn" @click="rerenderModal">
-                  Cancel
-                </b-button>
-                <b-button type="submit" class="primary-btn"> Add </b-button>
-              </div>
-            </form>
-          </template>
-        </AppModal>
       </div>
-
-      <AppModal modalId="updatePublisherModal" hideFooter :key="modalKey">
-        <template #modal-header> Update Publisher </template>
-
-        <template #modal-body>
-          <form class="px-2" @submit.prevent="
-            editPublisher(selectedPublisher.publisher_id, selectedPublisher)
-          ">
-            <div class="mb-2" :class="{
-              'input-group--error': $v.publisher.copy.$error,
-            }">
-              <label for="copy">Copies</label>
-              <b-form-input id="copy" v-model="selectedPublisher.copy"></b-form-input>
-            </div>
-
-            <div class="w-100 mt-4 d-flex justify-content-end">
-              <b-button class="mr-2 secondary-btn" @click="rerenderModal()">
-                Cancel
-              </b-button>
-              <b-button type="submit" class="primary-btn"> Update </b-button>
-            </div>
-          </form>
-        </template>
-      </AppModal>
     </main>
-
-    <AppModal modalId="removePublisherModal" modalSize="md" hideFooter :key="modalKey">
-      <template #modal-header> Mark Selected Publisher as Inactive </template>
-      <template #modal-body>
-        <div class="pb-2">
-          Are you sure you want to mark
-          <b>{{ selectedPublisher.p_name }}</b> as inactive?
-        </div>
-
-        <div class="w-100 mt-4 d-flex justify-content-end">
-          <b-button class="mr-2 secondary-btn text-muted" @click="rerenderModal()">
-            Cancel
-          </b-button>
-          <b-button variant="warning" class="warning-btn text-warning"
-            @click="deletePublisher(selectedPublisher.publisher_id)">
-            Yes
-          </b-button>
-        </div>
-      </template>
-    </AppModal>
   </div>
 </template>
 
 <script>
-import AppModal from "@/components/AppModal.vue";
-import { required } from "vuelidate/lib/validators";
 import { mapState } from "vuex";
 import AppSearchbar from '@/components/AppSearchbar.vue';
 
 export default {
-  name: "PublishersView",
+  name: "CopiesView",
   props: [],
   components: {
     // AppTable,
-    AppModal,
     AppSearchbar,
-  },
-  validations: {
-    publisher: {
-      p_name: {
-        required,
-      },
-      p_location: {
-        required,
-      },
-    },
   },
   data() {
     return {
@@ -152,7 +53,7 @@ export default {
         {
           key: "copy_id",
           label: "Copy ID",
-          thStyle: { textTransform: "uppercase", width: '250px' },
+          thStyle: { textTransform: "uppercase", width: '20%'},
           sortable: true,
         },
         {
@@ -161,40 +62,17 @@ export default {
           thStyle: { textTransform: "uppercase" },
           sortable: true,
         },
-        // {
-        //   key: "copy",
-        //   label: "Copies",
-        //   thStyle: { textTransform: "uppercase" },
-        // },
         {
           key: "status",
           label: "Status",
-          thStyle: { textTransform: "uppercase" },
+          thStyle: { textTransform: "uppercase", width: '30%' },
         },
       ],
-      items: [
-        {
-          copy_id: 1,
-          title: "Harry Potter and the Philosophers Stone",
-          status: 'Active'
-        },
-        {
-          copy_id: 2,
-          title: "The Summer I Turned Pretty",
-          status: 'Overdue'
-        },
-        {
-          copy_id: 3,
-          title: "The Lightning Thief",
-          status: 'Borrowed'
-        },
-
-      ],
-      perPage: 12,
+      perPage: 8,
       currentPage: 1,
       totalRows: 1,
       filter: null,
-      publisher: this.newPublisherObject(),
+      copy: this.newCopyObject(),
       modalKey: 0,
       selectedRow: [],
       selectedPublisher: {},
@@ -202,13 +80,23 @@ export default {
     };
   },
   created() {
-    this.$store.dispatch("fetchPublishers");
+    this.$store.dispatch("fetchCopies");
+    
+    fetch('http://114.29.238.61:3000/api/copies')
+      .then(response => response.json())
+      .then(data => {
+        // Log the data to the console
+        console.log(data);
+      })
+      .catch(error => {
+        console.error('Error fetching data from API:', error);
+    });
   },
   computed: {
-    ...mapState(["publishers"]),
-    // items() {
-    //   return this.publishers.publishers.map((item) => ({ ...item }));
-    // },
+    ...mapState(["copies"]),
+    items() {
+      return this.copies.copies.map((item) => ({ ...item }));
+    },
     sortOptions() {
       return this.fields
         .filter((f) => f.sortable)
@@ -238,31 +126,10 @@ export default {
     getSearchData(data){
       this.filter = data;
     },
-    newPublisherObject() {
+    newCopyObject() {
       return {
         title: ""
       };
-    },
-    addPublisher() {
-      this.$v.$touch();
-
-      if (this.$v.$invalid) {
-        this.submitStatus = "error";
-      } else {
-        this.$store
-          .dispatch("addPublisher", this.publisher)
-      }
-    },
-    editPublisher(id, publisher) {
-      delete publisher.status;
-      this.$store
-        .dispatch("editPublisher", { id, publisher })
-      console.log(id);
-    },
-    deletePublisher(isbn) {
-      this.$store
-        .dispatch("removePublisher", isbn)
-
     },
     logout() {
       this.$store.dispatch("logout")
@@ -272,5 +139,13 @@ export default {
 </script>
 
 <style lang="scss">
+.badge {
+  width: 100px !important;
+  font-size: 12px;
+}
 
+@media only screen and (max-width: 992px) {
+
+
+}
 </style>
