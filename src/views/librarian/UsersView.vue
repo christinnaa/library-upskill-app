@@ -6,21 +6,17 @@
         <div class="table__container p-4 pt-3 rounded">
           <div class="d-flex justify-content-between mt-2 mb-4">
             <h4>Users</h4>
-            <div>
-              <b-button class="mr-2 warning-btn" v-if="selectedRow[0] && selectedUser.status == 'active'"
-                v-b-modal.removeUserModal>
-                <b-icon icon="slash-circle" scale=".85"></b-icon>
-                Mark as Inactive</b-button>
-  
-              <b-button class="mr-2 success-btn" @click="
-                editUser(selectedUser.user_id, selectedUser)
-              " v-if="selectedRow[0] && selectedUser.status == 'inactive'">
-                <b-icon icon="check2-circle" scale=".85"></b-icon>
-                Mark as Active</b-button>
-              <b-button class="mr-2 info-btn" v-if="selectedRow[0]" v-b-modal.updateUserModal>
-                Update</b-button>
-  
-              <b-button v-b-modal.addUserModal class="primary-btn">Add User</b-button>
+            <div class="d-flex">
+              <div v-if="selectedRow[0]">
+                <b-button class="mr-2 warning-btn" v-b-modal.removeUserModal>
+                  <b-icon icon="trash" scale=".95" class="mx-1"></b-icon>
+                </b-button>
+                <b-button class="mr-2 secondary-btn" v-b-modal.updateUserModal>
+                  <b-icon icon="pencil-square" scale=".95" class="mx-1"></b-icon>
+                </b-button>
+              </div>
+
+              <b-button v-else class="primary-btn" v-b-modal.addUserModal>Add User</b-button>
             </div>
           </div>
   
@@ -86,19 +82,23 @@
                     </p>
                   </div>
                   <div class="col-6" :class="{
-                    'input-group--error': $v.user.city.$error,
+                    'input-group--error': $v.user.role.$error,
                   }">
-                    <label for="city">City</label>
-                    <b-form-input id="city" v-model="user.city"></b-form-input>
+                    <label for="role">Role</label>
+                    <b-form-select id="role" v-model="user.role">
+                      <b-form-select-option value="" disabled>Select</b-form-select-option>
+                      <b-form-select-option value="admin">Admin</b-form-select-option>
+                      <b-form-select-option value="reader">Reader</b-form-select-option>
+                    </b-form-select>
                     <p class="error-message" v-if="
                       submitStatus === 'error' &&
-                      !$v.user.city.required
+                      !$v.user.role.required
                     ">
-                      City is required.
+                      Role is required.
                     </p>
                   </div>
                 </b-row>
-                <b-row class="mb-3 px-2">
+                <b-row class="mb-4 px-2">
                   <div class="col-6" :class="{
                     'input-group--error': $v.user.username.$error,
                   }">
@@ -121,24 +121,6 @@
                       !$v.user.password.required
                     ">
                       Password is required.
-                    </p>
-                  </div>
-                </b-row>
-                <b-row class="px-2">
-                  <div class="col-12" :class="{
-                    'input-group--error': $v.user.role.$error,
-                  }">
-                    <label for="role">Role</label>
-                    <b-form-select id="role" v-model="user.role">
-                      <b-form-select-option value="" disabled>Select</b-form-select-option>
-                      <b-form-select-option value="admin">Admin</b-form-select-option>
-                      <b-form-select-option value="reader">Reader</b-form-select-option>
-                    </b-form-select>
-                    <p class="error-message" v-if="
-                      submitStatus === 'error' &&
-                      !$v.user.role.required
-                    ">
-                      Role is required.
                     </p>
                   </div>
                 </b-row>
@@ -173,8 +155,12 @@
                   <b-form-input type="date" v-model.trim="selectedUser.date_of_birth" id="date_of_birth"></b-form-input>
                 </div>
                 <div class="col-6">
-                  <label for="city">City</label>
-                  <b-form-input v-model.trim="selectedUser.city" id="city"></b-form-input>
+                  <label for="role">Role</label>
+                  <b-form-select v-model.trim="selectedUser.role">
+                    <b-form-select-option value="" disabled>Select</b-form-select-option>
+                    <b-form-select-option value="admin">Admin</b-form-select-option>
+                    <b-form-select-option value="reader">Reader</b-form-select-option>
+                  </b-form-select>
                 </div>
               </b-row>
               <b-row class="mb-3 px-2">
@@ -185,16 +171,6 @@
                 <div class="col-6">
                   <label for="password">Password</label>
                   <b-form-input v-model.trim="selectedUser.password" id="password"></b-form-input>
-                </div>
-              </b-row>
-              <b-row class="mb-2 px-2">
-                <div class="col-12">
-                  <label for="role">Role</label>
-                  <b-form-select v-model.trim="selectedUser.role">
-                    <b-form-select-option value="" disabled>Select</b-form-select-option>
-                    <b-form-select-option value="admin">Admin</b-form-select-option>
-                    <b-form-select-option value="reader">Reader</b-form-select-option>
-                  </b-form-select>
                 </div>
               </b-row>
 
@@ -272,14 +248,14 @@
       sortBy: 'name',
         fields: [
           {
-            key: "name",
-            label: "Reader Name",
+            key: "first_name",
+            label: "First Name",
             thStyle: { textTransform: "uppercase" },
             sortable: true,
           },
           {
-            key: "username",
-            label: "Username",
+            key: "last_name",
+            label: "Last Name",
             thStyle: { textTransform: "uppercase" },
             sortable: true,
           },

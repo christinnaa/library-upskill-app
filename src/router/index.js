@@ -54,9 +54,9 @@ const routes = [
         component: () => import("../views/librarian/CopiesView.vue"),
       },
       {
-        path: "/issued-books",
-        name: "issued-books",
-        component: () => import("../views/librarian/IssuedBooksView.vue"),
+        path: "/borrow-records",
+        name: "borrow-records",
+        component: () => import("../views/librarian/BorrowRecordsView.vue"),
       },
       {
         path: "/publishers",

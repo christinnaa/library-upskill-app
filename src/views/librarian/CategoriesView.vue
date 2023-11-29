@@ -7,20 +7,16 @@
         <div class="d-flex justify-content-between mt-2 mb-4">
           <h4>Categories</h4>
           <div>
-            <b-button class="mr-2 warning-btn" v-if="selectedRow[0] && selectedCategory.status == 'active'"
-              v-b-modal.removeCategoryModal>
-              <b-icon icon="slash-circle" scale=".85"></b-icon>
-              Mark as Inactive</b-button>
+            <div class="d-flex" v-if="selectedRow[0]">
+              <b-button class="mr-2 warning-btn" v-b-modal.removeCategoryModal>
+                <b-icon icon="trash" scale=".85"></b-icon>
+              </b-button>
+              <b-button class="mr-2 secondary-btn" v-b-modal.updateCategoryModal>
+                <b-icon icon="pencil-square" scale=".85"></b-icon>
+              </b-button>
+            </div>
 
-            <b-button class="mr-2 success-btn" @click="
-              editCategory(selectedCategory.category_id, selectedCategory)
-            " v-if="selectedRow[0] && selectedCategory.status == 'inactive'">
-              <b-icon icon="check2-circle" scale=".85"></b-icon>
-              Mark as Active</b-button>
-            <b-button class="mr-2 info-btn" v-if="selectedRow[0]" v-b-modal.updateCategoryModal>
-              Update</b-button>
-
-            <b-button v-b-modal.addCategoryModal class="primary-btn">Add Category</b-button>
+            <b-button v-else class="primary-btn" v-b-modal.addCategoryModal>Add Category</b-button>
           </div>
         </div>
 
@@ -33,7 +29,7 @@
           </template>
         </b-table>
 
-        <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" aria-controls="my-table"
+        <b-pagination v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="my-table"
           class="mt-3 mb-0 justify-content-center"></b-pagination>
 
         <AppModal modalId="addCategoryModal" :key="modalKey" hideFooter>
@@ -157,6 +153,9 @@ export default {
     items() {
       return this.categories.categories;
     },
+    rows() {
+      return this.items.length;
+    },
     sortOptions() {
       return this.fields
         .filter((f) => f.sortable)
@@ -165,14 +164,15 @@ export default {
         });
     },
   },
-  mounted() {
-    this.totalRows = this.items.length;
-  },
+  // mounted() {
+  //   this.totalRows = this.items.length;
+  // },
   methods: {
     onRowSelected(items) {
       this.selectedRow = items;
       for (let category of this.selectedRow) {
         this.selectedCategory = category;
+        // console.log(category)
       }
     },
     onFiltered(filteredItems) {

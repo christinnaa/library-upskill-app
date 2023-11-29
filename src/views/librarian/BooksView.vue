@@ -10,7 +10,7 @@
         </div>
         <b-table :items="items" :per-page="perPage" :fields="fields" :current-page="currentPage" label-sort-asc=""
           label-sort-desc="" label-sort-clear="" fixed responsive :filter="filter" select-mode="single"
-          ref="selectableTable" selectable @row-selected="onRowSelected" @filtered="onFiltered">
+          ref="selectableTable" selectable >
           <template #cell(actions)="row">
             <b-button size="sm" @click="row.toggleDetails(); getSelectedBook(row.item.book_id)"
               class="mr-2 secondary-btn">
@@ -54,7 +54,13 @@
                 </div>
 
                 <b-list-group class="mb-3">
-                  <!-- <b-list-group-item><b>Available Copies:</b> {{ row.item.copies }} </b-list-group-item> -->
+                  <b-list-group-item v-if="row.item.available_copies > 0"><b>Available Copies:</b> {{ row.item.available_copies }}</b-list-group-item>
+                  <b-list-group-item v-else>
+                    <b>Available Copies:</b> 
+                    <b-badge class="danger ml-2 py-2">
+                      Not Available
+                    </b-badge>
+                  </b-list-group-item>
                   <b-list-group-item><b>ISBN:</b> {{ row.item.isbn }}</b-list-group-item>
                   <b-list-group-item><b>Author:</b> {{ row.item.author }}</b-list-group-item>
                   <b-list-group-item><b>Publisher:</b>
@@ -66,21 +72,13 @@
                   </b-list-group-item>
                   <b-list-group-item><b>No. of Pages:</b>
                     {{ row.item.pages }}</b-list-group-item>
-                  <!-- <b-list-group-item><b>Status:</b>
-                    <b-badge pill v-if="row.item.status == 'active'" variant="success" class="ml-2 text-white">
-                      Active
-                    </b-badge>
-                    <b-badge pill v-else variant="warning" class="ml-2 text-white">
-                      Inactive
-                    </b-badge>
-                  </b-list-group-item> -->
                 </b-list-group>
               </b-card-body>
             </b-card>
           </template>
         </b-table>
 
-        <b-pagination v-model.trim="currentPage" :total-rows="totalRows" :per-page="perPage" aria-controls="my-table"
+        <b-pagination v-model.trim="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="my-table"
           class="mt-3 mb-0 justify-content-center"></b-pagination>
 
         <AppModal modalId="updateBookModal" modalSize="lg" hideFooter :key="modalKey">
@@ -105,14 +103,15 @@
                 <div class="col-4">
                   <label for="publisher">Publisher</label>
                   <b-form-select v-model.trim="updateBook.publisher_id">
-                    <b-form-select-option value="" disabled>Select</b-form-select-option>
-                    <b-form-select-option v-for="publisher in activePublishers" :key="publisher.publisher_id"
-                      :value="publisher.publisher_id">{{ publisher.publisher_name }}</b-form-select-option>
+                    <b-form-select-option value="" disabled>-- Select --</b-form-select-option>
+                    <b-form-select-option v-for="publisherOption in publisherOptions" :key="publisherOption.value" :value="publisherOption.value">
+                    {{ publisherOption.text }}
+                    </b-form-select-option>
                   </b-form-select>
                 </div>
-                <div class="col-4" :class="{ 'input-group--error': $v.book.pages.$error }">
+                <div class="col-4">
                 <label for="pages">Available Copies</label>
-                <b-form-input v-model.trim="$v.book.pages.$model" id="pages" disabled></b-form-input>
+                <b-form-input :value="value" id="pages" disabled></b-form-input>
               </div>
               </b-row>
               <b-row class="mb-3 px-2">
@@ -127,9 +126,10 @@
                 <div class="col-4">
                   <label for="categories">Category</label>
                   <b-form-select v-model.trim="updateBook.category_id">
-                    <b-form-select-option value="" disabled>Select</b-form-select-option>
-                    <b-form-select-option v-for="category in activeCategories" :key="category.category_id"
-                      :value="category.category_id">{{ category.cat_name }}</b-form-select-option>
+                    <b-form-select-option value="" disabled>-- Select --</b-form-select-option>
+                    <b-form-select-option v-for="categoryOption in categoryOptions" :key="categoryOption.value" :value="categoryOption.value">
+                    {{ categoryOption.text }}
+                    </b-form-select-option>
                   </b-form-select>
                 </div>
               </b-row>
@@ -176,9 +176,10 @@
               <div class="col-6" :class="{ 'input-group--error': $v.book.publisher_id.$error }">
                 <label for="publisher">Publisher</label>
                 <b-form-select v-model.trim="$v.book.publisher_id.$model">
-                  <b-form-select-option value disabled>Select</b-form-select-option>
-                  <b-form-select-option v-for="publisher in activePublishers" :key="publisher.publisher_id"
-                    :value="publisher.publisher_id">{{ publisher.p_name }}</b-form-select-option>
+                  <b-form-select-option value="" disabled>-- Select --</b-form-select-option>
+                  <b-form-select-option v-for="publisherOption in publisherOptions" :key="publisherOption.value" :value="publisherOption.value">
+                    {{ publisherOption.text }}
+                  </b-form-select-option>
                 </b-form-select>
                 <p class="error-message" v-if="submitStatus === 'error' && !$v.book.publisher_id.required
                   ">
@@ -218,9 +219,10 @@
               <div class="col-4" :class="{ 'input-group--error': $v.book.category_id.$error }">
                 <label for="categories">Category</label>
                 <b-form-select v-model.trim="$v.book.category_id.$model">
-                  <b-form-select-option value="" disabled>Select</b-form-select-option>
-                  <b-form-select-option v-for="category in activeCategories" :key="category.category_id"
-                    :value="category.category_id">{{ category.cat_name }}</b-form-select-option>
+                  <b-form-select-option value="" disabled>-- Select --</b-form-select-option>
+                  <b-form-select-option v-for="categoryOption in categoryOptions" :key="categoryOption.value" :value="categoryOption.value">
+                    {{ categoryOption.text }}
+                  </b-form-select-option>
                 </b-form-select>
                 <p class="error-message" v-if="submitStatus === 'error' && !$v.book.category_id.required
                   ">
@@ -229,7 +231,7 @@
               </div>
             </b-row>
 
-            <div class="w-100 mt-4 d-flex justify-content-end">
+            <div class="w-100 mtz-4 d-flex justify-content-end">
               <b-button class="mr-2 secondary-btn" @click="rerenderModal()">
                 Cancel
               </b-button>
@@ -291,6 +293,8 @@ export default {
         },
         { key: "actions", thStyle: { textTransform: "uppercase" } },
       ],
+      // value: this.book.available_copies,
+      value: "",
       perPage: 5,
       filter: null,
       currentPage: 1,
@@ -346,17 +350,16 @@ export default {
   },
   mounted() {
     // Set the initial number of items
-    this.totalRows = this.items.length;
     this.$root.$on("addNewBook", this.addBook);
   },
-  watch: {
-    'updateBook.category_id'() {
-      this.updateBook.shelf_id = this.activeCategories.filter(c => c.category_id == this.updateBook.category_id)[0].shelf_id;
-    },
-    'book.category_id'() {
-      this.book.shelf_id = this.activeCategories.filter(c => c.category_id == this.book.category_id)[0].shelf_id;
-    }
-  },
+  // watch: {
+  //   'updateBook.category_id'() {
+  //     this.updateBook.copy_id = this.activeCategories.filter(c => c.category_id == this.updateBook.category_id)[0].copy_id;
+  //   },
+  //   'book.category_id'() {
+  //     this.book.shelf_id = this.activeCategories.filter(c => c.category_id == this.book.category_id)[0].copy_id;
+  //   }
+  // },
   methods: {
     rerenderModal() {
       this.modalKey += 1;
@@ -368,6 +371,7 @@ export default {
     getSearchData(data) {
       this.filter = data;
     },
+
     addBook() {
       this.$v.$touch();
       if (this.$v.$invalid) {
@@ -421,22 +425,32 @@ export default {
     },
   },
   computed: {
-    ...mapState(["books"]),
+    ...mapState(["books", "publishers", "categories"]),
     ...mapGetters(["activePublishers", "activeCategories"]),
     items() {
-      return this.books.books.map((item) => ({
-        ...item,
-      }));
+      return this.books.books.map((items) => ({ ...items }));
     },
-    // subcats() {
-    //   return this.;
-    // },
+    rows() {
+      return this.items.length;
+    },
     sortOptions() {
       return this.fields
         .filter((f) => f.sortable)
         .map((f) => {
           return { text: f.label, value: f.key };
         });
+    },
+    publisherOptions() {
+      return this.publishers.publishers.map((publisher) => ({
+        value: publisher.publisher_id,
+        text: publisher.publisher_name,
+      }));
+    },
+    categoryOptions() {
+      return this.categories.categories.map((category) => ({
+        value: category.category_id,
+        text: category.category_name,
+      }));
     },
   },
 };
@@ -456,5 +470,10 @@ export default {
 .book-title {
   color: #81B29A;
   font-weight: 600;
+}
+
+.danger {
+  background-color: #bf4342;
+  color: #fff;
 }
 </style>

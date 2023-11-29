@@ -44,6 +44,7 @@ export default {
       service
         .getBooks()
         .then(({data}) => {
+          // console.log(data)
           commit("SET_BOOKS", data  );
         })
         .catch((error) => console.log(error));

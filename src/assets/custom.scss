@@ -231,6 +231,10 @@ a {
     background-color: darken(#fff2d6, 3) !important;
     border: darken(#fff2d6, 3) solid 1px !important;
   }
+
+  &:focus {
+    box-shadow: none !important;
+  }
 }
 
 .success-btn {

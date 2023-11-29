@@ -7,34 +7,27 @@
         <div class="d-flex justify-content-between mt-2 mb-4">
           <h4>Borrow Records</h4>
           <div>
-            <b-button v-if="selectedRow[0] && selectedIssuedBook.status == 'active' || selectedIssuedBook.status == 'overdue'" v-b-modal.updateIssuedBookModal
+            <b-button v-if="selectedRow[0]" v-b-modal.updateIssuedBookModal
               class="mr-2 info-btn">Update</b-button>
             <b-button v-b-modal.addBorrowRecord class="primary-btn">Add Record</b-button>
           </div>
         </div>
 
-        <b-table :items="items" :per-page="perPage" :fields="fields" :current-page="currentPage" :sort-by.sync="sortBy" sort-desc.sync="false" fixed responsive :filter="filter" select-mode="single"
-          ref="selectableTable" selectable @row-selected="onRowSelected" @filtered="onFiltered">
-          <template #cell(borrower_name)="row">
-            {{ row.item.first_name }} {{ row.item.last_name }}
-          </template>
+        <b-table :items="items" :per-page="perPage" :fields="fields" :current-page="currentPage" :sort-by.sync="sortBy" sort-desc.sync="false" fixed responsive :filter="filter" select-mode="single" ref="selectableTable" selectable @row-selected="onRowSelected" @filtered="onFiltered">
           <template #cell(status)="row">
-            <b-badge v-if="row.item.status == 'overdue'" class="bg-danger">{{ row.item.status }}</b-badge>
-            <b-badge v-else-if="row.item.status == 'active'" class="bg-primary">{{
-              row.item.status
-            }}</b-badge>
-            <b-badge v-else-if="row.item.status == 'returned'" class="bg-success">{{
+            <b-badge v-if="row.item.status == 'active'" class="primary py-2">{{ row.item.status }}</b-badge>
+            <b-badge v-else-if="row.item.status == 'inactive'" class="secondary py-2">{{
               row.item.status
             }}</b-badge>
           </template>
         </b-table>
 
-        <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" aria-controls="my-table"
+        <b-pagination v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="my-table"
           class="mt-3 mb-0 justify-content-center"></b-pagination>
       </div>
     </main>
 
-    <AppModal modalId="updateIssuedBookModal" hideFooter :key="modalKey">
+    <!-- <AppModal modalId="updateIssuedBookModal" hideFooter :key="modalKey">
       <template #modal-header> Update Issued Book </template>
       <template #modal-body>
         <form class="px-2" @submit.prevent="
@@ -110,12 +103,12 @@
             </div>
         </form>
       </template>
-    </AppModal>
+    </AppModal> -->
   </div>
 </template>
 
 <script>
-import AppModal from "@/components/AppModal.vue";
+// import AppModal from "@/components/AppModal.vue";
 import moment from "moment";
 import { required } from "vuelidate/lib/validators";
 import { mapState } from "vuex";
@@ -124,12 +117,12 @@ import AppSearchbar from '@/components/AppSearchbar.vue';
 export default {
   props: [],
   components: {
-    AppModal,
+    // AppModal,
     AppSearchbar,
   },
   data() {
     return {
-      sortBy: 'status',
+      sortBy: 'title',
       fields: [
         {
           key: "title",
@@ -137,12 +130,12 @@ export default {
           sortable: true,
         },
         {
-          key: "borrower_name",
+          key: "reader_name",
           thStyle: { textTransform: "uppercase", width: "190px" },
           sortable: true,
         },
         {
-          key: "borrow_date",
+          key: "borrowed_date",
           label: "Date Borrowed",
           thStyle: { textTransform: "uppercase", width: "160px" },
           sortable: true,
@@ -174,30 +167,16 @@ export default {
           sortable: true,
         },
       ],
-      items: [
-        {
-          title: 'Lightning Thief',
-          first_name: 'Bada',
-          last_name: 'Lee',
-          borrow_date: '2021-11-01',
-          status: 'active'
-        },
-        {
-          title: 'Crazy Rich Asians',
-          first_name: 'Bada',
-          last_name: 'Lee',
-          borrow_date: '2023-11-24',
-          status: 'active'
-        },
-      ],
-      perPage: 12,
+      perPage: 8,
       currentPage: 1,
       totalRows: 1,
       filter: null,
       modalKey: 0,
       selectedRow: [],
-      selectedIssuedBook: {},
+      selectedBorrowRecord: {},
       selectedBookData: {},
+
+      selectedIssuedBook: {},
       submitStatus: null,
     };
   },
@@ -209,14 +188,29 @@ export default {
     },
   },
   created() {
-    this.$store.dispatch("fetchIssuedBooks");
-    this.$store.dispatch("fetchBooks");
+    this.$store.dispatch("fetchBorrowRecords");
+    // this.$store.dispatch("fetchBooks");
+
+    // fetch('http://172.16.4.182:3100/api/borrow-records')
+    //   .then(response => response.json())
+    //   .then(data => {
+    //     // Log the data to the console
+    //     console.log(data);
+    //   })
+    //   .catch(error => {
+    //     console.error('Error fetching data from API:', error);
+    // });
   },
   computed: {
-    ...mapState(["issuedBooks", "books"]),
-    // items() {
-    //   return this.issuedBooks.issuedBooks;
-    // },
+    ...mapState(["borrowRecords"]),
+    items() {
+      // console.log(this.borrowRecords)
+      // return this.borrowRecords.borrowRecords.map((item) => ({ ...item }));
+      return this.borrowRecords.borrowRecords;
+    },
+    rows() {
+      return this.items.length;
+    },
     sortOptions() {
       return this.fields
         .filter((f) => f.sortable)
@@ -225,15 +219,12 @@ export default {
         });
     },
   },
-  mounted() {
-    this.totalRows = this.items.length;
-  },
   methods: {
     onRowSelected(items) {
       this.selectedRow = items;
-      for (let issuedBook of this.selectedRow) {
-        this.selectedIssuedBook = issuedBook;
-        this.getSelectedBookData();
+      for (let borrowRecord of this.selectedRow) {
+        this.selectedBorrowRecord = borrowRecord;
+        this.getSelectedRecordData();
       }
     },
     onFiltered(filteredItems) {
@@ -247,31 +238,31 @@ export default {
     getSearchData(data){
       this.filter = data;
     },
-    getSelectedBookData() {
-      this.selectedBookData = this.books.books.find(
-        (b) => b.book_id == this.selectedIssuedBook.book_id
-      );
-    },
-    editIssuedBook(id, issuedBook) {
-      this.$v.$touch();
+    // getSelectedRecordData() {
+    //   this.selectedBookData = this.books.books.find(
+    //     (b) => b.book_id == this.selectedIssuedBook.book_id
+    //   );
+    // },
+    // editIssuedBook(id, issuedBook) {
+    //   this.$v.$touch();
 
-      if (this.$v.$invalid) {
-        this.submitStatus = "error";
-      } else {
-        this.selectedIssuedBook.status = "returned";
+    //   if (this.$v.$invalid) {
+    //     this.submitStatus = "error";
+    //   } else {
+    //     this.selectedIssuedBook.status = "returned";
         
-        this.$store
-          .dispatch("editIssuedBook", { id, issuedBook })
+    //     this.$store
+    //       .dispatch("editIssuedBook", { id, issuedBook })
 
-        this.selectedBookData.copies++;
-        this.editBook(this.selectedBookData.book_id, this.selectedBookData);
-      }
-    },
-    editBook(book_id, book) {
-      this.$store
-        .dispatch("editBook", { book_id, book })
+    //     this.selectedBookData.copies++;
+    //     this.editBook(this.selectedBookData.book_id, this.selectedBookData);
+    //   }
+    // },
+    // editBook(book_id, book) {
+    //   this.$store
+    //     .dispatch("editBook", { book_id, book })
 
-    },
+    // },
     logout() {
       this.$store.dispatch("logout")
     },
@@ -285,4 +276,15 @@ td {
     text-transform: capitalize;
   }
 }
+
+.primary {
+  background-color: #e76f51;
+  width: 80px;
+}
+
+.secondary {
+  background-color: #8592a3;
+  width: 80px;
+}
+
 </style>

@@ -13,7 +13,7 @@
         </router-link>
       </span>
       <span class="sidebar__item">
-        <router-link class="sidebar__link" :to="{ name: 'issued-books' }" exact>
+        <router-link class="sidebar__link" :to="{ name: 'borrow-records' }" exact>
           <b-icon icon="bookmark-check" font-scale="2"></b-icon>
           <div class="sidebar__text">Borrow Records</div>
         </router-link>

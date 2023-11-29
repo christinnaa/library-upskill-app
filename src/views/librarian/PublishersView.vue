@@ -7,20 +7,17 @@
       <div class="table__container p-4 pt-3 rounded">
         <div class="d-flex justify-content-between mt-2 mb-4">
           <h4>Publishers</h4>
-          <div>
-            <b-button class="mr-2 warning-btn" v-if="selectedRow[0]" v-b-modal.removePublisherModal>
-              <b-icon icon="slash-circle" scale=".85"></b-icon>
-              Mark as Inactive</b-button>
-            <b-button class="mr-2 success-btn" @click="
-              editPublisher(selectedPublisher.publisher_id, selectedPublisher)
-            " v-if="selectedRow[0] && selectedPublisher.status == 'inactive'">
-              <b-icon icon="check2-circle" scale=".85"></b-icon>
-              Mark as Active</b-button>
-            <b-button v-if="selectedRow[0]" class="mr-2 info-btn" v-b-modal.updatePublisherModal>
-              Update
-            </b-button>
+          <div class="d-flex">
+            <div v-if="selectedRow[0]">
+              <b-button class="mr-2 warning-btn" v-b-modal.removePublisherModal>
+                <b-icon icon="trash" scale=".95" class="mx-1"></b-icon>
+              </b-button>
+              <b-button class="mr-2 secondary-btn" v-b-modal.updatePublisherModal>
+                <b-icon icon="pencil-square" scale=".95" class="mx-1"></b-icon>
+              </b-button>
+            </div>
 
-            <b-button class="primary-btn" v-b-modal.addPublisherModal>
+            <b-button v-else class="primary-btn" v-b-modal.addPublisherModal>
               Add Publisher</b-button>
           </div>
         </div>
@@ -40,7 +37,7 @@
           </template>
         </b-table>
 
-        <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" aria-controls="my-table"
+        <b-pagination v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="my-table"
           class="mt-3 mb-0 justify-content-center"></b-pagination>
 
         <AppModal modalId="addPublisherModal" :key="modalKey" hideFooter>
@@ -207,6 +204,9 @@ export default {
     items() {
       return this.publishers.publishers.map((item) => ({ ...item }));
     },
+    rows() {
+      return this.items.length;
+    },
     sortOptions() {
       return this.fields
         .filter((f) => f.sortable)
@@ -214,9 +214,6 @@ export default {
           return { text: f.label, value: f.key };
         });
     },
-  },
-  mounted() {
-    this.totalRows = this.items.length;
   },
   methods: {
     onRowSelected(items) {
