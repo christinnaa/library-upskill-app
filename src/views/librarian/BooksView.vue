@@ -8,7 +8,7 @@
           <h4>Books</h4>
           <b-button v-b-modal.addBookModal class="primary-btn">Add Book</b-button>
         </div>
-        <b-table :items="items" :per-page="perPage" :fields="fields" :current-page="currentPage" label-sort-asc=""
+        <b-table :items="items" :per-page="perPage" :fields="fields" :current-page="currentPage" :sort-by.sync="sortBy" label-sort-asc=""
           label-sort-desc="" label-sort-clear="" fixed responsive :filter="filter" select-mode="single"
           ref="selectableTable" selectable >
           <template #cell(actions)="row">
@@ -102,8 +102,8 @@
                 </div>
                 <div class="col-4">
                   <label for="publisher">Publisher</label>
+                  <!-- {{ updateBook.publisher }} -->
                   <b-form-select v-model.trim="updateBook.publisher_id">
-                    <b-form-select-option value="" disabled>-- Select --</b-form-select-option>
                     <b-form-select-option v-for="publisherOption in publisherOptions" :key="publisherOption.value" :value="publisherOption.value">
                     {{ publisherOption.text }}
                     </b-form-select-option>
@@ -111,7 +111,7 @@
                 </div>
                 <div class="col-4">
                 <label for="pages">Available Copies</label>
-                <b-form-input :value="value" id="pages" disabled></b-form-input>
+                <b-form-input v-model="updateBook.available_copies" id="pages" disabled></b-form-input>
               </div>
               </b-row>
               <b-row class="mb-3 px-2">
@@ -125,8 +125,8 @@
                 </div>
                 <div class="col-4">
                   <label for="categories">Category</label>
-                  <b-form-select v-model.trim="updateBook.category_id">
-                    <b-form-select-option value="" disabled>-- Select --</b-form-select-option>
+                  <b-form-select v-model.trim="updateBook.category">
+                    <b-form-select-option value="" disabled>Select</b-form-select-option>
                     <b-form-select-option v-for="categoryOption in categoryOptions" :key="categoryOption.value" :value="categoryOption.value">
                     {{ categoryOption.text }}
                     </b-form-select-option>
@@ -176,7 +176,7 @@
               <div class="col-6" :class="{ 'input-group--error': $v.book.publisher_id.$error }">
                 <label for="publisher">Publisher</label>
                 <b-form-select v-model.trim="$v.book.publisher_id.$model">
-                  <b-form-select-option value="" disabled>-- Select --</b-form-select-option>
+                  <b-form-select-option value="" disabled>Select Publisher</b-form-select-option>
                   <b-form-select-option v-for="publisherOption in publisherOptions" :key="publisherOption.value" :value="publisherOption.value">
                     {{ publisherOption.text }}
                   </b-form-select-option>
@@ -192,7 +192,7 @@
                 'input-group--error': $v.book.publication_year.$error,
               }">
                 <label for="publication_year">Publication Year</label>
-                <b-form-input v-model.trim="$v.book.publication_year.$model" id="publication_year"></b-form-input>
+                <b-form-input type="number" v-model.trim="$v.book.publication_year.$model" id="publication_year"></b-form-input>
                 <p class="error-message" v-if="submitStatus === 'error' &&
                   !$v.book.publication_year.required
                   ">
@@ -206,7 +206,7 @@
               </div>
               <div class="col-4" :class="{ 'input-group--error': $v.book.pages.$error }">
                 <label for="pages">No. of Pages</label>
-                <b-form-input v-model.trim="$v.book.pages.$model" id="pages"></b-form-input>
+                <b-form-input type="number" v-model.trim="$v.book.pages.$model" id="pages"></b-form-input>
                 <p class="error-message" v-if="submitStatus === 'error' && !$v.book.pages.numeric
                   ">
                   No. of pages must be a number.
@@ -219,7 +219,7 @@
               <div class="col-4" :class="{ 'input-group--error': $v.book.category_id.$error }">
                 <label for="categories">Category</label>
                 <b-form-select v-model.trim="$v.book.category_id.$model">
-                  <b-form-select-option value="" disabled>-- Select --</b-form-select-option>
+                  <b-form-select-option value="" disabled>Select Category</b-form-select-option>
                   <b-form-select-option v-for="categoryOption in categoryOptions" :key="categoryOption.value" :value="categoryOption.value">
                     {{ categoryOption.text }}
                   </b-form-select-option>
@@ -279,6 +279,7 @@ export default {
   },
   data() {
     return {
+      sortBy: 'book_id',
       fields: [
         { key: "isbn", thStyle: { textTransform: "uppercase" } },
         {
@@ -299,7 +300,16 @@ export default {
       filter: null,
       currentPage: 1,
       totalRows: 1,
-      book: this.newBookObject(),
+      book: {
+        title: "",
+        isbn: "",
+        author: "",
+        publisher_id: "",
+        publication_year: "",
+        copies: "",
+        pages: "",
+        category_id: "",
+      },
       modalKey: 0,
       updateBook: {},
       selectedBookId: "",
@@ -396,6 +406,7 @@ export default {
       let result = this.books.books.filter((book) => book.book_id == book_id);
       for (let book of result) {
         this.updateBook = book;
+        console.log(this.updateBook)
       }
     },
     editBook(book_id, book) {
@@ -406,18 +417,18 @@ export default {
           console.log(error);
         });
     },
-    newBookObject() {
-      return {
-        title: "",
-        isbn: "",
-        author: "",
-        publisher_id: "",
-        publication_year: "",
-        copies: "",
-        pages: "",
-        category_id: "",
-      };
-    },
+    // newBookObject() {
+    //   return {
+    //     title: "",
+    //     isbn: "",
+    //     author: "",
+    //     publisher_id: "",
+    //     publication_year: "",
+    //     copies: "",
+    //     pages: "",
+    //     category_id: "",
+    //   };
+    // },
     
     setBookPublisher(value) {
       this.book.publisher = value;
@@ -472,8 +483,4 @@ export default {
   font-weight: 600;
 }
 
-.danger {
-  background-color: #bf4342;
-  color: #fff;
-}
 </style>

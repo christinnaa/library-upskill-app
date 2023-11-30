@@ -38,7 +38,7 @@ export default {
     return apiClient.post("/books", books);
   },
   postPublisher(publishers) {
-    return apiClient.post("/publisher", publishers);
+    return apiClient.post("/publishers", publishers);
   },
   postCategory(categories) {
     return apiClient.post("/categories", categories);
@@ -55,22 +55,22 @@ export default {
 
 
   removeBook(book_id) {
-    return apiClient.patch(`/book/inactive/${book_id}`);
+    return apiClient.delete(`/books/${book_id}`);
   },
   removePublisher(publisher_id) {
-    return apiClient.patch(`/publisher/inactive/${publisher_id}`);
+    return apiClient.delete(`/publishers/${publisher_id}`);
   },
   removeCategory(category_id) {
-    return apiClient.patch(`/category/inactive/${category_id}`);
+    return apiClient.delete(`/categories/${category_id}`);
   },
   removeUser(user_id) {
-    return apiClient.patch(`/user/inactive/${user_id}`);
+    return apiClient.delete(`/users/${user_id}`);
   },
   removeBorrowRecord(borrow_id) {
-    return apiClient.patch(`/user/inactive/${borrow_id}`);
+    return apiClient.delete(`/borrow-records/${borrow_id}`);
   },
   removeCopy(copy_id) {
-    return apiClient.patch(`/user/inactive/${copy_id}`);
+    return apiClient.delete(`/copy/${copy_id}`);
   },
 
 
@@ -78,19 +78,19 @@ export default {
     return apiClient.put(`/book/${book_id}`, book);
   },
   updatePublisher(publisher_id, publisher) {  
-    return apiClient.put(`/publisher/${publisher_id}`, publisher);
+    return apiClient.put(`/publishers/${publisher_id}`, publisher);
   },
   updateCategory(category_id, category) {
-    return apiClient.put(`/category/${category_id}`, category);
+    return apiClient.put(`/categories/${category_id}`, category);
   },
   updateUser(user_id, user) {
-    return apiClient.put(`/user/${user_id}`, user);
+    return apiClient.put(`/users/${user_id}`, user);
   },
   updateBorrowRecord(borrow_id, borrowRecord) {
     return apiClient.put(`/user/${borrow_id}`, borrowRecord);
   },
   updateCopy(copy_id, copy) {
-    return apiClient.put(`/user/${copy_id}`, copy);
+    return apiClient.put(`/copies/${copy_id}`, copy);
   },
 
 };

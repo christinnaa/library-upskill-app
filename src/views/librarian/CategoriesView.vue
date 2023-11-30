@@ -22,11 +22,6 @@
 
         <b-table :items="items" :per-page="perPage" :fields="fields" :current-page="currentPage" :sort-by.sync="sortBy" sort-desc.sync="false" fixed responsive :filter="filter" select-mode="single"
           ref="selectableTable" selectable @row-selected="onRowSelected" @filtered="onFiltered">
-          <template #cell(subcategories)="row">
-            <span v-for="subcategory of row.item.sub_cat" :key="subcategory.id">
-              <b-badge variant="primary" class="mr-1" v-if="subcategory.status == 'active'">{{ subcategory.subcat_name }}</b-badge>
-            </span>
-          </template>
         </b-table>
 
         <b-pagination v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="my-table"
@@ -37,7 +32,7 @@
           <template #modal-body>
             <form class="px-2" @submit.prevent="addCategory">
               <div class="mb-3 pt-0" :class="{
-                'input-group--error': $v.category.cat_name.$error,
+                'input-group--error': $v.category.category_name.$error,
               }">
                 <label for="category">Category Name</label>
                 <b-form-input id="category" v-model="category.category_name"></b-form-input>
@@ -84,11 +79,11 @@
     </main>
 
     <AppModal modalId="removeCategoryModal" hideFooter :key="modalKey">
-      <template #modal-header> Mark Selected Category as Inactive </template>
+      <template #modal-header> Delete Category </template>
       <template #modal-body>
         <div class="pb-2 pt-1">
-          Are you sure you want to mark
-          <b>{{ selectedCategory.cat_name }}</b> as inactive?
+          Are you sure you want to delete
+          <b>{{ selectedCategory.category_name }}</b>?
         </div>
 
         <div class="w-100 mt-4 d-flex justify-content-end">
@@ -118,14 +113,14 @@ export default {
 },
   validations: {
     category: {
-      cat_name: {
+      category_name: {
         required,
       },
     },
   },
   data() {
     return {
-      sortBy: 'cat_name',
+      sortBy: 'category_id',
       fields: [
         {
           key: "category_name",
@@ -138,7 +133,9 @@ export default {
       currentPage: 1,
       totalRows: 1,
       filter: null,
-      category: this.newCategoryObject(),
+      category: {
+        category_name: ""
+      },
       modalKey: 0,
       selectedRow: [],
       selectedCategory: {},
@@ -164,15 +161,11 @@ export default {
         });
     },
   },
-  // mounted() {
-  //   this.totalRows = this.items.length;
-  // },
   methods: {
     onRowSelected(items) {
       this.selectedRow = items;
       for (let category of this.selectedRow) {
         this.selectedCategory = category;
-        // console.log(category)
       }
     },
     onFiltered(filteredItems) {
@@ -183,15 +176,12 @@ export default {
     getSearchData(data){
       this.filter = data;
     },
-    newCategoryObject() {
-      return {
-        cat_name: "",
-      };
-    },
     rerenderModal() {
       this.modalKey += 1;
     },
     addCategory() {
+      this.category.category_name = this.capitalizeFirstLetter(this.category.category_name);
+
       this.$v.$touch();
       if (this.$v.$invalid) {
         this.submitStatus = "error";
@@ -211,6 +201,9 @@ export default {
     },
     logout() {
       this.$store.dispatch("logout")
+    },
+    capitalizeFirstLetter(string) {
+      return string.charAt(0).toUpperCase() + string.slice(1);
     },
   },
 };

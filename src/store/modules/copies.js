@@ -38,8 +38,8 @@ export default {
     async addCopy({ commit }, copy) {
       try {
         await service
-          .postCopy(copy);
-        await commit("ADD_COPY", copy);
+          .postCopies(copy);
+        await commit("ADD_COPIES", copy);
         router.go(0);
       } catch (error) {
         console.log(error);
@@ -60,6 +60,7 @@ export default {
       service
         .updateCopy(id, copy)
         .then(async () => {
+          console.log(copy)
           await commit("UPDATE_COPY", id);
           router.go(0);
         })

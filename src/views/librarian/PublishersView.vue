@@ -46,24 +46,24 @@
           <template #modal-body>
             <form class="px-2" @submit.prevent="addPublisher">
               <div class="mb-3 pt-0" :class="{
-                'input-group--error': $v.publisher.p_name.$error,
+                'input-group--error': $v.publisher.publisher_name.$error,
               }">
                 <label for="p_name">Name</label>
-                <b-input id="p_name" v-model="publisher.publisher"></b-input>
+                <b-input id="p_name" v-model="publisher.publisher_name"></b-input>
                 <p class="error-message" v-if="
                   submitStatus === 'error' &&
-                  !$v.publisher.p_name.required
+                  !$v.publisher.publisher_name.required
                 ">
-                  Name is required.
+                  Publisher Name is required.
                 </p>
               </div>
               <div class="mb-2" :class="{
-                'input-group--error': $v.publisher.p_name.$error,
+                'input-group--error': $v.publisher.publisher_location.$error,
               }">
-                <label for="p_location">Location</label>
-                <b-form-input id="p_location" v-model="publisher.p_location"></b-form-input>
+                <label for="publisher_location">Location</label>
+                <b-form-input id="publisher_location" v-model="publisher.publisher_location"></b-form-input>
                 <p class="error-message" v-if="
-                  submitStatus === 'error' && !$v.publisher.p_location.required
+                  submitStatus === 'error' && !$v.publisher.publisher_location.required
                 ">
                   Location is required.
                 </p>
@@ -91,7 +91,7 @@
               <b-input id="p_name" v-model="selectedPublisher.publisher_name"></b-input>
             </div>
             <div class="mb-2" :class="{
-              'input-group--error': $v.publisher.p_name.$error,
+              'input-group--error': $v.publisher.publisher_location.$error,
             }">
               <label for="p_location">Location</label>
               <b-form-input id="p_location" v-model="selectedPublisher.publisher_location"></b-form-input>
@@ -109,11 +109,11 @@
     </main>
 
     <AppModal modalId="removePublisherModal" modalSize="md" hideFooter :key="modalKey">
-      <template #modal-header> Mark Selected Publisher as Inactive </template>
+      <template #modal-header> Delete Publisher </template>
       <template #modal-body>
         <div class="pb-2">
-          Are you sure you want to mark
-          <b>{{ selectedPublisher.p_name }}</b> as inactive?
+          Are you sure you want to delete
+          <b>{{ selectedPublisher.publisher_name }}</b>?
         </div>
 
         <div class="w-100 mt-4 d-flex justify-content-end">
@@ -146,10 +146,10 @@ export default {
   },
   validations: {
     publisher: {
-      p_name: {
+      publisher_name: {
         required,
       },
-      p_location: {
+      publisher_location: {
         required,
       },
     },
@@ -186,10 +186,13 @@ export default {
 
       // ],
       perPage: 5,
+      publisher: {
+        publisher_name: "",
+        publisher_location: "",
+      },
       currentPage: 1,
       totalRows: 1,
       filter: null,
-      publisher: this.newPublisherObject(),
       modalKey: 0,
       selectedRow: [],
       selectedPublisher: {},
@@ -233,32 +236,25 @@ export default {
     getSearchData(data){
       this.filter = data;
     },
-    newPublisherObject() {
-      return {
-        p_name: "",
-        p_location: "",
-      };
-    },
+    // newPublisherObject() {
+    //   return {
+    //     p_name: "",
+    //     p_location: "",
+    //   };
+    // },
     addPublisher() {
       this.$v.$touch();
-
       if (this.$v.$invalid) {
         this.submitStatus = "error";
       } else {
-        this.$store
-          .dispatch("addPublisher", this.publisher)
+        this.$store.dispatch("addPublisher", this.publisher)
       }
     },
     editPublisher(id, publisher) {
-      delete publisher.status;
-      this.$store
-        .dispatch("editPublisher", { id, publisher })
-
+      this.$store.dispatch("editPublisher", { id, publisher })
     },
-    deletePublisher(isbn) {
-      this.$store
-        .dispatch("removePublisher", isbn)
-
+    deletePublisher(id) {
+      this.$store.dispatch("removePublisher", id)
     },
     logout() {
       this.$store.dispatch("logout")

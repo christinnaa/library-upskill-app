@@ -22,20 +22,9 @@
   
           <b-table :items="items" :per-page="perPage" :fields="fields" :current-page="currentPage" :sort-by.sync="sortBy" sort-desc.sync="false" fixed responsive :filter="filter" select-mode="single"
             ref="selectableTable" selectable @row-selected="onRowSelected" @filtered="onFiltered">
-            <template #cell(first_name)="row">
-              <div v-if="row.item.status == 'inactive'" class="inactive">
-                <span>{{ row.item.first_name }} {{ row.item.last_name }}</span>
-                <b-badge pill variant="light" class="ml-2">{{
-                  row.item.status
-                }}</b-badge>
-              </div>
-              <template v-else>
-                {{ row.item.first_name }} {{ row.item.last_name }}
-              </template>
-            </template>
           </b-table>
   
-          <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" aria-controls="my-table"
+          <b-pagination v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="my-table"
             class="mt-3 mb-0 justify-content-center"></b-pagination>
   
           <AppModal modalId="addUserModal" modalSize="lg" :key="modalKey" hideFooter>
@@ -69,24 +58,12 @@
                   </div>
                 </b-row>
                 <b-row class="mb-3 px-2">
-                  <div class="col-6" :class="{
-                    'input-group--error': $v.user.date_of_birth.$error,
-                  }">
-                    <label for="date_of_birth">Date of Birth</label>
-                    <b-form-input type="date" id="date_of_birth" v-model="user.date_of_birth"></b-form-input>
-                    <p class="error-message" v-if="
-                      submitStatus === 'error' &&
-                      !$v.user.date_of_birth.required
-                    ">
-                      Date of birth is required.
-                    </p>
-                  </div>
-                  <div class="col-6" :class="{
+                  <div class="col-4" :class="{
                     'input-group--error': $v.user.role.$error,
                   }">
                     <label for="role">Role</label>
                     <b-form-select id="role" v-model="user.role">
-                      <b-form-select-option value="" disabled>Select</b-form-select-option>
+                      <b-form-select-option value="" disabled>Select Role</b-form-select-option>
                       <b-form-select-option value="admin">Admin</b-form-select-option>
                       <b-form-select-option value="reader">Reader</b-form-select-option>
                     </b-form-select>
@@ -97,9 +74,7 @@
                       Role is required.
                     </p>
                   </div>
-                </b-row>
-                <b-row class="mb-4 px-2">
-                  <div class="col-6" :class="{
+                  <div class="col-4" :class="{
                     'input-group--error': $v.user.username.$error,
                   }">
                     <label for="username">Username</label>
@@ -111,7 +86,7 @@
                       Username is required.
                     </p>
                   </div>
-                  <div class="col-6" :class="{
+                  <div class="col-4" :class="{
                     'input-group--error': $v.user.password.$error,
                   }">
                     <label for="password">Password</label>
@@ -150,30 +125,23 @@
                 </div>
               </b-row>
               <b-row class="mb-3 px-2">
-                <div class="col-6">
-                  <label for="date_of_birth">Date of Birth</label>
-                  <b-form-input type="date" v-model.trim="selectedUser.date_of_birth" id="date_of_birth"></b-form-input>
-                </div>
-                <div class="col-6">
-                  <label for="role">Role</label>
-                  <b-form-select v-model.trim="selectedUser.role">
-                    <b-form-select-option value="" disabled>Select</b-form-select-option>
-                    <b-form-select-option value="admin">Admin</b-form-select-option>
-                    <b-form-select-option value="reader">Reader</b-form-select-option>
-                  </b-form-select>
-                </div>
-              </b-row>
-              <b-row class="mb-3 px-2">
-                <div class="col-6">
+                <div class="col-4">
+                    <label for="role">Role</label>
+                    <b-form-select id="role" v-model="selectedUser.role">
+                      <b-form-select-option value="" disabled>Select Role</b-form-select-option>
+                      <b-form-select-option value="admin">Admin</b-form-select-option>
+                      <b-form-select-option value="reader">Reader</b-form-select-option>
+                    </b-form-select>
+                  </div>
+                <div class="col-4">
                   <label for="username">Username</label>
                   <b-form-input v-model.trim="selectedUser.username" id="username"></b-form-input>
                 </div>
-                <div class="col-6">
+                <div class="col-4">
                   <label for="password">Password</label>
                   <b-form-input v-model.trim="selectedUser.password" id="password"></b-form-input>
                 </div>
               </b-row>
-
               <div class="w-100 mt-4 d-flex justify-content-end">
                 <b-button class="mr-2 secondary-btn" @click="rerenderModal()">
                   Cancel
@@ -226,12 +194,6 @@
         last_name: {
           required,
         },
-        date_of_birth: {
-          required,
-        },
-        city: {
-          required,
-        },
         username: {
           required,
         },
@@ -245,7 +207,7 @@
     },
     data() {
       return {
-      sortBy: 'name',
+      sortBy: 'first_name',
         fields: [
           {
             key: "first_name",
@@ -276,7 +238,13 @@
         currentPage: 1,
         totalRows: 1,
         filter: null,
-        user: this.newUserObject(),
+        user: {
+          first_name: "",
+          last_name: "",
+          username: "",
+          password: "",
+          role: "",
+        },
         modalKey: 0,
         selectedRow: [],
         selectedUser: {},
@@ -298,9 +266,9 @@
             return { text: f.label, value: f.key };
           });
       },
-    },
-    mounted() {
-      this.totalRows = this.items.length;
+      rows() {
+        return this.items.length;
+      },
     },
     methods: {
       onRowSelected(items) {
@@ -317,21 +285,13 @@
       getSearchData(data){
         this.filter = data;
       },
-      newUserObject() {
-        return {
-          first_name: "",
-          last_name: "",
-          date_of_birth: "",
-          city: "",
-          username: "",
-          password: "",
-          role: ""
-        };
-      },
       rerenderModal() {
         this.modalKey += 1;
       },
       addUser() {
+        this.user.first_name = this.capitalizeFirstLetter(this.user.first_name);
+        this.user.last_name = this.capitalizeFirstLetter(this.user.last_name);
+
         this.$v.$touch();
         if (this.$v.$invalid) {
           this.submitStatus = "error";
@@ -351,6 +311,9 @@
       },
       logout() {
         this.$store.dispatch("logout")
+      },
+      capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
       },
     },
   };

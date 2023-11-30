@@ -15,8 +15,11 @@
 
         <b-table :items="items" :per-page="perPage" :fields="fields" :current-page="currentPage" :sort-by.sync="sortBy" sort-desc.sync="false" fixed responsive :filter="filter" select-mode="single" ref="selectableTable" selectable @row-selected="onRowSelected" @filtered="onFiltered">
           <template #cell(status)="row">
-            <b-badge v-if="row.item.status == 'active'" class="primary py-2">{{ row.item.status }}</b-badge>
-            <b-badge v-else-if="row.item.status == 'inactive'" class="secondary py-2">{{
+            <b-badge v-if="row.item.status == 'Active'" class="active py-2">{{ row.item.status }}</b-badge>
+            <b-badge v-else-if="row.item.status == 'Inactive'" class="inactive py-2">{{
+              row.item.status
+            }}</b-badge>
+            <b-badge v-else-if="row.item.status == 'Overdue'" class="overdue py-2">{{
               row.item.status
             }}</b-badge>
           </template>
@@ -53,7 +56,7 @@
           </div>
         </form>
       </template>
-    </AppModal>
+    </AppModal> -->
 
     <AppModal :key="modalKey" modalId="addBorrowRecord" modalSize="lg" submitMethod="addBorrowRecord" hideFooter>
       <template #modal-header> Add Borrow Record </template>
@@ -61,30 +64,34 @@
         <form>
           <b-row class="mb-3 px-2">
             <div class="col-6">
-                <label for="title">Username</label>
-                <b-form-input id="title"></b-form-input>
-                <p class="error-message" v-if="submitStatus === 'error' && !$v.book.title.required">
+              <label for="username">Username</label>
+                <b-form-select>
+                  <b-form-select-option value="" disabled>Select</b-form-select-option>
+                  <b-form-select-option v-for="userOption in userOptions" :key="userOption.value"
+                      :value="userOption.value">{{ userOption.value }}</b-form-select-option>
+                </b-form-select>
+                <p class="error-message" v-if="submitStatus === 'error' && !$v.user.username.required">
                   User is required.
                 </p>
             </div>
-            <div class="col-6">
+            <!-- <div class="col-6">
                 <label for="publisher">Title</label>
                 <b-form-select>
                   <b-form-select-option value="" disabled>Select</b-form-select-option>
                   <b-form-select-option v-for="publisher in activePublishers" :key="publisher.publisher_id"
                       :value="publisher.publisher_id">{{ publisher.p_name }}</b-form-select-option>
                   </b-form-select>
-            </div>
+            </div> -->
           </b-row>
           <b-row class="mb-3 px-2">
-            <div class="col-4">
+            <!-- <div class="col-4">
               <label for="publisher">Available Copy</label>
                 <b-form-select>
                 <b-form-select-option value="" disabled>Select</b-form-select-option>
                 <b-form-select-option v-for="publisher in activePublishers" :key="publisher.publisher_id"
                   :value="publisher.publisher_id">{{ publisher.publisher_name }}</b-form-select-option>
                 </b-form-select>
-            </div>
+            </div> -->
             <div class="col-4">
               <label for="date_of_birth">Borrow Date</label>
               <b-form-input type="date" id="date_of_birth"></b-form-input>
@@ -103,12 +110,12 @@
             </div>
         </form>
       </template>
-    </AppModal> -->
+    </AppModal>
   </div>
 </template>
 
 <script>
-// import AppModal from "@/components/AppModal.vue";
+import AppModal from "@/components/AppModal.vue";
 import moment from "moment";
 import { required } from "vuelidate/lib/validators";
 import { mapState } from "vuex";
@@ -117,7 +124,7 @@ import AppSearchbar from '@/components/AppSearchbar.vue';
 export default {
   props: [],
   components: {
-    // AppModal,
+    AppModal,
     AppSearchbar,
   },
   data() {
@@ -140,24 +147,24 @@ export default {
           thStyle: { textTransform: "uppercase", width: "160px" },
           sortable: true,
           formatter: (value) => {
-            return moment(value).format("MMM DD, YYYY");
+            return moment(value).format("YYYY-MM-DD");
           },
         },
-        // {
-        //   key: "return_date",
-        //   label: "return by",
-        //   thStyle: { textTransform: "uppercase", width: "160px" },
-        //   sortable: true,
-        //   formatter: (value) => {
-        //     return moment(value).format("MMM DD, YYYY");
-        //   },
-        // },
         {
-          key: "date_returned",
+          key: "return_by",
+          label: "Return By",
+          thStyle: { textTransform: "uppercase", width: "160px" },
+          sortable: true,
+          formatter: (value) => {
+            return moment(value).format("YYYY-MM-DD");
+          },
+        },
+        {
+          key: "returned_date",
           thStyle: { textTransform: "uppercase", width: "180px" },
           sortable: true,
           formatter: (value) => {
-            if (value) return moment(value).format("MMM DD, YYYY");
+            if (value) return moment(value).format("YYYY-MM-DD");
           },
         },
         {
@@ -181,14 +188,16 @@ export default {
     };
   },
   validations: {
-    selectedIssuedBook: {
-      date_returned: {
+    user: {
+      username: {
         required,
       },
-    },
+    }
   },
   created() {
     this.$store.dispatch("fetchBorrowRecords");
+    this.$store.dispatch("fetchUsers");
+    // this.userOptions();
     // this.$store.dispatch("fetchBooks");
 
     // fetch('http://172.16.4.182:3100/api/borrow-records')
@@ -202,7 +211,7 @@ export default {
     // });
   },
   computed: {
-    ...mapState(["borrowRecords"]),
+    ...mapState(["borrowRecords", "users"]),
     items() {
       // console.log(this.borrowRecords)
       // return this.borrowRecords.borrowRecords.map((item) => ({ ...item }));
@@ -218,13 +227,16 @@ export default {
           return { text: f.label, value: f.key };
         });
     },
+    userOption() {
+      return this.users.users.map((item) => ({ value: item.user_id, text: item.username }));
+    },
   },
   methods: {
     onRowSelected(items) {
       this.selectedRow = items;
       for (let borrowRecord of this.selectedRow) {
         this.selectedBorrowRecord = borrowRecord;
-        this.getSelectedRecordData();
+        // this.getSelectedRecordData();
       }
     },
     onFiltered(filteredItems) {
@@ -277,14 +289,20 @@ td {
   }
 }
 
-.primary {
+.overdue {
   background-color: #e76f51;
-  width: 80px;
+  color: #fff;
+  width: 80px !important;
 }
 
-.secondary {
-  background-color: #8592a3;
-  width: 80px;
+.available {
+  background-color: #2a9d8f;
+  color: #fff;
+  width: 80px !important;
 }
 
+.inactive {
+  background-color: #bcb8b1;
+  width: 80px !important;
+}
 </style>
