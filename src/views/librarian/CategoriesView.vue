@@ -76,6 +76,17 @@
           </form>
         </template>
       </AppModal>
+
+    </main>
+    <main class="alert-container">
+      <div class="test_div">
+        <b-alert dismissible class="alert" v-model="alert.showAlert" @dismissed="alert.showAlert = null" :variant="alert.variant">
+          <div class="alertborder">
+            <b-icon class="mr-2" :icon="alert.variant == 'success' || alert.variant =='info' ? 'check-lg' : 'exclamation-triangle-fill'" fill="black"></b-icon>
+              {{ alert.message }}
+            </div>
+          </b-alert>
+      </div>
     </main>
 
     <AppModal modalId="removeCategoryModal" hideFooter :key="modalKey">
@@ -96,6 +107,8 @@
         </div>
       </template>
     </AppModal>
+
+
   </div>
 </template>
 
@@ -140,10 +153,28 @@ export default {
       selectedRow: [],
       selectedCategory: {},
       submitStatus: null,
+      alert: {
+        dismissSecs: 0,
+        showAlert: 0,
+        variant: "",
+        message: ""
+      },
     };
   },
   created() {
     this.$store.dispatch("fetchCategories");
+  },
+  mounted() {
+    const alertMessage = sessionStorage.getItem('alertMessage');
+    const alertType = sessionStorage.getItem('alertType');
+
+    if (alertMessage && alertType) {
+      this.showAlert(alertMessage, alertType);
+    
+      // Clear the stored alert information in sessionStorage
+      sessionStorage.removeItem('alertMessage');
+      sessionStorage.removeItem('alertType');
+    }
   },
   computed: {
     ...mapState(["categories"]),
@@ -187,18 +218,21 @@ export default {
       if (this.$v.$invalid) {
         this.submitStatus = "error";
       } else {
-        this.$store
-          .dispatch("addCategory", this.category)
+        this.$store.dispatch("addCategory", this.category);
+        sessionStorage.setItem('alertMessage', 'Category Successfully Created');
+        sessionStorage.setItem('alertType', 'success');
       }
     },
     editCategory(id, category) {
       delete category.status;
-      this.$store
-        .dispatch("editCategory", { id, category })
+      this.$store.dispatch("editCategory", { id, category });
+      sessionStorage.setItem('alertMessage', 'Category Successfully Updated');
+      sessionStorage.setItem('alertType', 'info');
     },
     deleteCategory(id) {
-      this.$store
-        .dispatch("removeCategory", id)
+      this.$store.dispatch("removeCategory", id);
+      sessionStorage.setItem('alertMessage', 'Category Successfully Deleted');
+      sessionStorage.setItem('alertType', 'danger');
     },
     logout() {
       this.$store.dispatch("logout")
@@ -210,11 +244,30 @@ export default {
       this.category = {
         category_name: ""
       };
-    }
+    },
+    showAlert(message, variant) {
+      this.alert = {
+        dismissSecs: 5,
+        showAlert: 5,
+        message,
+        variant
+      }
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
+.test_div {
+  width: 25% !important;
+}
 
+.alert_class {
+  width: 200px !important;
+}
+
+.alert-container {
+  display: flex;
+  justify-content: end;
+}
 </style>

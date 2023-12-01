@@ -46,7 +46,7 @@
                 }">
                   <label for="status">Book Title</label>
                   <b-form-select id="status" v-model.trim="copy.book_id">
-                    <b-form-select-option value="" disabled>Select Book Title</b-form-select-option>
+                    <b-form-select-option value="" disabled>Select ...</b-form-select-option>
                     <b-form-select-option v-for="bookOption in bookOptions" :key="bookOption.value"
                       :value="bookOption.value">{{ bookOption.text }}</b-form-select-option>
                   </b-form-select>
@@ -64,7 +64,7 @@
                 }">
                   <label for="status">Status</label>
                   <b-form-select id="status" v-model="copy.status">
-                    <b-form-select-option value="" disabled>Select Status</b-form-select-option>
+                    <b-form-select-option value="" disabled>Select ...</b-form-select-option>
                     <b-form-select-option value="Active">Active</b-form-select-option>
                     <b-form-select-option value="Inactive">Inactive</b-form-select-option>
                   </b-form-select>
@@ -95,7 +95,7 @@
               <div class="col-12" :class="{'input-group--error': $v.copy.status.$error}">
                 <label for="status">Status</label>
                 <b-form-select id="status" v-model="selectedCopy.status">
-                  <b-form-select-option value="" disabled>Select Status</b-form-select-option>
+                  <b-form-select-option value="" disabled>Select ...</b-form-select-option>
                   <b-form-select-option value="Active">Active</b-form-select-option>
                   <b-form-select-option value="Inactive">Inactive</b-form-select-option>
                 </b-form-select>
@@ -246,6 +246,9 @@ export default {
       // Trigger pagination to update the number of buttons/pages due to filtering
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
+    },
+    deleteCopy(id) {
+      this.$store.dispatch("removeCopy", id)
     },
     rerenderModal() {
       this.modalKey += 1;

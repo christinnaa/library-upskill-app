@@ -63,7 +63,7 @@
                   }">
                     <label for="role">Role</label>
                     <b-form-select id="role" v-model="user.role">
-                      <b-form-select-option value="" disabled>Select Role</b-form-select-option>
+                      <b-form-select-option value="" disabled>Select ...</b-form-select-option>
                       <b-form-select-option value="admin">Admin</b-form-select-option>
                       <b-form-select-option value="reader">Reader</b-form-select-option>
                     </b-form-select>
@@ -128,7 +128,7 @@
                 <div class="col-4">
                     <label for="role">Role</label>
                     <b-form-select id="role" v-model="selectedUser.role">
-                      <b-form-select-option value="" disabled>Select Role</b-form-select-option>
+                      <b-form-select-option value="" disabled>Select ...</b-form-select-option>
                       <b-form-select-option value="admin">Admin</b-form-select-option>
                       <b-form-select-option value="reader">Reader</b-form-select-option>
                     </b-form-select>

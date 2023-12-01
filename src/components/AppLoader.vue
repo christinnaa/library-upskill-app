@@ -23,7 +23,7 @@ export default {
     showToggle() {
       setTimeout(() => {
         this.show = false;
-      }, 1500);
+      }, 800);
     },
   },
 };
@@ -51,17 +51,17 @@ export default {
   border-radius: 50%;
   margin: 0 8px;
   transform: translate3d(0);
-  animation: bounce 0.6s infinite alternate;
+  animation: bounce 0.4s infinite alternate;
 }
 
 .loader>span:nth-child(2) {
   background-color: #a4c3b2;
-  animation-delay: 0.2s;
+  animation-delay: 0.18s;
 }
 
 .loader>span:nth-child(3) {
   background-color: #cce3de;
-  animation-delay: 0.4s;
+  animation-delay: 0.2s;
 }
 
 @keyframes bounce {

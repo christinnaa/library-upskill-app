@@ -126,7 +126,7 @@
                 <div class="col-4">
                   <label for="categories">Category</label>
                   <b-form-select v-model.trim="updateBook.category">
-                    <b-form-select-option value="" disabled>Select</b-form-select-option>
+                    <b-form-select-option value="" disabled>Select ...</b-form-select-option>
                     <b-form-select-option v-for="categoryOption in categoryOptions" :key="categoryOption.value" :value="categoryOption.value">
                     {{ categoryOption.text }}
                     </b-form-select-option>
@@ -176,7 +176,7 @@
               <div class="col-6" :class="{ 'input-group--error': $v.book.publisher_id.$error }">
                 <label for="publisher">Publisher</label>
                 <b-form-select v-model.trim="$v.book.publisher_id.$model">
-                  <b-form-select-option value="" disabled>Select Publisher</b-form-select-option>
+                  <b-form-select-option value="" disabled>Select ...</b-form-select-option>
                   <b-form-select-option v-for="publisherOption in publisherOptions" :key="publisherOption.value" :value="publisherOption.value">
                     {{ publisherOption.text }}
                   </b-form-select-option>
@@ -219,7 +219,7 @@
               <div class="col-4" :class="{ 'input-group--error': $v.book.category_id.$error }">
                 <label for="categories">Category</label>
                 <b-form-select v-model.trim="$v.book.category_id.$model">
-                  <b-form-select-option value="" disabled>Select Category</b-form-select-option>
+                  <b-form-select-option value="" disabled>Select ...</b-form-select-option>
                   <b-form-select-option v-for="categoryOption in categoryOptions" :key="categoryOption.value" :value="categoryOption.value">
                     {{ categoryOption.text }}
                   </b-form-select-option>

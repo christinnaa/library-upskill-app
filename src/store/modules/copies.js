@@ -49,7 +49,7 @@ export default {
       service
         .removeCopy(id)
         .then(async () => {
-          await commit("REMOVE_COPY", id);
+          await commit("REMOVE_COPIES", id);
           router.go(0);
         })
         .catch((error) => {
@@ -61,7 +61,7 @@ export default {
         .updateCopy(id, copy)
         .then(async () => {
           console.log(copy)
-          await commit("UPDATE_COPY", id);
+          await commit("UPDATE_COPIES", id);
           router.go(0);
         })
         .catch((error) => {

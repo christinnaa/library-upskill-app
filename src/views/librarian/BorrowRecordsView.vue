@@ -7,13 +7,20 @@
         <div class="d-flex justify-content-between mt-2 mb-4">
           <h4>Borrow Records</h4>
           <div>
-            <b-button v-if="selectedRow[0]" v-b-modal.updateIssuedBookModal
-              class="mr-2 info-btn">Update</b-button>
-            <b-button v-b-modal.addBorrowRecord class="primary-btn">Add Record</b-button>
+            <div class="d-flex" v-if="selectedRow[0]">
+              <b-button class="mr-2 warning-btn" >
+                <b-icon icon="trash" scale=".85"></b-icon>
+              </b-button>
+              <b-button class="mr-2 secondary-btn" v-b-modal.updateBorrowRecord>
+                <b-icon icon="pencil-square" scale=".85"></b-icon>
+              </b-button>
+            </div>
+
+            <b-button v-else class="primary-btn" v-b-modal.addBorrowRecord>Add Borrow Record</b-button>
           </div>
         </div>
 
-        <b-table :items="items" :per-page="perPage" :fields="fields" :current-page="currentPage" :sort-by.sync="sortBy" sort-desc.sync="false" fixed responsive :filter="filter" select-mode="single" ref="selectableTable" selectable @row-selected="onRowSelected" @filtered="onFiltered">
+        <b-table :items="items" :per-page="perPage" :fields="fields" :current-page="currentPage" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc" fixed responsive :filter="filter" select-mode="single" ref="selectableTable" selectable @row-selected="onRowSelected" @filtered="onFiltered">
           <template #cell(status)="row">
             <b-badge v-if="row.item.status == 'Active'" class="active py-2">{{ row.item.status }}</b-badge>
             <b-badge v-else-if="row.item.status == 'Inactive'" class="inactive py-2">{{
@@ -30,24 +37,19 @@
       </div>
     </main>
 
-    <!-- <AppModal modalId="updateIssuedBookModal" hideFooter :key="modalKey">
-      <template #modal-header> Update Issued Book </template>
+    <AppModal modalId="updateBorrowRecord" hideFooter :key="modalKey" modalSize="md">
+      <template #modal-header> Update Borrow Record </template>
       <template #modal-body>
-        <form class="px-2" @submit.prevent="
-          editIssuedBook(selectedIssuedBook.issue_id, selectedIssuedBook)
-        ">
-          <div class="mb-2" :class="{
-            'input-group--error': $v.selectedIssuedBook.date_returned.$error,
-          }">
-            <label for="date_returned">Date Returned</label>
-            <b-form-input v-model="selectedIssuedBook.date_returned" type="date" id="date_returned"></b-form-input>
-            <p class="error-message" v-if="
-              submitStatus === 'error' &&
-              !$v.selectedIssuedBook.date_returned.required
-            ">
-              Date is required.
-            </p>
-          </div>
+        <form class="px-3" @submit.prevent="editBorrowRecord(selectedBorrowRecord.borrow_id, selectedBorrowRecord)">
+          <b-row class="mb-3">
+            <div class="col-12" :class="{'input-group--error': $v.borrowRecord.user_id.$error}">
+              <label for="date_of_birth">Borrow Date</label>
+              <b-form-input type="date" id="date_of_birth" v-model="borrowRecord.borrowed_date"></b-form-input>
+              <p class="error-message" v-if="submitStatus === 'error' && !$v.borrowRecord.user_id.required">
+                Username is required.
+              </p>
+            </div>
+          </b-row>
           <div class="w-100 mt-4 d-flex justify-content-end">
             <b-button class="mr-2 secondary-btn" @click="rerenderModal()">
               Cancel
@@ -56,21 +58,21 @@
           </div>
         </form>
       </template>
-    </AppModal> -->
+    </AppModal>
 
     <AppModal :key="modalKey" modalId="addBorrowRecord" modalSize="md" submitMethod="addBorrowRecord" hideFooter>
       <template #modal-header> Add Borrow Record </template>
       <template #modal-body>
-        <form class="px-2" @submit.prevent="addBorrowRecord">
+        <form class="px-3" @submit.prevent="addBorrowRecord">
           <b-row class="mb-3">
-            <div class="col-12" :class="{'input-group--error': $v.borrowRecord.username.$error}">
-              <label for="username">Username</label>
-              <b-form-select id="username" v-model.trim="borrowRecord.user_id">
-                <b-form-select-option value="null" disabled>Select Username</b-form-select-option>
+            <div class="col-12" :class="{'input-group--error': $v.borrowRecord.user_id.$error}">
+              <label for="user">Username</label>
+              <b-form-select id="user" v-model.trim="borrowRecord.user_id">
+                <b-form-select-option value="" disabled>Select ...</b-form-select-option>
                 <b-form-select-option v-for="userOption in userOptions" :key="userOption.value"
                   :value="userOption.value">{{ userOption.text }}</b-form-select-option>
               </b-form-select>
-              <p class="error-message" v-if="submitStatus === 'error' && !$v.borrowRecord.username.required">
+              <p class="error-message" v-if="submitStatus === 'error' && !$v.borrowRecord.user_id.required">
                 Username is required.
               </p>
             </div>
@@ -88,19 +90,19 @@
               </p>
             </div>
           </b-row> -->
-          <!-- <b-row class="mb-3">
-            <div class="col-12" :class="{'input-group--error': $v.user.title.$error}">
+          <b-row class="mb-3">
+            <div class="col-12" :class="{'input-group--error': $v.borrowRecord.copy_id.$error}">
               <label for="copy">Book Copy</label>
-              <b-form-select id="copy">
-                <b-form-select-option value="" disabled>Select Book Copy</b-form-select-option>
+              <b-form-select id="copy" v-model.trim="borrowRecord.copy_id">
+                <b-form-select-option value="" disabled>Select ...</b-form-select-option>
                 <b-form-select-option v-for="copyOption in copyOptions" :key="copyOption.value"
                   :value="copyOption.value">{{ copyOption.text }}</b-form-select-option>
               </b-form-select>
-              <p class="error-message" v-if="submitStatus === 'error' && !$v.user.copy.required">
+              <p class="error-message" v-if="submitStatus === 'error' && !$v.borrowRecord.copy_id.required">
                 Book Copy is required.
               </p>
             </div>
-          </b-row> -->
+          </b-row>
           <b-row>
             <div class="col-6">
               <label for="date_of_birth">Borrow Date</label>
@@ -139,7 +141,8 @@ export default {
   },
   data() {
     return {
-      sortBy: 'title',
+      sortBy: 'borrowed_date',
+      sortDesc: true,
       fields: [
         {
           key: "title",
@@ -191,12 +194,10 @@ export default {
       modalKey: 0,
       selectedRow: [],
       selectedBorrowRecord: {},
-      selectedBookData: {},
-      selectedIssuedBook: {},
       submitStatus: null,
       borrowRecord: {
-        copy_id: "",
         user_id: "",
+        copy_id: "",
         borrowed_date: "",
         return_by: "",
         returned_date: "",
@@ -206,13 +207,16 @@ export default {
   },
   validations: {
     borrowRecord: {
-      username: {
+      user_id: {
         required,
       },
-      title: {
+      copy_id: {
         required
       },
-      copy: {
+      borrowed_date: {
+        required
+      },
+      returned_date: {
         required
       }
     }
@@ -255,7 +259,9 @@ export default {
     userOptions() {
       return this.users.users
       .filter(user => user.role === 'reader')
-      .map((user) => ({ value: user.user_id, text: user.username }));
+      .map((user) => (
+      console.log(user.username),
+      { value: user.user_id, text: user.username }));
     },
     bookOptions() {
       return this.books.books.map((book) => (
@@ -274,7 +280,7 @@ export default {
         return returnDate.toISOString().split('T')[0]; // Format to 'yyyy-mm-dd'
       }
       return null;
-    }
+    },
   },
   methods: {
     onRowSelected(items) {
@@ -296,35 +302,21 @@ export default {
     getSearchData(data){
       this.filter = data;
     },
-    // getSelectedRecordData() {
-    //   this.selectedBookData = this.books.books.find(
-    //     (b) => b.book_id == this.selectedIssuedBook.book_id
-    //   );
-    // },
-    // editIssuedBook(id, issuedBook) {
-    //   this.$v.$touch();
-
-    //   if (this.$v.$invalid) {
-    //     this.submitStatus = "error";
-    //   } else {
-    //     this.selectedIssuedBook.status = "returned";
-        
-    //     this.$store
-    //       .dispatch("editIssuedBook", { id, issuedBook })
-
-    //     this.selectedBookData.copies++;
-    //     this.editBook(this.selectedBookData.book_id, this.selectedBookData);
-    //   }
-    // },
-    // editBook(book_id, book) {
-    //   this.$store
-    //     .dispatch("editBook", { book_id, book })
-
-    // },
+    addBorrowRecord() {
+      this.$v.$touch();
+      if (this.$v.$invalid) {
+        this.submitStatus = "error";
+      } else {
+        // console.log(this.bookOptions)
+        this.$store.dispatch("addBorrowRecord", this.copy)
+      }
+    },
+    editBorrowRecord(id, borrowRecord) {
+      this.$store.dispatch("editBorrowRecord", { id, borrowRecord })
+    },
     logout() {
       this.$store.dispatch("logout")
     },
-    
     clear() {
       this.borrowRecord = {
         copy_id: "",
@@ -352,7 +344,7 @@ td {
   width: 80px !important;
 }
 
-.available {
+.active {
   background-color: #2a9d8f;
   color: #fff;
   width: 80px !important;
