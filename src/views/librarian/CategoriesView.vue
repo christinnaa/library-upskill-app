@@ -178,6 +178,7 @@ export default {
     },
     rerenderModal() {
       this.modalKey += 1;
+      this.clear();
     },
     addCategory() {
       this.category.category_name = this.capitalizeFirstLetter(this.category.category_name);
@@ -205,6 +206,11 @@ export default {
     capitalizeFirstLetter(string) {
       return string.charAt(0).toUpperCase() + string.slice(1);
     },
+    clear() {
+      this.category = {
+        category_name: ""
+      };
+    }
   },
 };
 </script>

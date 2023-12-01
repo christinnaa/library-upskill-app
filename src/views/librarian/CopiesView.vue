@@ -53,7 +53,7 @@
                   <p class="error-message" v-if="submitStatus === 'error' &&
                     !$v.copy.book_id.required
                     ">
-                    Status is required.
+                    Title is required.
                   </p>
      
                 </div>
@@ -151,13 +151,13 @@ export default {
   },
   data() {
     return {
-      sortBy: 'copy_id',
+      sortBy: 'title',
       fields: [
         {
           key: "copy_id",
           label: "Copy ID",
           thStyle: { textTransform: "uppercase", width: '20%' },
-          sortable: true,
+          // sortable: true,
         },
         {
           key: "title",
@@ -249,6 +249,7 @@ export default {
     },
     rerenderModal() {
       this.modalKey += 1;
+      this.clear();
     },
     getSearchData(data) {
       this.filter = data;
@@ -262,6 +263,12 @@ export default {
     logout() {
       this.$store.dispatch("logout")
     },
+    clear() {
+      this.copy ={
+        book_id: "",
+        status: ""
+      }
+    }
   },
 };
 </script>

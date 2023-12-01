@@ -58,47 +58,57 @@
       </template>
     </AppModal> -->
 
-    <AppModal :key="modalKey" modalId="addBorrowRecord" modalSize="lg" submitMethod="addBorrowRecord" hideFooter>
+    <AppModal :key="modalKey" modalId="addBorrowRecord" modalSize="md" submitMethod="addBorrowRecord" hideFooter>
       <template #modal-header> Add Borrow Record </template>
       <template #modal-body>
-        <form>
-          <b-row class="mb-3 px-2">
-            <div class="col-6">
+        <form class="px-2" @submit.prevent="addBorrowRecord">
+          <b-row class="mb-3">
+            <div class="col-12" :class="{'input-group--error': $v.borrowRecord.username.$error}">
               <label for="username">Username</label>
-                <b-form-select>
-                  <b-form-select-option value="" disabled>Select</b-form-select-option>
-                  <b-form-select-option v-for="userOption in userOptions" :key="userOption.value"
-                      :value="userOption.value">{{ userOption.value }}</b-form-select-option>
-                </b-form-select>
-                <p class="error-message" v-if="submitStatus === 'error' && !$v.user.username.required">
-                  User is required.
-                </p>
+              <b-form-select id="username" v-model.trim="borrowRecord.user_id">
+                <b-form-select-option value="null" disabled>Select Username</b-form-select-option>
+                <b-form-select-option v-for="userOption in userOptions" :key="userOption.value"
+                  :value="userOption.value">{{ userOption.text }}</b-form-select-option>
+              </b-form-select>
+              <p class="error-message" v-if="submitStatus === 'error' && !$v.borrowRecord.username.required">
+                Username is required.
+              </p>
             </div>
-            <!-- <div class="col-6">
-                <label for="publisher">Title</label>
-                <b-form-select>
-                  <b-form-select-option value="" disabled>Select</b-form-select-option>
-                  <b-form-select-option v-for="publisher in activePublishers" :key="publisher.publisher_id"
-                      :value="publisher.publisher_id">{{ publisher.p_name }}</b-form-select-option>
-                  </b-form-select>
-            </div> -->
           </b-row>
-          <b-row class="mb-3 px-2">
-            <!-- <div class="col-4">
-              <label for="publisher">Available Copy</label>
-                <b-form-select>
-                <b-form-select-option value="" disabled>Select</b-form-select-option>
-                <b-form-select-option v-for="publisher in activePublishers" :key="publisher.publisher_id"
-                  :value="publisher.publisher_id">{{ publisher.publisher_name }}</b-form-select-option>
-                </b-form-select>
-            </div> -->
-            <div class="col-4">
-              <label for="date_of_birth">Borrow Date</label>
-              <b-form-input type="date" id="date_of_birth"></b-form-input>
+          <!-- <b-row class="mb-3">
+            <div class="col-12" :class="{'input-group--error': $v.user.title.$error}">
+              <label for="title">title</label>
+              <b-form-select id="title">
+                <b-form-select-option value="null" disabled>Select title</b-form-select-option>
+                <b-form-select-option v-for="bookOption in bookOptions" :key="bookOption.value"
+                  :value="bookOption.value">{{ bookOption.text }}</b-form-select-option>
+              </b-form-select>
+              <p class="error-message" v-if="submitStatus === 'error' && !$v.user.title.required">
+                title is required.
+              </p>
             </div>
-            <div class="col-4">
-              <label for="date_of_birth">Date Returned</label>
-              <b-form-input type="date" id="date_of_birth" readonly></b-form-input>
+          </b-row> -->
+          <!-- <b-row class="mb-3">
+            <div class="col-12" :class="{'input-group--error': $v.user.title.$error}">
+              <label for="copy">Book Copy</label>
+              <b-form-select id="copy">
+                <b-form-select-option value="" disabled>Select Book Copy</b-form-select-option>
+                <b-form-select-option v-for="copyOption in copyOptions" :key="copyOption.value"
+                  :value="copyOption.value">{{ copyOption.text }}</b-form-select-option>
+              </b-form-select>
+              <p class="error-message" v-if="submitStatus === 'error' && !$v.user.copy.required">
+                Book Copy is required.
+              </p>
+            </div>
+          </b-row> -->
+          <b-row>
+            <div class="col-6">
+              <label for="date_of_birth">Borrow Date</label>
+              <b-form-input type="date" id="date_of_birth" v-model="borrowRecord.borrowed_date"></b-form-input>
+            </div>
+            <div class="col-6">
+              <label for="date_of_birth">Date to be Returned</label>
+              <b-form-input type="date" id="date_of_birth" v-model="returnDate" readonly></b-form-input>
             </div>
           </b-row>
 
@@ -182,21 +192,36 @@ export default {
       selectedRow: [],
       selectedBorrowRecord: {},
       selectedBookData: {},
-
       selectedIssuedBook: {},
       submitStatus: null,
+      borrowRecord: {
+        copy_id: "",
+        user_id: "",
+        borrowed_date: "",
+        return_by: "",
+        returned_date: "",
+        status: "",
+      }
     };
   },
   validations: {
-    user: {
+    borrowRecord: {
       username: {
         required,
       },
+      title: {
+        required
+      },
+      copy: {
+        required
+      }
     }
   },
   created() {
     this.$store.dispatch("fetchBorrowRecords");
     this.$store.dispatch("fetchUsers");
+    this.$store.dispatch("fetchCopies");
+    this.$store.dispatch("fetchBooks");
     // this.userOptions();
     // this.$store.dispatch("fetchBooks");
 
@@ -211,7 +236,7 @@ export default {
     // });
   },
   computed: {
-    ...mapState(["borrowRecords", "users"]),
+    ...mapState(["borrowRecords", "users", "copies", "books"]),
     items() {
       // console.log(this.borrowRecords)
       // return this.borrowRecords.borrowRecords.map((item) => ({ ...item }));
@@ -227,9 +252,29 @@ export default {
           return { text: f.label, value: f.key };
         });
     },
-    userOption() {
-      return this.users.users.map((item) => ({ value: item.user_id, text: item.username }));
+    userOptions() {
+      return this.users.users
+      .filter(user => user.role === 'reader')
+      .map((user) => ({ value: user.user_id, text: user.username }));
     },
+    bookOptions() {
+      return this.books.books.map((book) => (
+      { value: book.book_id, text: book.title }));
+    },
+    copyOptions() {
+      return this.copies.copies
+      .filter(copy => copy.status === 'Active')
+      .map((copy) => ({ value: copy.copy_id, text: copy.title }));
+    },
+    returnDate() {
+      if (this.borrowRecord.borrowed_date) {
+        const borrowedDate = new Date(this.borrowRecord.borrowed_date);
+        const returnDate = new Date(borrowedDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+        console.log(returnDate)
+        return returnDate.toISOString().split('T')[0]; // Format to 'yyyy-mm-dd'
+      }
+      return null;
+    }
   },
   methods: {
     onRowSelected(items) {
@@ -246,6 +291,7 @@ export default {
     },
     rerenderModal() {
       this.modalKey += 1;
+      this.clear();
     },
     getSearchData(data){
       this.filter = data;
@@ -278,6 +324,17 @@ export default {
     logout() {
       this.$store.dispatch("logout")
     },
+    
+    clear() {
+      this.borrowRecord = {
+        copy_id: "",
+        user_id: "",
+        borrowed_date: "",
+        return_by: "",
+        returned_date: "",
+        status: "",
+      };
+    }
   },
 };
 </script>

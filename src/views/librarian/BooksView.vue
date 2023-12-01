@@ -373,6 +373,7 @@ export default {
   methods: {
     rerenderModal() {
       this.modalKey += 1;
+      this.clear();
     },
     onFiltered(filteredItems) {
       this.totalRows = filteredItems.length;
@@ -417,23 +418,22 @@ export default {
           console.log(error);
         });
     },
-    // newBookObject() {
-    //   return {
-    //     title: "",
-    //     isbn: "",
-    //     author: "",
-    //     publisher_id: "",
-    //     publication_year: "",
-    //     copies: "",
-    //     pages: "",
-    //     category_id: "",
-    //   };
-    // },
-    
     setBookPublisher(value) {
       this.book.publisher = value;
       this.$v.book.publisher.$touch();
     },
+    clear() {
+      this.book ={
+        title: "",
+        isbn: "",
+        author: "",
+        publisher_id: "",
+        publication_year: "",
+        copies: "",
+        pages: "",
+        category_id: "",
+      }
+    }
   },
   computed: {
     ...mapState(["books", "publishers", "categories"]),

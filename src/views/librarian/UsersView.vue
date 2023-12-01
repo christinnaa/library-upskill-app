@@ -287,6 +287,7 @@
       },
       rerenderModal() {
         this.modalKey += 1;
+        this.clear();
       },
       addUser() {
         this.user.first_name = this.capitalizeFirstLetter(this.user.first_name);
@@ -315,6 +316,15 @@
       capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
       },
+      clear() {
+        this.user = {
+          first_name: "",
+          last_name: "",
+          username: "",
+          password: "",
+          role: "",
+        };
+      }
     },
   };
   </script>

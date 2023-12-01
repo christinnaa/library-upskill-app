@@ -37,6 +37,7 @@ export default {
         .getUsers()
         .then(({data}) => {
           commit("SET_USERS", data);
+          // console.log(data)
         })
         .catch((error) => console.log(error));
     },

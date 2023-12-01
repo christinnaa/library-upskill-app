@@ -232,6 +232,7 @@ export default {
     },
     rerenderModal() {
       this.modalKey += 1;
+      this.clear();
     },
     getSearchData(data){
       this.filter = data;
@@ -259,6 +260,12 @@ export default {
     logout() {
       this.$store.dispatch("logout")
     },
+    clear() {
+      this.publisher = {
+        publisher_name: "",
+        publisher_location: "",
+      };
+    }
   },
 };
 </script>
