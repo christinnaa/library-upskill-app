@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <main>
-      <AppSearchbar @passData="getSearchData($event)"/>
+      <AppSearchbar @passData="getSearchData($event)" />
 
       <div class="table__container p-4 pt-3 rounded">
         <div class="d-flex justify-content-between mt-2 mb-4">
@@ -20,8 +20,9 @@
           </div>
         </div>
 
-        <b-table :items="items" :per-page="perPage" :fields="fields" :current-page="currentPage" :sort-by.sync="sortBy" sort-desc.sync="false" fixed responsive :filter="filter" select-mode="single"
-          ref="selectableTable" selectable @row-selected="onRowSelected" @filtered="onFiltered">
+        <b-table :items="items" :per-page="perPage" :fields="fields" :current-page="currentPage" :sort-by.sync="sortBy"
+          sort-desc.sync="false" fixed responsive :filter="filter" select-mode="single" ref="selectableTable" selectable
+          @row-selected="onRowSelected" @filtered="onFiltered">
         </b-table>
 
         <b-pagination v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="my-table"
@@ -36,10 +37,9 @@
               }">
                 <label for="category">Category Name</label>
                 <b-form-input id="category" v-model="category.category_name"></b-form-input>
-                <p class="error-message" v-if="
-                  submitStatus === 'error' &&
+                <p class="error-message" v-if="submitStatus === 'error' &&
                   !$v.category.category_name.required
-                ">
+                  ">
                   Category name is required.
                 </p>
               </div>
@@ -59,12 +59,12 @@
         <template #modal-body>
           <form class="px-2" @submit.prevent="
             editCategory(selectedCategory.category_id, selectedCategory)
-          ">
+            ">
             <b-row class="mb-4">
               <div class="col-12 pt-0">
-              <label for="category">Category</label>
-              <b-form-input id="category" v-model="selectedCategory.category_name"></b-form-input>
-            </div>
+                <label for="category">Category</label>
+                <b-form-input id="category" v-model="selectedCategory.category_name"></b-form-input>
+              </div>
             </b-row>
 
             <div class="w-100 mt-4 d-flex justify-content-end">
@@ -78,7 +78,7 @@
       </AppModal>
 
     </main>
-    <main class="alert-container">
+    <!-- <main class="alert-container">
       <div class="test_div">
         <b-alert dismissible class="alert" v-model="alert.showAlert" @dismissed="alert.showAlert = null" :variant="alert.variant">
           <div class="alertborder">
@@ -87,7 +87,7 @@
             </div>
           </b-alert>
       </div>
-    </main>
+    </main> -->
 
     <AppModal modalId="removeCategoryModal" hideFooter :key="modalKey">
       <template #modal-header> Delete Category </template>
@@ -123,7 +123,7 @@ export default {
   components: {
     AppModal,
     AppSearchbar,
-},
+  },
   validations: {
     category: {
       category_name: {
@@ -142,7 +142,7 @@ export default {
           sortable: true,
         },
       ],
-      perPage: 5,
+      perPage: 8,
       currentPage: 1,
       totalRows: 1,
       filter: null,
@@ -165,16 +165,7 @@ export default {
     this.$store.dispatch("fetchCategories");
   },
   mounted() {
-    const alertMessage = sessionStorage.getItem('alertMessage');
-    const alertType = sessionStorage.getItem('alertType');
-
-    if (alertMessage && alertType) {
-      this.showAlert(alertMessage, alertType);
-    
-      // Clear the stored alert information in sessionStorage
-      sessionStorage.removeItem('alertMessage');
-      sessionStorage.removeItem('alertType');
-    }
+    this.showToast();
   },
   computed: {
     ...mapState(["categories"]),
@@ -204,7 +195,7 @@ export default {
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
     },
-    getSearchData(data){
+    getSearchData(data) {
       this.filter = data;
     },
     rerenderModal() {
@@ -212,27 +203,19 @@ export default {
       this.clear();
     },
     addCategory() {
-      this.category.category_name = this.capitalizeFirstLetter(this.category.category_name);
-
       this.$v.$touch();
       if (this.$v.$invalid) {
         this.submitStatus = "error";
       } else {
-        this.$store.dispatch("addCategory", this.category);
-        sessionStorage.setItem('alertMessage', 'Category Successfully Created');
-        sessionStorage.setItem('alertType', 'success');
+        this.performAction('addCategory', this.category, 'success');
       }
     },
     editCategory(id, category) {
       delete category.status;
-      this.$store.dispatch("editCategory", { id, category });
-      sessionStorage.setItem('alertMessage', 'Category Successfully Updated');
-      sessionStorage.setItem('alertType', 'info');
+      this.performAction('editCategory', { id, category }, 'info');
     },
     deleteCategory(id) {
-      this.$store.dispatch("removeCategory", id);
-      sessionStorage.setItem('alertMessage', 'Category Successfully Deleted');
-      sessionStorage.setItem('alertType', 'danger');
+      this.performAction('removeCategory', id, 'warning');
     },
     logout() {
       this.$store.dispatch("logout")
@@ -245,14 +228,47 @@ export default {
         category_name: ""
       };
     },
-    showAlert(message, variant) {
-      this.alert = {
-        dismissSecs: 5,
-        showAlert: 5,
-        message,
-        variant
-      }
+    performAction(action, data, toastType) {
+      this.$store.dispatch(action, data);
+
+      localStorage.setItem('toastAction', action);
+      localStorage.setItem('toastData', JSON.stringify(data));
+      localStorage.setItem('toastType', toastType);
     },
+    showToast() {
+      const toastAction = localStorage.getItem('toastAction');
+      if (toastAction) {
+        // const toastData = JSON.parse(localStorage.getItem('toastData'));
+        const toastType = localStorage.getItem('toastType') || 'success'; // Default to 'success' if not set
+
+        let message = 'Default toast message';
+        if (toastAction === 'addCategory') {
+          message = `Category Added Successfully!`;
+        } else if (toastAction === 'editCategory') {
+          message = `Category Updated Successfully!`;
+        } else if (toastAction === 'removeCategory') {
+          message = `Category Deleted Successfully!`;
+        }
+
+        this.$toast[toastType](message, {
+          position: "bottom-right",
+          timeout: 5000,
+          closeOnClick: true,
+          pauseOnFocusLoss: true,
+          pauseOnHover: true,
+          draggable: true,
+          draggablePercent: 0.6,
+          showCloseButtonOnHover: true,
+          closeButton: "button",
+          icon: true,
+          rtl: false
+        });
+
+        localStorage.removeItem('toastAction');
+        localStorage.removeItem('toastData');
+        localStorage.removeItem('toastType');
+      }
+    }
   },
 };
 </script>
@@ -268,6 +284,6 @@ export default {
 
 .alert-container {
   display: flex;
-  justify-content: end;
+  justify-content: flex-end;
 }
 </style>

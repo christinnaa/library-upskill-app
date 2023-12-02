@@ -12,9 +12,6 @@
               <b-button class="mr-2 warning-btn" v-b-modal.removeCopyModal>
                 <b-icon icon="trash" scale=".95" class="mx-1"></b-icon>
               </b-button>
-              <b-button class="mr-2 secondary-btn" v-b-modal.updateCopyModal>
-                <b-icon icon="pencil-square" scale=".95" class="mx-1"></b-icon>
-              </b-button>
             </div>
             <b-button v-else class="primary-btn" v-b-modal.addCopyModal>Add Copy</b-button>
           </div>
@@ -37,13 +34,11 @@
 
         <AppModal modalId="addCopyModal" :key="modalKey" hideFooter>
           <template #modal-header> Add Copy </template>
-         
+
           <template #modal-body>
             <form class="px-2" @submit.prevent="addCopy">
               <b-row class="mb-3 px-2">
-                <div class="col-12" :class="{
-                  'input-group--error': $v.copy.book_id.$error,
-                }">
+                <div class="col-12" :class="{ 'input-group--error': $v.copy.book_id.$error }">
                   <label for="status">Book Title</label>
                   <b-form-select id="status" v-model.trim="copy.book_id">
                     <b-form-select-option value="" disabled>Select ...</b-form-select-option>
@@ -55,7 +50,6 @@
                     ">
                     Title is required.
                   </p>
-     
                 </div>
               </b-row>
               <b-row class="mb-3 px-2">
@@ -86,33 +80,6 @@
         </AppModal>
       </div>
 
-      <AppModal modalId="updateCopyModal" hideFooter :key="modalKey">
-        <template #modal-header> Update Copy </template>
-
-        <template #modal-body>
-          <form class="px-2" @submit.prevent="editCopy(selectedCopy.copy_id, selectedCopy)">
-            <b-row class="mb-3 px-2">
-              <div class="col-12" :class="{'input-group--error': $v.copy.status.$error}">
-                <label for="status">Status</label>
-                <b-form-select id="status" v-model="selectedCopy.status">
-                  <b-form-select-option value="" disabled>Select ...</b-form-select-option>
-                  <b-form-select-option value="Active">Active</b-form-select-option>
-                  <b-form-select-option value="Inactive">Inactive</b-form-select-option>
-                </b-form-select>
-                <p class="error-message" v-if="submitStatus === 'error' && !$v.copy.status.required">
-                  Status is required.
-                </p>
-              </div>
-            </b-row>
-            <div class="w-100 mt-4 d-flex justify-content-end">
-              <b-button class="mr-2 secondary-btn" @click="rerenderModal">
-                Cancel
-              </b-button>
-              <b-button type="submit" class="primary-btn"> Update </b-button>
-            </div>
-          </form>
-        </template>
-      </AppModal>
     </main>
 
     <AppModal modalId="removeCopyModal" hideFooter :key="modalKey">
@@ -199,7 +166,9 @@ export default {
   created() {
     this.$store.dispatch("fetchCopies");
     this.$store.dispatch("fetchBooks");
-
+  },
+  mounted() {
+    this.showToast();
   },
   computed: {
     ...mapState(["copies", "books"]),
@@ -227,7 +196,6 @@ export default {
       this.selectedRow = items;
       for (let copy of this.selectedRow) {
         this.selectedCopy = copy;
-        // console.log(copy)
       }
     },
     addCopy() {
@@ -235,20 +203,20 @@ export default {
       if (this.$v.$invalid) {
         this.submitStatus = "error";
       } else {
-        // console.log(this.bookOptions)
-        this.$store.dispatch("addCopy", this.copy)
+        this.performAction('addCopy', this.copy, 'success');
       }
     },
     editCopy(id, copy) {
-      this.$store.dispatch("editCopy", { id, copy })
+      this.performAction('editCopy', { id, copy }, 'info');
+    },
+    deleteCopy(id) {
+      // this.$store.dispatch("removeCopy", id);
+      this.performAction('removeCopy', id, 'warning');
     },
     onFiltered(filteredItems) {
       // Trigger pagination to update the number of buttons/pages due to filtering
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
-    },
-    deleteCopy(id) {
-      this.$store.dispatch("removeCopy", id)
     },
     rerenderModal() {
       this.modalKey += 1;
@@ -257,19 +225,54 @@ export default {
     getSearchData(data) {
       this.filter = data;
     },
-    // newCopyObject() {
-    //   return {
-    //     title: "",
-    //     status: ""
-    //   };
-    // },
     logout() {
       this.$store.dispatch("logout")
     },
     clear() {
-      this.copy ={
+      this.copy = {
         book_id: "",
         status: ""
+      }
+    },
+    performAction(action, data, toastType) {
+      this.$store.dispatch(action, data);
+
+      localStorage.setItem('toastAction', action);
+      localStorage.setItem('toastData', JSON.stringify(data));
+      localStorage.setItem('toastType', toastType);
+    },
+    showToast() {
+      const toastAction = localStorage.getItem('toastAction');
+      if (toastAction) {
+        // const toastData = JSON.parse(localStorage.getItem('toastData'));
+        const toastType = localStorage.getItem('toastType') || 'success'; // Default to 'success' if not set
+
+        let message = 'Default toast message';
+        if (toastAction === 'addCopy') {
+          message = `Copy Added Successfully!`;
+        } else if (toastAction === 'editCopy') {
+          message = `Copy Updated Successfully!`;
+        } else if (toastAction === 'removeCopy') {
+          message = `Copy Deleted Successfully!`;
+        }
+
+        this.$toast[toastType](message, {
+          position: "bottom-right",
+          timeout: 5000,
+          closeOnClick: true,
+          pauseOnFocusLoss: true,
+          pauseOnHover: true,
+          draggable: true,
+          draggablePercent: 0.6,
+          showCloseButtonOnHover: true,
+          closeButton: "button",
+          icon: true,
+          rtl: false
+        });
+
+        localStorage.removeItem('toastAction');
+        localStorage.removeItem('toastData');
+        localStorage.removeItem('toastType');
       }
     }
   },

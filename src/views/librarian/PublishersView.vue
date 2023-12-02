@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <main>
-      <AppSearchbar @passData="getSearchData($event)"/>
+      <AppSearchbar @passData="getSearchData($event)" />
 
 
       <div class="table__container p-4 pt-3 rounded">
@@ -22,8 +22,9 @@
           </div>
         </div>
 
-        <b-table :items="items" :per-page="perPage" :fields="fields" :current-page="currentPage" :sort-by.sync="sortBy" sort-desc.sync="false" fixed responsive :filter="filter" select-mode="single"
-          ref="selectableTable" selectable @row-selected="onRowSelected" @filtered="onFiltered">
+        <b-table :items="items" :per-page="perPage" :fields="fields" :current-page="currentPage" :sort-by.sync="sortBy"
+          sort-desc.sync="false" fixed responsive :filter="filter" select-mode="single" ref="selectableTable" selectable
+          @row-selected="onRowSelected" @filtered="onFiltered">
           <template #cell(location)="row">
             <div v-if="row.item.status == 'inactive'" class="inactive">
               <span>{{ row.item.p_location }}</span>
@@ -50,10 +51,9 @@
               }">
                 <label for="p_name">Name</label>
                 <b-input id="p_name" v-model="publisher.publisher_name"></b-input>
-                <p class="error-message" v-if="
-                  submitStatus === 'error' &&
+                <p class="error-message" v-if="submitStatus === 'error' &&
                   !$v.publisher.publisher_name.required
-                ">
+                  ">
                   Publisher Name is required.
                 </p>
               </div>
@@ -62,9 +62,8 @@
               }">
                 <label for="publisher_location">Location</label>
                 <b-form-input id="publisher_location" v-model="publisher.publisher_location"></b-form-input>
-                <p class="error-message" v-if="
-                  submitStatus === 'error' && !$v.publisher.publisher_location.required
-                ">
+                <p class="error-message" v-if="submitStatus === 'error' && !$v.publisher.publisher_location.required
+                  ">
                   Location is required.
                 </p>
               </div>
@@ -85,7 +84,7 @@
         <template #modal-body>
           <form class="px-2" @submit.prevent="
             editPublisher(selectedPublisher.publisher_id, selectedPublisher)
-          ">
+            ">
             <div class="mb-3 pt-0">
               <label for="p_name">Name</label>
               <b-input id="p_name" v-model="selectedPublisher.publisher_name"></b-input>
@@ -170,22 +169,7 @@ export default {
           sortable: true,
         },
       ],
-      // items: [
-      //   {
-      //     publisher: "Miramax Books",
-      //     p_location: "New York",
-      //   },
-      //   {
-      //     publisher: "Bloomsbury",
-      //     p_location: "London",
-      //   },
-      //   {
-      //     publisher: "Simon & Schuster",
-      //     p_location: "New York",
-      //   },
-
-      // ],
-      perPage: 5,
+      perPage: 8,
       publisher: {
         publisher_name: "",
         publisher_location: "",
@@ -201,6 +185,9 @@ export default {
   },
   created() {
     this.$store.dispatch("fetchPublishers");
+  },
+  mounted() {
+    this.showToast();
   },
   computed: {
     ...mapState(["publishers"]),
@@ -234,28 +221,22 @@ export default {
       this.modalKey += 1;
       this.clear();
     },
-    getSearchData(data){
+    getSearchData(data) {
       this.filter = data;
     },
-    // newPublisherObject() {
-    //   return {
-    //     p_name: "",
-    //     p_location: "",
-    //   };
-    // },
     addPublisher() {
       this.$v.$touch();
       if (this.$v.$invalid) {
         this.submitStatus = "error";
       } else {
-        this.$store.dispatch("addPublisher", this.publisher)
+        this.performAction('addPublisher', this.publisher, 'success');
       }
     },
     editPublisher(id, publisher) {
-      this.$store.dispatch("editPublisher", { id, publisher })
+      this.performAction('editPublisher', { id, publisher }, 'info');
     },
     deletePublisher(id) {
-      this.$store.dispatch("removePublisher", id)
+      this.performAction('removePublisher', id, 'warning');
     },
     logout() {
       this.$store.dispatch("logout")
@@ -265,11 +246,50 @@ export default {
         publisher_name: "",
         publisher_location: "",
       };
+    },
+    performAction(action, data, toastType) {
+      this.$store.dispatch(action, data);
+
+      localStorage.setItem('toastAction', action);
+      localStorage.setItem('toastData', JSON.stringify(data));
+      localStorage.setItem('toastType', toastType);
+    },
+    showToast() {
+      const toastAction = localStorage.getItem('toastAction');
+      if (toastAction) {
+        // const toastData = JSON.parse(localStorage.getItem('toastData'));
+        const toastType = localStorage.getItem('toastType') || 'success'; // Default to 'success' if not set
+
+        let message = 'Default toast message';
+        if (toastAction === 'addPublisher') {
+          message = `Publisher Added Successfully!`;
+        } else if (toastAction === 'editPublisher') {
+          message = `Publisher Updated Successfully!`;
+        } else if (toastAction === 'removePublisher') {
+          message = `Publisher Deleted Successfully!`;
+        }
+
+        this.$toast[toastType](message, {
+          position: "bottom-right",
+          timeout: 5000,
+          closeOnClick: true,
+          pauseOnFocusLoss: true,
+          pauseOnHover: true,
+          draggable: true,
+          draggablePercent: 0.6,
+          showCloseButtonOnHover: true,
+          closeButton: "button",
+          icon: true,
+          rtl: false
+        });
+
+        localStorage.removeItem('toastAction');
+        localStorage.removeItem('toastData');
+        localStorage.removeItem('toastType');
+      }
     }
   },
 };
 </script>
 
-<style lang="scss">
-
-</style>
+<style lang="scss"></style>

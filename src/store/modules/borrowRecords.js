@@ -36,6 +36,7 @@ export default {
         await service
           .postBorrowRecord(borrowRecord);
         await commit("ADD_BORROWRECORDS", borrowRecord);
+        console.log(borrowRecord);
         router.go(0);
       } catch (error) {
         console.log(error);
