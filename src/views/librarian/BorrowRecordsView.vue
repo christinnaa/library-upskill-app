@@ -89,12 +89,38 @@
         </AppModal>
       </div>
       <AppModal modalId="updateBorrowRecord" hideFooter modalSize="md" :key="modalKey">
-        <template #modal-header> Update User </template>
+        <template #modal-header> Update Borrow Record </template>
         <template #modal-body>
           <form class="px-3" @submit.prevent="editBorrowRecord(selectedBorrowRecord.borrow_id, selectedBorrowRecord)">
             <b-row class="mb-3">
               <div class="col-12">
+                <label for="user">Reader Name</label>
+                <b-form-input v-model.trim="selectedBorrowRecord.reader_name" id="username" disabled></b-form-input>
+              </div>
+            </b-row>
+            <b-row class="mb-3">
+              <div class="col-8">
+                <label for="user">Book Title</label>
+                <b-form-input v-model.trim="selectedBorrowRecord.title" id="username" disabled></b-form-input>
+              </div>
+              <div class="col-4">
+                <label for="user">Copy ID</label>
+                <b-form-input v-model.trim="selectedBorrowRecord.copy_id" id="username" disabled></b-form-input>
+              </div>
+            </b-row>
+            <b-row class="mb-3">
+              <div class="col-6">
                 <label for="returnedDate">Borrow Date</label>
+                <b-form-input id="returnedDate" v-model.trim="formattedBorrowedDate"></b-form-input>
+              </div>
+              <div class="col-6">
+                <label for="returnedDate">Return By</label>
+                <b-form-input id="returnedDate" v-model.trim="formattedReturnByDate" disabled></b-form-input>
+              </div>
+            </b-row>
+            <b-row class="mb-3">
+              <div class="col-12">
+                <label for="returnedDate">Returned Date</label>
                 <b-form-input type="date" id="returnedDate" v-model="selectedBorrowRecord.returned_date"></b-form-input>
               </div>
             </b-row>
@@ -171,15 +197,15 @@ export default {
             return moment(value).format("YYYY-MM-DD");
           },
         },
-        {
-          key: "return_by",
-          label: "Return By",
-          thStyle: { textTransform: "uppercase", width: "160px" },
-          sortable: true,
-          formatter: (value) => {
-            return moment(value).format("YYYY-MM-DD");
-          },
-        },
+        // {
+        //   key: "return_by",
+        //   label: "Return By",
+        //   thStyle: { textTransform: "uppercase", width: "160px" },
+        //   sortable: true,
+        //   formatter: (value) => {
+        //     return moment(value).format("YYYY-MM-DD");
+        //   },
+        // },
         {
           key: "returned_date",
           thStyle: { textTransform: "uppercase", width: "180px" },
@@ -253,7 +279,7 @@ export default {
         .filter(user => user.role === 'reader')
         .map((user) => (
           console.log(user.user_id, user.username),
-          { value: user.user_id, text: user.username }));
+          { value: user.user_id, text: `${user.first_name} ${user.last_name}` }));
     },
     bookOptions() {
       return this.books.books.map((book) => (
@@ -272,6 +298,12 @@ export default {
         return returnDate.toISOString().split('T')[0]; // Format to 'yyyy-mm-dd'
       }
       return null;
+    },
+    formattedBorrowedDate() {
+      return moment(this.selectedBorrowRecord.borrowed_date).format('YYYY-MM-DD');
+    },
+    formattedReturnByDate() {
+      return moment(this.selectedBorrowRecord.return_by).format('YYYY-MM-DD');
     },
   },
   watch: {
