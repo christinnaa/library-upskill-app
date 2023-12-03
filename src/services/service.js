@@ -87,7 +87,7 @@ export default {
     return apiClient.put(`/users/${user_id}`, user);
   },
   updateBorrowRecord(borrow_id, borrowRecord) {
-    return apiClient.put(`/user/${borrow_id}`, borrowRecord);
+    return apiClient.put(`/borrow-records/${borrow_id}`, borrowRecord);
   },
   updateCopy(copy_id, copy) {
     return apiClient.put(`/copies/${copy_id}`, copy);

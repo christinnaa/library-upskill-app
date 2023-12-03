@@ -8,7 +8,7 @@
           <h4>Borrow Records</h4>
           <div>
             <div class="d-flex" v-if="selectedRow[0]">
-              <b-button class="mr-2 warning-btn">
+              <b-button class="mr-2 warning-btn" v-b-modal.removeBorrowRecord>
                 <b-icon icon="trash" scale=".85"></b-icon>
               </b-button>
               <b-button class="mr-2 secondary-btn" v-b-modal.updateBorrowRecord>
@@ -36,80 +36,94 @@
 
         <b-pagination v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="my-table"
           class="mt-3 mb-0 justify-content-center"></b-pagination>
+
+        <AppModal :key="modalKey" modalId="addBorrowRecord" modalSize="md" hideFooter>
+          <template #modal-header> Add Borrow Record </template>
+          <template #modal-body>
+            <form class="px-3" @submit.prevent="addBorrowRecord">
+              <b-row class="mb-3">
+                <div class="col-12" :class="{ 'input-group--error': $v.borrowRecord.user_id.$error }">
+                  <label for="user">Username</label>
+                  <b-form-select id="user" v-model.trim="borrowRecord.user_id">
+                    <b-form-select-option value="" disabled>Select ...</b-form-select-option>
+                    <b-form-select-option v-for="userOption in userOptions" :key="userOption.value"
+                      :value="userOption.value">{{ userOption.text }}</b-form-select-option>
+                  </b-form-select>
+                  <p class="error-message" v-if="submitStatus === 'error' && !$v.borrowRecord.user_id.required">
+                    Username is required.
+                  </p>
+                </div>
+              </b-row>
+              <b-row class="mb-3">
+                <div class="col-12" :class="{ 'input-group--error': $v.borrowRecord.copy_id.$error }">
+                  <label for="copy">Book Copy</label>
+                  <b-form-select id="copy" v-model.trim="borrowRecord.copy_id">
+                    <b-form-select-option value="" disabled>Select ...</b-form-select-option>
+                    <b-form-select-option v-for="copyOption in copyOptions" :key="copyOption.value"
+                      :value="copyOption.value">{{ copyOption.text }}</b-form-select-option>
+                  </b-form-select>
+                  <p class="error-message" v-if="submitStatus === 'error' && !$v.borrowRecord.copy_id.required">
+                    Book Copy is required.
+                  </p>
+                </div>
+              </b-row>
+              <b-row>
+                <div class="col-6">
+                  <label for="date_of_birth">Borrow Date</label>
+                  <b-form-input type="date" id="date_of_birth" v-model="borrowRecord.borrowed_date"></b-form-input>
+                </div>
+                <div class="col-6">
+                  <label for="date_of_birth">Date to be Returned</label>
+                  <b-form-input type="date" id="date_of_birth" v-model="borrowRecord.return_by" readonly></b-form-input>
+                </div>
+              </b-row>
+
+              <div class="w-100 mt-4 d-flex justify-content-end">
+                <b-button class="mr-2 secondary-btn" @click="rerenderModal()">
+                  Cancel
+                </b-button>
+                <b-button type="submit" class="primary-btn"> Add </b-button>
+              </div>
+            </form>
+          </template>
+        </AppModal>
       </div>
+      <AppModal modalId="updateBorrowRecord" hideFooter modalSize="md" :key="modalKey">
+        <template #modal-header> Update User </template>
+        <template #modal-body>
+          <form class="px-3" @submit.prevent="editBorrowRecord(selectedBorrowRecord.borrow_id, selectedBorrowRecord)">
+            <b-row class="mb-3">
+              <div class="col-12">
+                <label for="returnedDate">Borrow Date</label>
+                <b-form-input type="date" id="returnedDate" v-model="selectedBorrowRecord.returned_date"></b-form-input>
+              </div>
+            </b-row>
+            <div class="w-100 mt-4 d-flex justify-content-end">
+              <b-button class="mr-2 secondary-btn" @click="rerenderModal()">
+                Cancel
+              </b-button>
+              <b-button type="submit" class="primary-btn"> Update </b-button>
+            </div>
+          </form>
+        </template>
+      </AppModal>
     </main>
 
-    <!-- <AppModal modalId="updateBorrowRecord" hideFooter :key="modalKey" modalSize="md">
-      <template #modal-header> Update Borrow Record </template>
+    <AppModal modalId="removeBorrowRecord" hideFooter :key="modalKey">
+      <template #modal-header> Delete Book Copy </template>
       <template #modal-body>
-        <form class="px-3" @submit.prevent="editBorrowRecord(selectedBorrowRecord.borrow_id, selectedBorrowRecord)">
-          <b-row class="mb-3">
-            <div class="col-12" :class="{ 'input-group--error': $v.borrowRecord.user_id.$error }">
-              <label for="date_of_birth">Borrow Date</label>
-              <b-form-input type="date" id="date_of_birth" v-model="borrowRecord.borrowed_date"></b-form-input>
-              <p class="error-message" v-if="submitStatus === 'error' && !$v.borrowRecord.user_id.required">
-                Username is required.
-              </p>
-            </div>
-          </b-row>
-          <div class="w-100 mt-4 d-flex justify-content-end">
-            <b-button class="mr-2 secondary-btn" @click="rerenderModal()">
-              Cancel
-            </b-button>
-            <b-button type="submit" class="primary-btn"> Update </b-button>
-          </div>
-        </form>
-      </template>
-    </AppModal> -->
+        <div class="pb-2 pt-1">
+          Are you sure you want to delete this?
+        </div>
 
-    <AppModal :key="modalKey" modalId="addBorrowRecord" modalSize="md" hideFooter>
-      <template #modal-header> Add Borrow Record </template>
-      <template #modal-body>
-        <form class="px-3" @submit.prevent="addBorrowRecord">
-          <b-row class="mb-3">
-            <div class="col-12" :class="{ 'input-group--error': $v.borrowRecord.user_id.$error }">
-              <label for="user">Username</label>
-              <b-form-select id="user" v-model.trim="borrowRecord.user_id">
-                <b-form-select-option value="" disabled>Select ...</b-form-select-option>
-                <b-form-select-option v-for="userOption in userOptions" :key="userOption.value"
-                  :value="userOption.value">{{ userOption.text }}</b-form-select-option>
-              </b-form-select>
-              <p class="error-message" v-if="submitStatus === 'error' && !$v.borrowRecord.user_id.required">
-                Username is required.
-              </p>
-            </div>
-          </b-row>
-          <b-row class="mb-3">
-            <div class="col-12" :class="{ 'input-group--error': $v.borrowRecord.copy_id.$error }">
-              <label for="copy">Book Copy</label>
-              <b-form-select id="copy" v-model.trim="borrowRecord.copy_id">
-                <b-form-select-option value="" disabled>Select ...</b-form-select-option>
-                <b-form-select-option v-for="copyOption in copyOptions" :key="copyOption.value"
-                  :value="copyOption.value">{{ copyOption.text }}</b-form-select-option>
-              </b-form-select>
-              <p class="error-message" v-if="submitStatus === 'error' && !$v.borrowRecord.copy_id.required">
-                Book Copy is required.
-              </p>
-            </div>
-          </b-row>
-          <b-row>
-            <div class="col-6">
-              <label for="date_of_birth">Borrow Date</label>
-              <b-form-input type="date" id="date_of_birth" v-model="borrowRecord.borrowed_date"></b-form-input>
-            </div>
-            <div class="col-6">
-              <label for="date_of_birth">Date to be Returned</label>
-              <b-form-input type="date" id="date_of_birth"  v-model="borrowRecord.return_by" readonly></b-form-input>
-            </div>
-          </b-row>
-
-          <div class="w-100 mt-4 d-flex justify-content-end">
-            <b-button class="mr-2 secondary-btn" @click="rerenderModal()">
-              Cancel
-            </b-button>
-            <b-button type="submit" class="primary-btn"> Add </b-button>
-          </div>
-        </form>
+        <div class="w-100 mt-4 d-flex justify-content-end">
+          <b-button class="mr-2 secondary-btn text-muted" @click="rerenderModal()">
+            Cancel
+          </b-button>
+          <b-button class="warning-btn text-warning" @click="deleteBorrowRecord(selectedBorrowRecord.borrow_id)">
+            Yes
+          </b-button>
+        </div>
       </template>
     </AppModal>
   </div>
@@ -133,6 +147,11 @@ export default {
       sortBy: 'borrowed_date',
       sortDesc: true,
       fields: [
+        {
+          key: "copy_id",
+          thStyle: { textTransform: "uppercase", width: "130px" },
+          sortable: true,
+        },
         {
           key: "title",
           thStyle: { textTransform: "uppercase", width: "350px" },
@@ -185,8 +204,8 @@ export default {
       selectedBorrowRecord: {},
       submitStatus: null,
       borrowRecord: {
-        user_id: "",
         copy_id: "",
+        user_id: "",
         borrowed_date: "",
         return_by: "",
       }
@@ -203,9 +222,6 @@ export default {
       borrowed_date: {
         required
       },
-      returned_date: {
-        required
-      }
     }
   },
   created() {
@@ -213,6 +229,9 @@ export default {
     this.$store.dispatch("fetchUsers");
     this.$store.dispatch("fetchCopies");
     this.$store.dispatch("fetchBooks");
+  },
+  mounted() {
+    this.showToast();
   },
   computed: {
     ...mapState(["borrowRecords", "users", "copies", "books"]),
@@ -233,7 +252,7 @@ export default {
       return this.users.users
         .filter(user => user.role === 'reader')
         .map((user) => (
-          // console.log(user.username),
+          console.log(user.user_id, user.username),
           { value: user.user_id, text: user.username }));
     },
     bookOptions() {
@@ -267,6 +286,7 @@ export default {
       for (let borrowRecord of this.selectedRow) {
         this.selectedBorrowRecord = borrowRecord;
       }
+      console.log(this.selectedBorrowRecord);
     },
     onFiltered(filteredItems) {
       this.totalRows = filteredItems.length;
@@ -284,12 +304,16 @@ export default {
       if (this.$v.$invalid) {
         this.submitStatus = "error";
       } else {
-        this.$store.dispatch("addBorrowRecord", this.borrowRecord)
-        console.log(this.borrowRecord);
+        this.performAction("addBorrowRecord", this.borrowRecord, 'success')
+        // console.log(this.borrowRecord);
       }
     },
     editBorrowRecord(id, borrowRecord) {
       this.$store.dispatch("editBorrowRecord", { id, borrowRecord })
+    },
+    deleteBorrowRecord(id) {
+      // this.$store.dispatch("removeCopy", id);
+      this.$store.dispatch('removeBorrowRecord', id);
     },
     logout() {
       this.$store.dispatch("logout")
@@ -303,6 +327,47 @@ export default {
         returned_date: "",
         status: "",
       };
+    },
+    performAction(action, data, toastType) {
+      this.$store.dispatch(action, data);
+
+      localStorage.setItem('toastAction', action);
+      localStorage.setItem('toastData', JSON.stringify(data));
+      localStorage.setItem('toastType', toastType);
+    },
+    showToast() {
+      const toastAction = localStorage.getItem('toastAction');
+      if (toastAction) {
+        // const toastData = JSON.parse(localStorage.getItem('toastData'));
+        const toastType = localStorage.getItem('toastType') || 'success'; // Default to 'success' if not set
+
+        let message = 'Default toast message';
+        if (toastAction === 'addBorrowRecord') {
+          message = `Borrow Record Added Successfully!`;
+        } else if (toastAction === 'editBorrowRecord') {
+          message = `Borrow Record Updated Successfully!`;
+        } else if (toastAction === 'removeBorrowRecord') {
+          message = `Borrow Record Deleted Successfully!`;
+        }
+
+        this.$toast[toastType](message, {
+          position: "bottom-right",
+          timeout: 5000,
+          closeOnClick: true,
+          pauseOnFocusLoss: true,
+          pauseOnHover: true,
+          draggable: true,
+          draggablePercent: 0.6,
+          showCloseButtonOnHover: true,
+          closeButton: "button",
+          icon: true,
+          rtl: false
+        });
+
+        localStorage.removeItem('toastAction');
+        localStorage.removeItem('toastData');
+        localStorage.removeItem('toastType');
+      }
     }
   },
 };

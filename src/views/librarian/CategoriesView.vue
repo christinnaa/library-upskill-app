@@ -78,16 +78,6 @@
       </AppModal>
 
     </main>
-    <!-- <main class="alert-container">
-      <div class="test_div">
-        <b-alert dismissible class="alert" v-model="alert.showAlert" @dismissed="alert.showAlert = null" :variant="alert.variant">
-          <div class="alertborder">
-            <b-icon class="mr-2" :icon="alert.variant == 'success' || alert.variant =='info' ? 'check-lg' : 'exclamation-triangle-fill'" fill="black"></b-icon>
-              {{ alert.message }}
-            </div>
-          </b-alert>
-      </div>
-    </main> -->
 
     <AppModal modalId="removeCategoryModal" hideFooter :key="modalKey">
       <template #modal-header> Delete Category </template>

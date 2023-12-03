@@ -39,8 +39,8 @@
             <form class="px-2" @submit.prevent="addCopy">
               <b-row class="mb-3 px-2">
                 <div class="col-12" :class="{ 'input-group--error': $v.copy.book_id.$error }">
-                  <label for="status">Book Title</label>
-                  <b-form-select id="status" v-model.trim="copy.book_id">
+                  <label for="title">Book Title</label>
+                  <b-form-select id="title" v-model.trim="copy.book_id">
                     <b-form-select-option value="" disabled>Select ...</b-form-select-option>
                     <b-form-select-option v-for="bookOption in bookOptions" :key="bookOption.value"
                       :value="bookOption.value">{{ bookOption.text }}</b-form-select-option>

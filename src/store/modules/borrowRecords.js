@@ -14,12 +14,16 @@ export default {
     SET_BORROWRECORDS(state, borrowRecords) {
       state.borrowRecords = borrowRecords;
     },
-    ADD_BORROWRECORDS(state, borrowRecord) {
+    ADD_BORROWRECORD(state, borrowRecord) {
       state.borrowRecords.push(borrowRecord);
     },
-    UPDATE_BORROWRECORDS(state, id) {
-      let index = state.copies.findIndex((c) => c.copy_id == id);
-      state.copies.splice(index, 0);
+    UPDATE_BORROWRECORD(state, id) {
+      let index = state.borrow_id.findIndex((b) => b.borrow_id == id);
+      state.borrow_id.splice(index, 0);
+    },
+    REMOVE_BORROWRECORD(state, id) {
+      let index = state.borrowRecords.findIndex((b) => b.borrow_id == id);
+      state.borrowRecords.splice(index, 0);
     },
   },
   actions: {
@@ -35,7 +39,7 @@ export default {
       try {
         await service
           .postBorrowRecord(borrowRecord);
-        await commit("ADD_BORROWRECORDS", borrowRecord);
+        await commit("ADD_BORROWRECORD", borrowRecord);
         console.log(borrowRecord);
         router.go(0);
       } catch (error) {
@@ -47,7 +51,18 @@ export default {
         .updateBorrowRecord(id, borrowRecord)
         .then(async () => {
           console.log(borrowRecord)
-          await commit("UPDATE_BORROWRECORDS", borrowRecord);
+          await commit("UPDATE_BORROWRECORD", borrowRecord);
+          router.go(0);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    removeBorrowRecord({ commit }, id) {
+      service
+        .removeBorrowRecord(id)
+        .then(async () => {
+          await commit("REMOVE_BORROWRECORD", id);
           router.go(0);
         })
         .catch((error) => {
