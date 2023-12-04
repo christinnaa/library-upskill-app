@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper">
+  <div class="wrapper"> 
     <main>
       <AppSearchbar @passData="getSearchData($event)" />
 

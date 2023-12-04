@@ -36,17 +36,10 @@
                           Update
                         </a>
                       </span>
-                      <span v-if="row.item.status == 'active'">
+                      <span>
                         <a v-b-modal.removeBookModal class="dropdown-item d-flex align-items-center py-2" href="#">
                           <b-icon icon="slash-circle" class="mr-2" font-scale=".95"></b-icon>
-                          Mark as inactive
-                        </a>
-                      </span>
-                      <span v-else>
-                        <a @click="editBook(selectedBookId, updateBook)"
-                          class="dropdown-item d-flex align-items-center py-2" href="#">
-                          <b-icon icon="check2-circle" class="mr-2" font-scale=".95"></b-icon>
-                          Mark as active
+                          Delete
                         </a>
                       </span>
                     </template>
@@ -103,7 +96,7 @@
                 </div>
                 <div class="col-4">
                   <label for="publisher">Publisher</label>
-                  <!-- {{ updateBook.publisher }} -->
+                  {{ updateBook.publisher }}
                   <b-form-select v-model.trim="updateBook.publisher">
                     <b-form-select-option v-for="publisherOption in publisherOptions" :key="publisherOption.value"
                       :value="publisherOption.value">
@@ -127,6 +120,7 @@
                 </div>
                 <div class="col-4">
                   <label for="categories">Category</label>
+                  {{ updateBook.category }}
                   <b-form-select v-model.trim="updateBook.category">
                     <b-form-select-option value="" disabled>Select ...</b-form-select-option>
                     <b-form-select-option v-for="categoryOption in categoryOptions" :key="categoryOption.value"
@@ -249,11 +243,10 @@
     </main>
 
     <AppModal modalId="removeBookModal" hideFooter>
-      <template #modal-header> Mark Selected Book as Inactive</template>
+      <template #modal-header> Delete Book</template>
       <template #modal-body>
         <div class="pb-2">
-          Are you sure you want to mark
-          <b>{{ updateBook.title }}</b> as inactive?
+          Are you sure you want to delete <b>{{ updateBook.title }}</b>?
         </div>
 
         <div class="w-100 mt-4 d-flex justify-content-end">
@@ -367,6 +360,7 @@ export default {
   mounted() {
     // Set the initial number of items
     this.$root.$on("addNewBook", this.addBook);
+    this.showToast();
   },
   // watch: {
   //   'updateBook.category_id'() {
@@ -394,19 +388,17 @@ export default {
       if (this.$v.$invalid) {
         this.submitStatus = "error";
       } else {
-        this.$store
-          .dispatch("addBook", this.book)
-          .catch(() => {
-            console.log("There was a problem adding the book.");
-          });
+        this.performAction('addBook', this.book, 'success');
+        // .catch(() => {
+        //     console.log("There was a problem adding the book.");
+        // });
       }
     },
-    deleteBook(book_id) {
-      this.$store
-        .dispatch("removeBook", book_id)
-        .catch((error) => {
-          console.log(error);
-        });
+    deleteBook(id) {
+      this.performAction('removeBook', id, 'warning');
+      // .catch((error) => {
+      //   console.log(error);
+      // });
     },
     getSelectedBook(book_id) {
       this.selectedBookId = book_id;
@@ -438,6 +430,47 @@ export default {
         copies: "",
         pages: "",
         category_id: "",
+      }
+    },
+    performAction(action, data, toastType) {
+      this.$store.dispatch(action, data);
+
+      localStorage.setItem('toastAction', action);
+      localStorage.setItem('toastData', JSON.stringify(data));
+      localStorage.setItem('toastType', toastType);
+    },
+    showToast() {
+      const toastAction = localStorage.getItem('toastAction');
+      if (toastAction) {
+        // const toastData = JSON.parse(localStorage.getItem('toastData'));
+        const toastType = localStorage.getItem('toastType') || 'success'; // Default to 'success' if not set
+
+        let message = 'Default toast message';
+        if (toastAction === 'addBook') {
+          message = `Book Added Successfully!`;
+        } else if (toastAction === 'editBook') {
+          message = `Book Updated Successfully!`;
+        } else if (toastAction === 'removeBook') {
+          message = `Book Deleted Successfully!`;
+        }
+
+        this.$toast[toastType](message, {
+          position: "bottom-right",
+          timeout: 5000,
+          closeOnClick: true,
+          pauseOnFocusLoss: true,
+          pauseOnHover: true,
+          draggable: true,
+          draggablePercent: 0.6,
+          showCloseButtonOnHover: true,
+          closeButton: "button",
+          icon: true,
+          rtl: false
+        });
+
+        localStorage.removeItem('toastAction');
+        localStorage.removeItem('toastData');
+        localStorage.removeItem('toastType');
       }
     }
   },
@@ -487,4 +520,5 @@ export default {
 .book-title {
   color: #81B29A;
   font-weight: 600;
-}</style>
+}
+</style>

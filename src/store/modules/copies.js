@@ -7,7 +7,7 @@ export default {
   },
   getters: {
     activeCopies: (state) => {
-      return state.copies.filter((copy) => copy.status == 'active');
+      return state.copies.filter((copy) => copy.status == 'Active');
     },
   },
   mutations: {

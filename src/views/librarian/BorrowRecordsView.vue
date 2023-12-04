@@ -67,6 +67,19 @@
                   </p>
                 </div>
               </b-row>
+              <b-row class="mb-3">
+                <div class="col-12" :class="{ 'input-group--error': $v.borrowRecord.copy_id.$error }">
+                  <label for="copy">Book Copy</label>
+                  <b-form-select id="copy">
+                    <b-form-select-option value="" disabled>Select ...</b-form-select-option>
+                    <b-form-select-option v-for="copy in activeCopies" :key="copy.copy_id"
+                      :value="copy.copy_id">{{ copy.title }}</b-form-select-option>
+                  </b-form-select>
+                  <p class="error-message" v-if="submitStatus === 'error' && !$v.borrowRecord.copy_id.required">
+                    Book Copy is required.
+                  </p>
+                </div>
+              </b-row>
               <b-row>
                 <div class="col-6">
                   <label for="date_of_birth">Borrow Date</label>
@@ -99,19 +112,19 @@
               </div>
             </b-row>
             <b-row class="mb-3">
-              <div class="col-8">
+              <div class="col-10">
                 <label for="user">Book Title</label>
                 <b-form-input v-model.trim="selectedBorrowRecord.title" id="username" disabled></b-form-input>
               </div>
-              <div class="col-4">
-                <label for="user">Copy ID</label>
+              <div class="col-2">
+                <label for="user">ID</label>
                 <b-form-input v-model.trim="selectedBorrowRecord.copy_id" id="username" disabled></b-form-input>
               </div>
             </b-row>
             <b-row class="mb-3">
               <div class="col-6">
                 <label for="returnedDate">Borrow Date</label>
-                <b-form-input id="returnedDate" v-model.trim="formattedBorrowedDate"></b-form-input>
+                <b-form-input id="returnedDate" v-model.trim="formattedBorrowedDate" disabled></b-form-input>
               </div>
               <div class="col-6">
                 <label for="returnedDate">Return By</label>
@@ -119,9 +132,13 @@
               </div>
             </b-row>
             <b-row class="mb-3">
-              <div class="col-12">
+              <div class="col-12" v-if="selectedBorrowRecord.returned_date == null">
                 <label for="returnedDate">Returned Date</label>
                 <b-form-input type="date" id="returnedDate" v-model="selectedBorrowRecord.returned_date"></b-form-input>
+              </div>
+              <div class="col-12" v-else>
+                <label for="returnedDate">Returned Date</label>
+                <b-form-input id="returnedDate" v-model="formattedReturnedDate" disabled></b-form-input>
               </div>
             </b-row>
             <div class="w-100 mt-4 d-flex justify-content-end">
@@ -136,7 +153,7 @@
     </main>
 
     <AppModal modalId="removeBorrowRecord" hideFooter :key="modalKey">
-      <template #modal-header> Delete Book Copy </template>
+      <template #modal-header> Delete Borrow Record </template>
       <template #modal-body>
         <div class="pb-2 pt-1">
           Are you sure you want to delete this?
@@ -159,7 +176,7 @@
 import AppModal from "@/components/AppModal.vue";
 import moment from "moment";
 import { required } from "vuelidate/lib/validators";
-import { mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import AppSearchbar from '@/components/AppSearchbar.vue';
 
 export default {
@@ -170,17 +187,17 @@ export default {
   },
   data() {
     return {
-      sortBy: 'borrowed_date',
+      sortBy: 'borrow_id',
       sortDesc: true,
       fields: [
         {
-          key: "copy_id",
-          thStyle: { textTransform: "uppercase", width: "130px" },
+          key: "title",
+          thStyle: { textTransform: "uppercase", width: "350px" },
           sortable: true,
         },
         {
-          key: "title",
-          thStyle: { textTransform: "uppercase", width: "350px" },
+          key: "copy_id",
+          thStyle: { textTransform: "uppercase", width: "130px" },
           sortable: true,
         },
         {
@@ -197,15 +214,6 @@ export default {
             return moment(value).format("YYYY-MM-DD");
           },
         },
-        // {
-        //   key: "return_by",
-        //   label: "Return By",
-        //   thStyle: { textTransform: "uppercase", width: "160px" },
-        //   sortable: true,
-        //   formatter: (value) => {
-        //     return moment(value).format("YYYY-MM-DD");
-        //   },
-        // },
         {
           key: "returned_date",
           thStyle: { textTransform: "uppercase", width: "180px" },
@@ -261,6 +269,7 @@ export default {
   },
   computed: {
     ...mapState(["borrowRecords", "users", "copies", "books"]),
+    ...mapGetters(["activeCopies"]),
     items() {
       return this.borrowRecords.borrowRecords;
     },
@@ -305,6 +314,9 @@ export default {
     formattedReturnByDate() {
       return moment(this.selectedBorrowRecord.return_by).format('YYYY-MM-DD');
     },
+    formattedReturnedDate() {
+      return moment(this.selectedBorrowRecord.returned_date).format('YYYY-MM-DD');
+    },
   },
   watch: {
     returnDate(newValue) {
@@ -341,11 +353,12 @@ export default {
       }
     },
     editBorrowRecord(id, borrowRecord) {
-      this.$store.dispatch("editBorrowRecord", { id, borrowRecord })
+      this.performAction("editBorrowRecord", { id, borrowRecord }, 'info')
+      // console.log({id, borrowRecord})
     },
     deleteBorrowRecord(id) {
-      // this.$store.dispatch("removeCopy", id);
-      this.$store.dispatch('removeBorrowRecord', id);
+      // this.$store.dispatch('removeBorrowRecord', id);
+      this.performAction("removeBorrowRecord", id, 'warning')
     },
     logout() {
       this.$store.dispatch("logout")
@@ -356,7 +369,6 @@ export default {
         user_id: "",
         borrowed_date: "",
         return_by: "",
-        returned_date: "",
         status: "",
       };
     },

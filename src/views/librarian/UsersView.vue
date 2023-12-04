@@ -28,7 +28,7 @@
         <b-pagination v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="my-table"
           class="mt-3 mb-0 justify-content-center"></b-pagination>
 
-        <AppModal modalId="addUserModal" modalSize="lg" :key="modalKey" hideFooter>
+        <AppModal modalId="addUserModal" modalSize="md" :key="modalKey" hideFooter>
           <template #modal-header> Add User </template>
           <template #modal-body>
             <form class="px-2" @submit.prevent="addUser">
@@ -106,7 +106,7 @@
         </AppModal>
       </div>
 
-      <AppModal modalId="updateUserModal" hideFooter modalSize="lg" :key="modalKey">
+      <AppModal modalId="updateUserModal" hideFooter modalSize="md" :key="modalKey">
         <template #modal-header> Update User </template>
         <template #modal-body>
           <form @submit.prevent="editUser(selectedUser.user_id, selectedUser)">

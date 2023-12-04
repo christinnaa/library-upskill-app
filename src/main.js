@@ -25,7 +25,7 @@ import "./assets/custom.scss";
 Vue.use(Toast, options);
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
-Vue.use(Vuelidate);
+Vue.use(Vuelidate)
 
 new Vue({
   router,

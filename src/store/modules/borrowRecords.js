@@ -18,8 +18,8 @@ export default {
       state.borrowRecords.push(borrowRecord);
     },
     UPDATE_BORROWRECORD(state, id) {
-      let index = state.borrow_id.findIndex((b) => b.borrow_id == id);
-      state.borrow_id.splice(index, 0);
+      let index = state.borrowRecords.findIndex((b) => b.borrow_id == id);
+      state.borrowRecords.splice(index, 0);
     },
     REMOVE_BORROWRECORD(state, id) {
       let index = state.borrowRecords.findIndex((b) => b.borrow_id == id);
@@ -50,8 +50,8 @@ export default {
       service
         .updateBorrowRecord(id, borrowRecord)
         .then(async () => {
-          console.log(borrowRecord)
-          await commit("UPDATE_BORROWRECORD", borrowRecord);
+          // console.log(borrowRecord)
+          await commit("UPDATE_BORROWRECORD", id);
           router.go(0);
         })
         .catch((error) => {
