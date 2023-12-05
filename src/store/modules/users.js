@@ -5,6 +5,11 @@ export default {
   state: {
     users: [],
   },
+  getters: {
+    allReaders: (state) => {
+      return state.users.filter((user) => user.role == "reader");
+    },
+  },
   mutations: {
     SET_USERS(state, users) {
       state.users = users;

@@ -38,7 +38,7 @@
                       </span>
                       <span>
                         <a v-b-modal.removeBookModal class="dropdown-item d-flex align-items-center py-2" href="#">
-                          <b-icon icon="slash-circle" class="mr-2" font-scale=".95"></b-icon>
+                          <b-icon icon="trash" class="mr-2" font-scale=".95"></b-icon>
                           Delete
                         </a>
                       </span>
@@ -94,17 +94,16 @@
                   <label for="author">Author</label>
                   <b-form-input v-model.trim="updateBook.author" id="author"></b-form-input>
                 </div>
-                <div class="col-4">
+                <div class="col-5">
                   <label for="publisher">Publisher</label>
-                  {{ updateBook.publisher }}
-                  <b-form-select v-model.trim="updateBook.publisher">
-                    <b-form-select-option v-for="publisherOption in publisherOptions" :key="publisherOption.value"
-                      :value="publisherOption.value">
-                      {{ publisherOption.text }}
+                  <b-form-select v-model.trim="updateBook.publisher_id">
+                    <b-form-select-option v-for="publisher in allPublishers" :key="publisher.publisher_id"
+                      :value="publisher.publisher_id">
+                      {{ publisher.publisher_name }}
                     </b-form-select-option>
                   </b-form-select>
                 </div>
-                <div class="col-4">
+                <div class="col-3">
                   <label for="pages">Available Copies</label>
                   <b-form-input v-model="updateBook.available_copies" id="pages" disabled></b-form-input>
                 </div>
@@ -120,12 +119,11 @@
                 </div>
                 <div class="col-4">
                   <label for="categories">Category</label>
-                  {{ updateBook.category }}
-                  <b-form-select v-model.trim="updateBook.category">
+                  <b-form-select v-model.trim="updateBook.category_id">
                     <b-form-select-option value="" disabled>Select ...</b-form-select-option>
-                    <b-form-select-option v-for="categoryOption in categoryOptions" :key="categoryOption.value"
-                      :value="categoryOption.value">
-                      {{ categoryOption.text }}
+                    <b-form-select-option v-for="category in allCategories" :key="category.category_id"
+                      :value="category.category_id">
+                      {{ category.category_name }}
                     </b-form-select-option>
                   </b-form-select>
                 </div>
@@ -174,9 +172,9 @@
                 <label for="publisher">Publisher</label>
                 <b-form-select v-model.trim="$v.book.publisher_id.$model">
                   <b-form-select-option value="" disabled>Select ...</b-form-select-option>
-                  <b-form-select-option v-for="publisherOption in publisherOptions" :key="publisherOption.value"
-                    :value="publisherOption.value">
-                    {{ publisherOption.text }}
+                  <b-form-select-option v-for="publisher in allPublishers" :key="publisher.publisher_id"
+                    :value="publisher.publisher_id">
+                    {{ publisher.publisher_name }}
                   </b-form-select-option>
                 </b-form-select>
                 <p class="error-message" v-if="submitStatus === 'error' && !$v.book.publisher_id.required
@@ -219,9 +217,9 @@
                 <label for="categories">Category</label>
                 <b-form-select v-model.trim="$v.book.category_id.$model">
                   <b-form-select-option value="" disabled>Select ...</b-form-select-option>
-                  <b-form-select-option v-for="categoryOption in categoryOptions" :key="categoryOption.value"
-                    :value="categoryOption.value">
-                    {{ categoryOption.text }}
+                  <b-form-select-option v-for="category in allCategories" :key="category.category_id"
+                    :value="category.category_id">
+                    {{ category.category_name }}
                   </b-form-select-option>
                 </b-form-select>
                 <p class="error-message" v-if="submitStatus === 'error' && !$v.book.category_id.required
@@ -410,16 +408,16 @@ export default {
     },
     editBook(book_id, book) {
       delete book.status;
-      this.$store
-        .dispatch("editBook", { book_id, book })
-        .catch((error) => {
-          console.log(error);
-        });
+      this.performAction('editBook', { book_id, book }, 'info');
+      // this.$store.dispatch("editBook", { book_id, book })
+      // .catch((error) => {
+      //   console.log(error);
+      // });
     },
-    setBookPublisher(value) {
-      this.book.publisher = value;
-      this.$v.book.publisher.$touch();
-    },
+    // setBookPublisher(value) {
+    //   this.book.publisher = value;
+    //   this.$v.book.publisher.$touch();
+    // },
     clear() {
       this.book = {
         title: "",
@@ -476,7 +474,7 @@ export default {
   },
   computed: {
     ...mapState(["books", "publishers", "categories"]),
-    ...mapGetters(["activePublishers", "activeCategories"]),
+    ...mapGetters(["allPublishers", "allCategories"]),
     items() {
       return this.books.books.map((items) => ({ ...items }));
     },
@@ -489,18 +487,6 @@ export default {
         .map((f) => {
           return { text: f.label, value: f.key };
         });
-    },
-    publisherOptions() {
-      return this.publishers.publishers.map((publisher) => ({
-        value: publisher.publisher_id,
-        text: publisher.publisher_name,
-      }));
-    },
-    categoryOptions() {
-      return this.categories.categories.map((category) => ({
-        value: category.category_id,
-        text: category.category_name,
-      }));
     },
   },
 };

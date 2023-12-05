@@ -19,6 +19,12 @@
         </router-link>
       </span>
       <span class="sidebar__item">
+        <router-link class="sidebar__link" :to="{ name: 'copies' }" exact>
+          <b-icon icon="bookshelf" font-scale="2"></b-icon>
+          <div class="sidebar__text">Copies</div>
+        </router-link>
+      </span>
+      <span class="sidebar__item">
         <router-link class="sidebar__link" :to="{ name: 'publishers' }" exact>
           <b-icon icon="building" font-scale="2"></b-icon>
           <div class="sidebar__text">Publishers</div>
@@ -28,12 +34,6 @@
         <router-link class="sidebar__link" :to="{ name: 'categories' }" exact>
           <b-icon icon="grid3x3-gap" font-scale="2"></b-icon>
           <div class="sidebar__text">Categories</div>
-        </router-link>
-      </span>
-      <span class="sidebar__item">
-        <router-link class="sidebar__link" :to="{ name: 'copies' }" exact>
-          <b-icon icon="bookshelf" font-scale="2"></b-icon>
-          <div class="sidebar__text">Copies</div>
         </router-link>
       </span>
       <span class="sidebar__item">

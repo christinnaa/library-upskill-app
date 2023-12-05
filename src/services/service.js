@@ -75,7 +75,7 @@ export default {
 
 
   updateBook(book_id, book) {
-    return apiClient.put(`/book/${book_id}`, book);
+    return apiClient.put(`/books/${book_id}`, book);
   },
   updatePublisher(publisher_id, publisher) {  
     return apiClient.put(`/publishers/${publisher_id}`, publisher);

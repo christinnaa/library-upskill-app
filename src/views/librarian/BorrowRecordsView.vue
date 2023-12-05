@@ -46,8 +46,8 @@
                   <label for="user">Username</label>
                   <b-form-select id="user" v-model.trim="borrowRecord.user_id">
                     <b-form-select-option value="" disabled>Select ...</b-form-select-option>
-                    <b-form-select-option v-for="userOption in userOptions" :key="userOption.value"
-                      :value="userOption.value">{{ userOption.text }}</b-form-select-option>
+                    <b-form-select-option v-for="reader in allReaders" :key="reader.user_id" :value="reader.user_id">{{
+                      reader.first_name }} {{ reader.last_name }}</b-form-select-option>
                   </b-form-select>
                   <p class="error-message" v-if="submitStatus === 'error' && !$v.borrowRecord.user_id.required">
                     Username is required.
@@ -58,19 +58,6 @@
                 <div class="col-12" :class="{ 'input-group--error': $v.borrowRecord.copy_id.$error }">
                   <label for="copy">Book Copy</label>
                   <b-form-select id="copy" v-model.trim="borrowRecord.copy_id">
-                    <b-form-select-option value="" disabled>Select ...</b-form-select-option>
-                    <b-form-select-option v-for="copyOption in copyOptions" :key="copyOption.value"
-                      :value="copyOption.value">{{ copyOption.text }}</b-form-select-option>
-                  </b-form-select>
-                  <p class="error-message" v-if="submitStatus === 'error' && !$v.borrowRecord.copy_id.required">
-                    Book Copy is required.
-                  </p>
-                </div>
-              </b-row>
-              <b-row class="mb-3">
-                <div class="col-12" :class="{ 'input-group--error': $v.borrowRecord.copy_id.$error }">
-                  <label for="copy">Book Copy</label>
-                  <b-form-select id="copy">
                     <b-form-select-option value="" disabled>Select ...</b-form-select-option>
                     <b-form-select-option v-for="copy in activeCopies" :key="copy.copy_id"
                       :value="copy.copy_id">{{ copy.title }}</b-form-select-option>
@@ -269,7 +256,7 @@ export default {
   },
   computed: {
     ...mapState(["borrowRecords", "users", "copies", "books"]),
-    ...mapGetters(["activeCopies"]),
+    ...mapGetters(["activeCopies", "allReaders"]),
     items() {
       return this.borrowRecords.borrowRecords;
     },
@@ -282,22 +269,6 @@ export default {
         .map((f) => {
           return { text: f.label, value: f.key };
         });
-    },
-    userOptions() {
-      return this.users.users
-        .filter(user => user.role === 'reader')
-        .map((user) => (
-          console.log(user.user_id, user.username),
-          { value: user.user_id, text: `${user.first_name} ${user.last_name}` }));
-    },
-    bookOptions() {
-      return this.books.books.map((book) => (
-        { value: book.book_id, text: book.title }));
-    },
-    copyOptions() {
-      return this.copies.copies
-        .filter(copy => copy.status === 'Active')
-        .map((copy) => ({ value: copy.copy_id, text: copy.title }));
     },
     returnDate() {
       if (this.borrowRecord.borrowed_date) {

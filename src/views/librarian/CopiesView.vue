@@ -21,10 +21,8 @@
           sort-desc.sync="false" fixed responsive :filter="filter" select-mode="single" ref="selectableTable" selectable
           @row-selected="onRowSelected" @filtered="onFiltered">
           <template #cell(status)="row">
-            <b-badge v-if="row.item.status == 'Inactive'" class="badge inactive py-2 px-3">{{ row.item.status }}</b-badge>
-            <b-badge v-else-if="row.item.status == 'Active'" class="badge active py-2 px-3">{{
-              row.item.status
-            }}</b-badge>
+            <b-badge v-if="row.item.status == 'Inactive'" class="badge inactive py-2 px-3">Unavailable</b-badge>
+            <b-badge v-else-if="row.item.status == 'Active'" class="badge active py-2 px-3">Available</b-badge>
           </template>
         </b-table>
 

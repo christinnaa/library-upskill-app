@@ -1,15 +1,13 @@
-import service from "@/services/service";
-import router from "@/router";
+import service from '@/services/service';
+import router from '@/router';
 
 export default {
   state: {
     publishers: [],
   },
   getters: {
-    activePublishers: (state) => {
-      return state.publishers.filter(
-        (publisher) => publisher.status == "active"
-      );
+    allPublishers: (state) => {
+      return state.publishers;
     },
   },
   mutations: {
@@ -31,9 +29,8 @@ export default {
   actions: {
     async addPublisher({ commit }, publisher) {
       try {
-        await service
-          .postPublisher(publisher);
-        await commit("ADD_PUBLISHER", publisher);
+        await service.postPublisher(publisher);
+        await commit('ADD_PUBLISHER', publisher);
         router.go(0);
       } catch (error) {
         console.log(error);
@@ -42,8 +39,8 @@ export default {
     fetchPublishers({ commit }) {
       service
         .getPublishers()
-        .then(({data}) => {
-          commit("SET_PUBLISHERS", data);
+        .then(({ data }) => {
+          commit('SET_PUBLISHERS', data);
         })
         .catch((error) => console.log(error));
     },
@@ -51,7 +48,7 @@ export default {
       service
         .removePublisher(id)
         .then(async () => {
-          await commit("REMOVE_PUBLISHER", id);
+          await commit('REMOVE_PUBLISHER', id);
           router.go(0);
         })
         .catch((error) => {
@@ -62,7 +59,7 @@ export default {
       service
         .updatePublisher(id, publisher)
         .then(async () => {
-          await commit("UPDATE_PUBLISHER", id);
+          await commit('UPDATE_PUBLISHER', id);
           router.go(0);
         })
         .catch((error) => {
