@@ -6,6 +6,7 @@
       <div class="table__container p-4 pt-3 rounded">
         <div class="d-flex justify-content-between mt-2 mb-4">
           <h4>Users</h4>
+
           <div class="d-flex">
             <div v-if="selectedRow[0]">
               <b-button class="mr-2 warning-btn" v-b-modal.removeUserModal>
@@ -217,12 +218,12 @@ export default {
           thStyle: { textTransform: "uppercase" },
           sortable: true,
         },
-        {
-          key: "password",
-          label: "Password",
-          thStyle: { textTransform: "uppercase" },
-          sortable: true,
-        },
+        // {
+        //   key: "password",
+        //   label: "Password",
+        //   thStyle: { textTransform: "uppercase" },
+        //   sortable: true,
+        // },
         {
           key: "role",
           label: "Role",
@@ -289,7 +290,7 @@ export default {
       this.clear();
     },
     addUser() {
-      this.user.first_name = this.capitalizeFirstLetter(this.user.first_name);
+      this.user.first_name = this.capitalizeEachWord(this.user.first_name);
       this.user.last_name = this.capitalizeFirstLetter(this.user.last_name);
 
       this.$v.$touch();
@@ -313,6 +314,13 @@ export default {
     },
     capitalizeFirstLetter(string) {
       return string.charAt(0).toUpperCase() + string.slice(1);
+    },
+    capitalizeEachWord(inputString) {
+      let words = inputString.split(' ');
+      let capitalizedWords = words.map(word => word.charAt(0).toUpperCase() + word.slice(1));
+      let resultString = capitalizedWords.join(' ');
+
+      return resultString;
     },
     clear() {
       this.user = {

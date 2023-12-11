@@ -1,84 +1,89 @@
-import Vue from "vue";
-import VueRouter from "vue-router";
+import Vue from 'vue';
+import VueRouter from 'vue-router';
 
 Vue.use(VueRouter);
 
 const routes = [
   {
-    path: "/",
-    name: "login",
-    component: () => import("../views/LoginView.vue"),
+    path: '/',
+    name: 'login',
+    component: () => import('../views/LoginView.vue'),
   },
   {
-    path: "/",
-    name: "home",
-    redirect: { name: "browse" },
+    path: '/',
+    name: 'home',
+    redirect: { name: 'browse' },
   },
+  // {
+  //   path: '/browse',
+  //   name: 'browse',
+  //   component: () => import('../views/BrowseView.vue'),
+  // },
+  // {
+  //   path: '/reader/:id?',
+  //   name: 'reader',
+  //   component: () => import('../views/reader/ReaderView.vue'),
+  //   redirect: { name: 'reader-browse' },
+  //   children: [
+  //     {
+  //       path: '/reader/browse',
+  //       name: 'reader-browse',
+  //       component: () => import('../views/reader/SearchBooksView.vue'),
+  //     },
+  //   ],
+  // },
   {
-    path: "/browse",
-    name: "browse",
-    component: () => import("../views/BrowseView.vue"),
-  },
-  {
-    path: "/reader/:id?",
-    name: "reader",
-    component: () => import("../views/reader/ReaderView.vue"),
-    redirect: { name: "reader-browse" },
+    path: '/:id?',
+    name: 'librarian',
+    component: () => import('../views/librarian/LibrarianView.vue'),
+    redirect: { name: 'books' },
     children: [
       {
-        path: "/reader/browse",
-        name: "reader-browse",
-        component: () => import("../views/reader/SearchBooksView.vue"),
-      },
-    ],
-  },
-  {
-    path: "/:id?",
-    name: "librarian",
-    component: () => import("../views/librarian/LibrarianView.vue"),
-    redirect: { name: "books" },
-    children: [
-      {
-        path: "/books",
-        name: "books",
-        component: () => import("../views/librarian/BooksView.vue"),
+        path: '/books',
+        name: 'books',
+        component: () => import('../views/librarian/BooksView.vue'),
       },
       {
-        path: "/dashboard",
-        name: "dashboard",
-        component: () => import("../views/librarian/DashboardView.vue"),
+        path: '/browse',
+        name: 'browse',
+        component: () => import('../views/librarian/BrowseView.vue'),
       },
       {
-        path: "/copies",
-        name: "copies",
-        component: () => import("../views/librarian/CopiesView.vue"),
+        path: '/dashboard',
+        name: 'dashboard',
+        component: () => import('../views/librarian/DashboardView.vue'),
       },
       {
-        path: "/borrow-records",
-        name: "borrow-records",
-        component: () => import("../views/librarian/BorrowRecordsView.vue"),
+        path: '/copies',
+        name: 'copies',
+        component: () => import('../views/librarian/CopiesView.vue'),
       },
       {
-        path: "/publishers",
-        name: "publishers",
-        component: () => import("../views/librarian/PublishersView.vue"),
+        path: '/borrow-records',
+        name: 'borrow-records',
+        component: () => import('../views/librarian/BorrowRecordsView.vue'),
       },
       {
-        path: "/categories",
-        name: "categories",
-        component: () => import("../views/librarian/CategoriesView.vue"),
+        path: '/publishers',
+        name: 'publishers',
+        component: () => import('../views/librarian/PublishersView.vue'),
       },
       {
-        path: "/users",
-        name: "users",
-        component: () => import("../views/librarian/UsersView.vue"),
+        path: '/categories',
+        name: 'categories',
+        component: () => import('../views/librarian/CategoriesView.vue'),
+      },
+      {
+        path: '/users',
+        name: 'users',
+        component: () => import('../views/librarian/UsersView.vue'),
       },
     ],
   },
 ];
 
 const router = new VueRouter({
-  mode: "history",
+  mode: 'history',
   base: process.env.BASE_URL,
   routes,
 });
@@ -91,7 +96,7 @@ const router = new VueRouter({
 
 //   if (authRequired && !loggedIn) {
 //     next("/");
-//   } 
+//   }
 //   else if (role !== "admin" && to.path !== "/reader/browse" && to.path !== "/browse") {
 //     next("/reader/browse")
 //   }
@@ -100,6 +105,17 @@ const router = new VueRouter({
 //   }
 // });
 
+router.beforeEach((to, from, next) => {
+  // If the user is not logged in, redirect to /login
+  const publicPages = ['/'];
+  const authRequired = !publicPages.includes(to.path);
+  const loggedIn = localStorage.getItem('token');
 
+  if (authRequired && !loggedIn) {
+    return next('/');
+  }
+
+  next();
+});
 
 export default router;

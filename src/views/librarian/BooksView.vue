@@ -382,14 +382,13 @@ export default {
     },
 
     addBook() {
+      this.book.author = this.capitalizeEachWord(this.book.author);
+
       this.$v.$touch();
       if (this.$v.$invalid) {
         this.submitStatus = "error";
       } else {
         this.performAction('addBook', this.book, 'success');
-        // .catch(() => {
-        //     console.log("There was a problem adding the book.");
-        // });
       }
     },
     deleteBook(id) {
@@ -403,7 +402,7 @@ export default {
       let result = this.books.books.filter((book) => book.book_id == book_id);
       for (let book of result) {
         this.updateBook = book;
-        console.log(this.updateBook)
+        // console.log(this.updateBook)
       }
     },
     editBook(book_id, book) {
@@ -418,6 +417,13 @@ export default {
     //   this.book.publisher = value;
     //   this.$v.book.publisher.$touch();
     // },
+    capitalizeEachWord(inputString) {
+      let words = inputString.split(' ');
+      let capitalizedWords = words.map(word => word.charAt(0).toUpperCase() + word.slice(1));
+      let resultString = capitalizedWords.join(' ');
+
+      return resultString;
+    },
     clear() {
       this.book = {
         title: "",
@@ -441,7 +447,7 @@ export default {
       const toastAction = localStorage.getItem('toastAction');
       if (toastAction) {
         // const toastData = JSON.parse(localStorage.getItem('toastData'));
-        const toastType = localStorage.getItem('toastType') || 'success'; // Default to 'success' if not set
+        const toastType = localStorage.getItem('toastType') || 'success';
 
         let message = 'Default toast message';
         if (toastAction === 'addBook') {

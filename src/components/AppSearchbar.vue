@@ -3,21 +3,22 @@
     class="nav__header container-fluid w-100 px-4 mb-4 d-flex align-items-center justify-content-between rounded bg-white">
     <div class="search__container w-100">
       <b-icon icon="search" class="mr-3"></b-icon>
-      <input type="text" placeholder="Search" class="w-75 border-0" id="filter-input" v-model.trim="filter" @keydown="searchData" />
+      <input type="text" placeholder="Search" class="w-75 border-0" id="filter-input" v-model.trim="filter"
+        @keydown="searchData" />
     </div>
 
     <AppDropdown>
-        <template v-slot:text>
-          <b-icon class="mr-2" font-scale="1.5" icon="person-circle"></b-icon>
-          Bada Lee
-          <b-icon class="ml-3" font-scale=".75" icon="caret-down-fill"></b-icon>
-        </template>
-        <template v-slot:links>
-          <p class="dropdown-header text-capitalize">Admin</p>
-          <!-- <a class="dropdown-item" @click="logout">Logout</a> -->
-          <router-link class="dropdown-item" :to="{ name: 'login' }">Logout</router-link>
-        </template>
-      </AppDropdown>
+      <template v-slot:text>
+        <b-icon class="mr-2" font-scale="1.5" icon="person-circle"></b-icon>
+        {{ userName }}
+        <b-icon class="ml-3" font-scale=".75" icon="caret-down-fill"></b-icon>
+      </template>
+      <template v-slot:links>
+        <p class="dropdown-header text-capitalize">{{ role }}</p>
+        <a class="dropdown-item" @click="logout">Logout</a>
+        <!-- <router-link class="dropdown-item" :to="{ name: 'login' }">Logout</router-link> -->
+      </template>
+    </AppDropdown>
   </div>
 </template>
 
@@ -33,16 +34,18 @@ export default {
     return {
       filter: "",
       userName: "",
+      // currentUser: JSON.parse(localStorage.getItem("username"))
     }
   },
   created() {
-    this.userName = `${localStorage.getItem("first_name")} ${localStorage.getItem("last_name")}`
+    this.userName = `${localStorage.getItem("username")}`
+    this.role = `${localStorage.getItem("role")}`
   },
-  computed: {
-    role() {
-      return localStorage.getItem("role");
-    }
-  },
+  // computed: {
+  //   role() {
+  //     return localStorage.getItem("role");
+  //   }
+  // },
   methods: {
     searchData() {
       this.$emit("passData", this.filter)

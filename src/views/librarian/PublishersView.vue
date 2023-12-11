@@ -225,6 +225,9 @@ export default {
       this.filter = data;
     },
     addPublisher() {
+      this.publisher.publisher_name = this.capitalizeEachWord(this.publisher.publisher_name);
+      this.publisher.publisher_location = this.capitalizeEachWord(this.publisher.publisher_location);
+
       this.$v.$touch();
       if (this.$v.$invalid) {
         this.submitStatus = "error";
@@ -240,6 +243,13 @@ export default {
     },
     logout() {
       this.$store.dispatch("logout")
+    },
+    capitalizeEachWord(inputString) {
+      let words = inputString.split(' ');
+      let capitalizedWords = words.map(word => word.charAt(0).toUpperCase() + word.slice(1));
+      let resultString = capitalizedWords.join(' ');
+
+      return resultString;
     },
     clear() {
       this.publisher = {

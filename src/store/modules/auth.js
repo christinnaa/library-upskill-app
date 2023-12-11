@@ -6,6 +6,7 @@ export default {
   state: {
     user: "",
     loggedIn: false,
+    loginError: ""
   },
   getters: {
     users: (state) => {
@@ -17,6 +18,12 @@ export default {
       state.user = userData;
       state.loggedIn = true;
     },
+    LOGIN_ERROR(state, error) {
+      state.loginError = error;
+    },
+    CLEAR_LOGIN_ERROR(state) {
+      state.loginError = null;
+    },
     LOGOUT(state) {
       state.user = null;
     },
@@ -27,20 +34,22 @@ export default {
         .login({ username, password })
         .then(async ({ data }) => {
           await commit("LOGIN_SUCCESSFUL", data.user);
-          if (data.user.token) {
-            localStorage.setItem("token", data.user.token);
+          await commit("CLEAR_LOGIN_ERROR");
+          if (data.token) {
+            localStorage.setItem("token", data.token);
             localStorage.setItem("role", data.user.role);
             localStorage.setItem("first_name", data.user.first_name);
             localStorage.setItem("last_name", data.user.last_name);
             localStorage.setItem("username", data.user.username);
           }
+          router.push("/dashboard");
+          // data.user.role === "admin"
+          //   ? router.push("/dashboard")
+          //   : router.push("/books");
 
-          data.user.role === "admin"
-            ? router.push("/books")
-            : router.push("/reader");
         })
         .catch((e) => {
-          alert(e.response.data.error);
+          commit("LOGIN_ERROR", e.response.data.message);
         });
     },
     logout({ commit }) {
@@ -50,7 +59,7 @@ export default {
       localStorage.removeItem("last_name");
       localStorage.removeItem("username");
       commit("LOGOUT");
-      router.go(0);
+      router.push("/");
     },
   },
 };

@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper"> 
+  <div class="wrapper">
     <main>
       <AppSearchbar @passData="getSearchData($event)" />
 
@@ -181,7 +181,6 @@ export default {
       }
     },
     onFiltered(filteredItems) {
-      // Trigger pagination to update the number of buttons/pages due to filtering
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
     },
@@ -193,12 +192,21 @@ export default {
       this.clear();
     },
     addCategory() {
+      this.category.category_name = this.capitalizeEachWord(this.category.category_name);
+
       this.$v.$touch();
       if (this.$v.$invalid) {
         this.submitStatus = "error";
       } else {
         this.performAction('addCategory', this.category, 'success');
       }
+    },
+    capitalizeEachWord(inputString) {
+      let words = inputString.split(' ');
+      let capitalizedWords = words.map(word => word.charAt(0).toUpperCase() + word.slice(1));
+      let resultString = capitalizedWords.join(' ');
+
+      return resultString;
     },
     editCategory(id, category) {
       delete category.status;

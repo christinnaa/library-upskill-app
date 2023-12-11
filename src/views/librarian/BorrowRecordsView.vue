@@ -274,7 +274,7 @@ export default {
       if (this.borrowRecord.borrowed_date) {
         const borrowedDate = new Date(this.borrowRecord.borrowed_date);
         const returnDate = new Date(borrowedDate.getTime() + 7 * 24 * 60 * 60 * 1000);
-        console.log(returnDate)
+        // console.log(returnDate)
         return returnDate.toISOString().split('T')[0]; // Format to 'yyyy-mm-dd'
       }
       return null;
@@ -292,7 +292,7 @@ export default {
   watch: {
     returnDate(newValue) {
       this.borrowRecord.return_by = newValue;
-      console.log(this.borrowRecord.return_by);
+      // console.log(this.borrowRecord.return_by);
     }
   },
   methods: {
@@ -301,7 +301,7 @@ export default {
       for (let borrowRecord of this.selectedRow) {
         this.selectedBorrowRecord = borrowRecord;
       }
-      console.log(this.selectedBorrowRecord);
+      // console.log(this.selectedBorrowRecord);
     },
     onFiltered(filteredItems) {
       this.totalRows = filteredItems.length;

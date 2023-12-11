@@ -171,7 +171,7 @@ export default {
   computed: {
     ...mapState(["copies", "books"]),
     items() {
-      // console.log(this.copies.copies)
+      console.log(this.copies.copies)
       return this.copies.copies.map((item) => ({ ...item }));
     },
     rows() {
