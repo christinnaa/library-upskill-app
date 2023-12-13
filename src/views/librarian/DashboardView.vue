@@ -46,8 +46,7 @@
                                         <b>Manuela Azul</b> has been crammed into an existence that feels too small for her.
                                         As an undocumented immigrant who's on the run from her father's Argentine crime-family,
                                         Manu is confined to a small apartment and a small life in Miami, Florida. <br> <br>
-                                        A world connected to her dead father and his criminal past. A world straight out of Argentine folklore, where the seventh consecutive daughter is born a bruja and the seventh consecutive son is a lobizón, a werewolf. As Manu uncovers her own story and traces her real heritage all the way back to a city in Argentina, she learns it's not just her U.S. residency that's
-                                        illegal ... it's her entire existence.
+                                        A world connected to her dead father and his criminal past. A world straight out of folklore, where the 7th consecutive daughter is born a bruja and the 7th consecutive son is a lobizón, a werewolf. As Manu uncovers her own story and traces her real heritage, she learns it's not just her residency that's illegal ... it's her entire existence.
                                     </p>
                                     <router-link :to="{ name: 'books' }" exact>
                                         <b-button class="primary-btn">Learn More</b-button>
@@ -251,6 +250,25 @@ p {
     }
 }
 
+@media only screen and (min-width: 998px) and (max-width: 1720px) {
+.trending-container {
+
+    img {
+        width: 150px !important;
+        border-radius: 12px;
+    }
+}
+}
+
+@media only screen and (min-width: 1720px) {
+.trending-container {
+
+    img {
+        width: 100%;
+        border-radius: 12px;
+    }
+}
+}
 @media only screen and (max-width: 992px) {
 
     .reco {
