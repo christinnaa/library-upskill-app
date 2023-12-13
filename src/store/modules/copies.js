@@ -60,7 +60,7 @@ export default {
       service
         .updateCopy(id, copy)
         .then(async () => {
-          console.log(copy)
+          // console.log(copy)
           await commit("UPDATE_COPIES", id);
           router.go(0);
         })

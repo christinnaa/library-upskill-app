@@ -401,7 +401,7 @@
         let result = this.books.books.filter((book) => book.book_id == book_id);
         for (let book of result) {
           this.updateBook = book;
-          console.log(this.updateBook)
+          // console.log(this.updateBook)
         }
       },
       editBook(book_id, book) {
